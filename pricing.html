@@ -1,0 +1,583 @@
+// Pricing Page structure
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plans & Pricing | Money Mastery System</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#8B7355', // Darker Gold for Text/BG Contrast (ADA Compliant)
+                            accent: '#e4e0d8',  // Light Beige
+                            secondary: '#3E5C65', // Darker Teal for Text Contrast (ADA Compliant)
+                            pop: '#ab9478',      // Original Gold for large graphical elements
+                            dark: '#394144',     // Dark Charcoal/Slate
+                            bg: '#ffffff',       // Pure White
+                            offwhite: '#fbfbf4', // Ivory
+                            text: '#394144',    // Dark Charcoal
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-brand-bg text-brand-text font-sans antialiased">
+    
+    <!-- Navigation (Same as Home) -->
+    <nav class="bg-white/95 backdrop-blur-md fixed w-full z-50 transition-all duration-300 border-b border-brand-secondary/10 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="font-serif font-bold text-2xl tracking-wide text-brand-secondary">RISING & THRIVING</span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-brand-dark hover:text-brand-pop transition-colors font-medium">Home</a>
+                    <a href="index.html#how-it-works" class="text-brand-dark hover:text-brand-pop transition-colors font-medium">How It Works</a>
+                    <a href="pricing.html" class="text-brand-pop font-medium border-b-2 border-brand-pop">Pricing</a>
+                    <a href="index.html#about" class="text-brand-dark hover:text-brand-pop transition-colors font-medium">About</a>
+                    <a href="index.html#quiz" class="px-6 py-2 bg-brand-secondary text-white rounded-full hover:bg-brand-dark transition-colors font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Take the Quiz</a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-text hover:text-brand-primary focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-bg border-t border-brand-primary/20">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-accent/30">Home</a>
+                <a href="index.html#how-it-works" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-accent/30">How It Works</a>
+                <a href="pricing.html" class="block px-3 py-2 rounded-md text-base font-medium text-brand-primary bg-brand-accent/20">Pricing</a>
+                <a href="index.html#about" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-accent/30">About</a>
+                <a href="index.html#quiz" class="block px-3 py-2 rounded-md text-base font-medium bg-brand-primary text-white mt-4 text-center">Take the Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 fade-in-up">
+                <h1 class="font-serif text-4xl md:text-5xl font-bold mb-6">Choose the Plan That Fits Your Life</h1>
+                <p class="text-xl text-brand-text/80 max-w-3xl mx-auto mb-8">All plans include access to the Money Mastery System, Clarity AI, and support. Pick the level of coaching that works for you.</p>
+                
+                <!-- Competitor Toggle -->
+                <a href="#competitor-comparison" class="inline-flex items-center gap-2 px-6 py-2 bg-brand-offwhite border border-brand-accent rounded-full text-brand-secondary font-medium hover:bg-brand-secondary hover:text-white transition-all transform hover:-translate-y-0.5 shadow-sm group">
+                    <i class="fa-solid fa-scale-balanced group-hover:rotate-12 transition-transform"></i>
+                    Comparing us to "The Leading Brand"? View the breakdown
+                </a>
+            </div>
+
+            <!-- Pricing Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 items-stretch">
+                
+                <!-- PLAN 1: SELF-STARTER -->
+                <div class="bg-white rounded-xl shadow-lg border border-brand-accent/30 overflow-hidden flex flex-col fade-in-up delay-100 relative group hover:border-brand-secondary/30 transition-all">
+                    <div class="p-8 pb-0 flex-grow-0">
+                        <h3 class="font-serif font-bold text-2xl mb-2 text-brand-secondary">Self-Starter</h3>
+                        <p class="text-sm opacity-70 mb-6 min-h-[40px]">Perfect for the entrepreneur ready to take control.</p>
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-serif font-bold text-brand-dark">$888</span>
+                                <span class="text-sm opacity-60">/year</span>
+                            </div>
+                            <div class="inline-block mt-2 bg-brand-pop/10 px-3 py-1 rounded-full border border-brand-pop/20">
+                                <p class="text-xs text-brand-pop font-bold">Just $2.43/day</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full py-3 bg-brand-offwhite text-brand-secondary border border-brand-secondary/20 text-center rounded-md font-bold hover:bg-brand-secondary hover:text-white transition-colors mb-6">Get Started</a>
+                    </div>
+                    <div class="p-8 pt-0 bg-brand-offwhite/50 flex-grow">
+                        <ul class="space-y-4 text-sm text-brand-dark/80">
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Full Money Mastery System access</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Net Worth Tracker & Debt Calculators</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Live Stripe integration</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Clarity AI assistant</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span><strong>3 Guest Logins</strong> (Team/Family)</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span><strong>Easy Report Export</strong> (PDF/CSV)</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- PLAN 2: MOMENTUM (BEST VALUE) -->
+                <div class="bg-brand-secondary text-white rounded-xl shadow-2xl border-4 border-brand-pop overflow-hidden flex flex-col relative transform md:-translate-y-4 fade-in-up delay-200 z-10">
+                    <div class="absolute top-0 inset-x-0 bg-brand-pop text-white text-center text-xs font-bold py-1 uppercase tracking-widest">Best Value</div>
+                    <div class="p-8 pb-0 pt-10 flex-grow-0">
+                        <h3 class="font-serif font-bold text-2xl mb-2 text-white">Momentum</h3>
+                        <p class="text-sm opacity-90 mb-6 min-h-[40px]">For those who want community & accountability.</p>
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-serif font-bold">$1,488</span>
+                                <span class="text-sm opacity-80">/year</span>
+                            </div>
+                            <div class="inline-block mt-2 bg-white/20 px-3 py-1 rounded-full border border-white/30">
+                                <p class="text-xs text-white font-bold">$4.08/day</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full py-3 bg-white text-brand-secondary text-center rounded-md font-bold hover:bg-brand-pop hover:text-white transition-colors mb-6 shadow-md">Choose Momentum</a>
+                    </div>
+                    <div class="p-8 pt-0 bg-black/10 flex-grow">
+                        <ul class="space-y-4 text-sm">
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-pop mt-1"></i> <span class="font-bold">Everything in Self-Starter</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-pop mt-1"></i> <span><strong>Money Reset Group Calls</strong> (Monthly)</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-pop mt-1"></i> <span>Access to calls for remainder of current year</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-brand-pop mt-1"></i> <span>Priority Support</span></li>
+                        </ul>
+                        <div class="mt-6 pt-4 border-t border-white/10 text-xs text-center opacity-60">
+                            Valid for Jan 1, 2026 - Dec 31, 2026 transactions
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PLAN 3: FIERCE FINANCIALS -->
+                <div class="bg-white rounded-xl shadow-lg border border-brand-accent/30 overflow-hidden flex flex-col fade-in-up delay-300 relative group hover:border-brand-secondary/30 transition-all">
+                    <div class="p-8 pb-0 flex-grow-0">
+                        <h3 class="font-serif font-bold text-2xl mb-2 text-brand-secondary">Fierce Financials</h3>
+                        <p class="text-sm opacity-70 mb-6 min-h-[40px]">Premium 1:1 coaching for rapid transformation.</p>
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-4xl font-serif font-bold text-brand-dark">$7,200</span>
+                                <span class="text-sm opacity-60">/year</span>
+                            </div>
+                            <div class="inline-block mt-2 bg-brand-pop/10 px-3 py-1 rounded-full border border-brand-pop/20">
+                                <p class="text-xs text-brand-pop font-bold">$19.72/day</p>
+                            </div>
+                        </div>
+                        <a href="#" class="block w-full py-3 bg-brand-offwhite text-brand-secondary border border-brand-secondary/20 text-center rounded-md font-bold hover:bg-brand-secondary hover:text-white transition-colors mb-6">Learn More</a>
+                    </div>
+                    <div class="p-8 pt-0 bg-brand-offwhite/50 flex-grow">
+                        <ul class="space-y-4 text-sm text-brand-dark/80">
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span class="font-bold">Everything in Momentum</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span><strong>12 Months of 1:1 Coaching</strong> (2 calls/mo)</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Direct Access to Donna</span></li>
+                            <li class="flex items-start gap-3"><i class="fa-solid fa-check text-green-500 mt-1"></i> <span>Personalized Strategic Planning</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Competitor Comparison Section (Interactive Table) -->
+            <div id="competitor-comparison" class="max-w-6xl mx-auto mb-20 pt-10 scroll-mt-24">
+                <div class="text-center mb-8">
+                    <h2 class="font-serif text-3xl font-bold text-brand-secondary">Why We're Different</h2>
+                    <p class="text-brand-dark/70 text-sm mt-2">Click any row to see the feature in action.</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-xl border border-brand-accent/30 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-brand-offwhite text-brand-secondary">
+                                <th class="p-6 font-serif font-bold text-lg w-1/3">Feature / System</th>
+                                <th class="p-6 text-center font-bold text-lg w-1/3 border-l border-brand-accent/20 bg-brand-pop/10 text-brand-pop">Money Mastery System</th>
+                                <th class="p-6 text-center font-bold text-lg w-1/3 border-l border-brand-accent/20 text-[#2CA01C] bg-[#2CA01C]/5">"Leading Brand"</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <!-- Feature 1: Dashboard -->
+                            <tr class="hover:bg-brand-secondary/5 cursor-pointer transition-all group relative" onclick="openFeatureModal('dashboard')">
+                                <td class="p-6 font-medium text-brand-dark flex items-center gap-3">
+                                    <i class="fa-solid fa-chart-pie text-brand-pop/50 group-hover:text-brand-pop transition-colors text-xl"></i>
+                                    <div>
+                                        <span class="block">Total Clarity Dashboard</span>
+                                        <span class="text-[10px] text-brand-pop font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Click to View Demo</span>
+                                    </div>
+                                    <i class="fa-solid fa-circle-info text-gray-300 opacity-50 group-hover:opacity-100 group-hover:text-brand-pop ml-auto transition-all"></i>
+                                </td>
+                                <td class="p-6 text-center border-l border-brand-accent/20 bg-brand-pop/5 group-hover:bg-brand-pop/10 transition-colors"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i></td>
+                                <td class="p-6 text-center border-l border-brand-accent/20"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i></td>
+                            </tr>
+
+                            <!-- Feature 2: Net Worth -->
+                            <tr class="hover:bg-brand-secondary/5 cursor-pointer transition-all group relative" onclick="openFeatureModal('networth')">
+                                <td class="p-6 font-medium text-brand-dark flex items-center gap-3">
+                                    <i class="fa-solid fa-chart-line text-brand-pop/50 group-hover:text-brand-pop transition-colors text-xl"></i>
+                                    <div>
+                                        <span class="block">Net Worth Tracker</span>
+                                        <span class="text-[10px] text-brand-pop font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Click to View Demo</span>
+                                    </div>
+                                    <i class="fa-solid fa-circle-info text-gray-300 opacity-50 group-hover:opacity-100 group-hover:text-brand-pop ml-auto transition-all"></i>
+                                </td>
+                                <td class="p-6 text-center border-l border-brand-accent/20 bg-brand-pop/5 group-hover:bg-brand-pop/10 transition-colors"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i></td>
+                                <td class="p-6 text-center border-l border-brand-accent/20"><i class="fa-solid fa-circle-xmark text-gray-300 text-xl"></i></td>
+                            </tr>
+
+                            <!-- Feature 3: Debt Payoff -->
+                            <tr class="hover:bg-brand-secondary/5 cursor-pointer transition-all group relative" onclick="openFeatureModal('debt')">
+                                <td class="p-6 font-medium text-brand-dark flex items-center gap-3">
+                                    <i class="fa-solid fa-bomb text-brand-pop/50 group-hover:text-brand-pop transition-colors text-xl"></i>
+                                    <div>
+                                        <span class="block">Debt Payoff Calculator</span>
+                                        <span class="text-[10px] text-brand-pop font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Click to View Demo</span>
+                                    </div>
+                                    <i class="fa-solid fa-circle-info text-gray-300 opacity-50 group-hover:opacity-100 group-hover:text-brand-pop ml-auto transition-all"></i>
+                                </td>
+                                <td class="p-6 text-center border-l border-brand-accent/20 bg-brand-pop/5 group-hover:bg-brand-pop/10 transition-colors"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i></td>
+                                <td class="p-6 text-center border-l border-brand-accent/20"><i class="fa-solid fa-circle-xmark text-gray-300 text-xl"></i></td>
+                            </tr>
+
+                            <!-- Feature 4: Bill Calendar -->
+                            <tr class="hover:bg-brand-secondary/5 cursor-pointer transition-all group relative" onclick="openFeatureModal('calendar')">
+                                <td class="p-6 font-medium text-brand-dark flex items-center gap-3">
+                                    <i class="fa-regular fa-calendar-check text-brand-pop/50 group-hover:text-brand-pop transition-colors text-xl"></i>
+                                    <div>
+                                        <span class="block">Bill Calendar & Payment Scheduler</span>
+                                        <span class="text-[10px] text-brand-pop font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Click to View Demo</span>
+                                    </div>
+                                    <i class="fa-solid fa-circle-info text-gray-300 opacity-50 group-hover:opacity-100 group-hover:text-brand-pop ml-auto transition-all"></i>
+                                </td>
+                                <td class="p-6 text-center border-l border-brand-accent/20 bg-brand-pop/5 group-hover:bg-brand-pop/10 transition-colors"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i></td>
+                                <td class="p-6 text-center border-l border-brand-accent/20"><i class="fa-solid fa-circle-xmark text-gray-300 text-xl"></i></td>
+                            </tr>
+
+                            <!-- Feature 5: Clarity AI -->
+                            <tr class="hover:bg-brand-secondary/5 cursor-pointer transition-all group relative" onclick="openFeatureModal('ai')">
+                                <td class="p-6 font-medium text-brand-dark flex items-center gap-3">
+                                    <i class="fa-solid fa-robot text-brand-pop/50 group-hover:text-brand-pop transition-colors text-xl"></i>
+                                    <div>
+                                        <span class="block">Clarity AI Guide</span>
+                                        <span class="text-[10px] text-brand-pop font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Click to View Demo</span>
+                                    </div>
+                                    <i class="fa-solid fa-circle-info text-gray-300 opacity-50 group-hover:opacity-100 group-hover:text-brand-pop ml-auto transition-all"></i>
+                                </td>
+                                <td class="p-6 text-center border-l border-brand-accent/20 bg-brand-pop/5 group-hover:bg-brand-pop/10 transition-colors"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i></td>
+                                <td class="p-6 text-center border-l border-brand-accent/20"><i class="fa-solid fa-circle-xmark text-gray-300 text-xl"></i></td>
+                            </tr>
+
+                            <!-- Feature 6: One Login -->
+                            <tr class="hover:bg-brand-secondary/5 cursor-pointer transition-all group relative" onclick="openFeatureModal('onelogin')">
+                                <td class="p-6 font-medium text-brand-dark flex items-center gap-3">
+                                    <i class="fa-solid fa-users-viewfinder text-brand-pop/50 group-hover:text-brand-pop transition-colors text-xl"></i>
+                                    <div>
+                                        <span class="block">Personal + Business in One View</span>
+                                        <span class="text-[10px] text-brand-pop font-bold uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">Click to View Demo</span>
+                                    </div>
+                                    <i class="fa-solid fa-circle-info text-gray-300 opacity-50 group-hover:opacity-100 group-hover:text-brand-pop ml-auto transition-all"></i>
+                                </td>
+                                <td class="p-6 text-center border-l border-brand-accent/20 bg-brand-pop/5 group-hover:bg-brand-pop/10 transition-colors"><i class="fa-solid fa-circle-check text-green-500 text-xl"></i></td>
+                                <td class="p-6 text-center border-l border-brand-accent/20"><span class="text-sm text-gray-400">Requires 2 Subscriptions</span></td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-gray-50">
+                            <tr>
+                                <td class="p-6 font-bold text-brand-dark">The Verdict</td>
+                                <td class="p-6 text-center font-bold text-brand-pop border-l border-brand-accent/20 bg-brand-pop/10">Complete Financial Life System</td>
+                                <td class="p-6 text-center text-gray-400 font-medium border-l border-brand-accent/20">Just Bookkeeping</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Feature Modal (Hidden by default) -->
+            <div id="feature-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <!-- Background backdrop -->
+                <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closeFeatureModal()"></div>
+
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl border-2 border-brand-pop">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <button onclick="closeFeatureModal()" class="absolute top-4 right-4 text-gray-400 hover:text-brand-secondary text-2xl z-10">&times;</button>
+                            
+                            <div class="flex flex-col md:flex-row gap-8">
+                                <!-- Left: Demo Visual -->
+                                <div class="md:w-1/2">
+                                    <div class="bg-brand-offwhite rounded-xl aspect-video flex items-center justify-center border-2 border-dashed border-brand-accent overflow-hidden relative">
+                                        <!-- Placeholder Image - Will be swapped via JS -->
+                                        <img id="modal-image" src="images/dashboard-mockup.png" alt="Feature Demo" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 flex items-center justify-center bg-black/10">
+                                            <span class="bg-white/90 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider text-brand-dark shadow-sm">Interactive Demo Preview</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 flex justify-between items-center bg-brand-offwhite p-3 rounded-lg">
+                                        <span class="text-xs font-bold text-brand-secondary uppercase">Competitor Status:</span>
+                                        <span id="modal-competitor-status" class="text-xs font-bold text-[#2CA01C]">Basic Feature Only</span>
+                                    </div>
+                                </div>
+
+                                <!-- Right: Content -->
+                                <div class="md:w-1/2 space-y-4">
+                                    <h3 id="modal-title" class="font-serif text-3xl font-bold text-brand-secondary">Feature Title</h3>
+                                    <p id="modal-desc" class="text-brand-dark/80 leading-relaxed text-lg">
+                                        Description goes here.
+                                    </p>
+                                    
+                                    <div class="bg-brand-pop/10 p-4 rounded-lg border-l-4 border-brand-pop mt-4">
+                                        <h4 class="font-bold text-brand-pop text-sm uppercase mb-1">The Verdict</h4>
+                                        <p id="modal-verdict" class="text-sm text-brand-dark">Why we win.</p>
+                                    </div>
+
+                                    <div class="pt-6">
+                                        <button onclick="closeFeatureModal()" class="w-full py-3 bg-brand-secondary text-white rounded-lg font-bold hover:bg-brand-pop transition-colors shadow-lg">
+                                            Got it, I want this!
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table (Internal Plans) -->
+            <div class="max-w-5xl mx-auto mb-20 overflow-x-auto fade-in-up delay-200">
+                <h3 class="font-serif text-3xl font-bold text-center mb-8 text-brand-dark">Compare Our Plans</h3>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b-2 border-brand-secondary">
+                            <th class="p-4 text-lg font-serif text-brand-secondary">Features</th>
+                            <th class="p-4 text-center text-brand-dark">Self-Starter</th>
+                            <th class="p-4 text-center text-brand-pop font-bold bg-brand-offwhite rounded-t-lg">Momentum</th>
+                            <th class="p-4 text-center text-brand-dark">Fierce Financials</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <!-- Core Features -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4 font-medium">Money Mastery System Access</td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                            <td class="p-4 text-center bg-brand-offwhite"><i class="fa-solid fa-check text-brand-pop"></i></td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                        </tr>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4 font-medium">Guest Logins & Report Export</td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                            <td class="p-4 text-center bg-brand-offwhite"><i class="fa-solid fa-check text-brand-pop"></i></td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                        </tr>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4 font-medium">Live Stripe Integration</td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                            <td class="p-4 text-center bg-brand-offwhite"><i class="fa-solid fa-check text-brand-pop"></i></td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                        </tr>
+                        <!-- Advanced Features -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4 font-medium">Monthly Money Reset Calls</td>
+                            <td class="p-4 text-center text-gray-300"><i class="fa-solid fa-minus"></i></td>
+                            <td class="p-4 text-center bg-brand-offwhite"><i class="fa-solid fa-check text-brand-pop"></i></td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                        </tr>
+                        <!-- Premium Features -->
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4 font-medium">1:1 Coaching Calls</td>
+                            <td class="p-4 text-center text-gray-300"><i class="fa-solid fa-minus"></i></td>
+                            <td class="p-4 text-center bg-brand-offwhite text-gray-300"><i class="fa-solid fa-minus"></i></td>
+                            <td class="p-4 text-center"><span class="font-bold text-brand-secondary">24 Calls/Year</span></td>
+                        </tr>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="p-4 font-medium">Direct Access to Donna</td>
+                            <td class="p-4 text-center text-gray-300"><i class="fa-solid fa-minus"></i></td>
+                            <td class="p-4 text-center bg-brand-offwhite text-gray-300"><i class="fa-solid fa-minus"></i></td>
+                            <td class="p-4 text-center"><i class="fa-solid fa-check text-green-500"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="max-w-3xl mx-auto py-12 mb-16">
+                <h2 class="font-serif text-3xl font-bold text-center mb-8 text-brand-dark">Frequently Asked Questions</h2>
+                <p class="text-center text-brand-dark/70 mb-12">We know investing in a system (and yourself) is a big decision. Here are the honest answers you need.</p>
+                
+                <div class="space-y-4">
+                    <!-- FAQ Item 1: The "Worth It?" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">Is this really worth $888? I'm already trying to save money.</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            Think of it this way: The cost is less than $2.50 a day. Most of our members find they "find" that much money just by canceling unused subscriptions or avoiding one impulse purchase a week—things the system helps you identify instantly. Plus, unlike a static spreadsheet, this is a full system with AI guidance, tax prep organization (which saves you accountant fees), and debt payoff strategies that can save you thousands in interest.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2: The "Tech Overwhelm" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">I'm not "techy." Is this hard to set up?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            Not at all. If you can log into your bank account, you can use Money Mastery. We use a secure connection (via Stripe) that handles the technical part for you. There's no complex coding or spreadsheet formulas you have to maintain. Plus, we have a "Start Here" video that walks you through everything in under 15 minutes.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3: The "Payment Plan" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">Is there a monthly payment option?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            We designed the Self-Starter and Momentum plans as annual commitments because real financial change happens over seasons, not just in one month. However, we understand cash flow is real! We do offer payment plans for the Fierce Financials tier. If you need a split payment for other tiers, please contact support, and we'll see if we can help.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4: The "Safe?" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">Is my financial data actually safe?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            Security is our #1 priority. We use bank-level 256-bit SSL encryption. We partner with Stripe (the same processor used by Amazon and Google) to handle transaction data. We never see or store your bank login credentials directly. Your data is yours, and it stays private.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5: The "Upgrade" Logic -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">Can I upgrade to Momentum later?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            Absolutely! Many members start with the Self-Starter plan and then realize they want the community support. You can upgrade at any time, and we'll simply prorate the difference for the remainder of your year.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6: The "Date" Logic -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">What does "valid for 2026 transactions" mean?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                    <!-- FAQ Item 7: The "Features" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">What exactly do I get access to?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            You get immediate access to the full 2025 Money Mastery System dashboard. This includes:
+                            <ul class="list-disc pl-5 mt-2 space-y-1">
+                                <li><strong>The Main Dashboard:</strong> Your total financial picture in one view.</li>
+                                <li><strong>Transactions Tab:</strong> Auto-synced with Stripe for real-time tracking.</li>
+                                <li><strong>Net Worth Tracker:</strong> Visualize your wealth growth over time.</li>
+                                <li><strong>Debt Payoff Tools:</strong> Calculators for Snowball & Avalanche methods.</li>
+                                <li><strong>Profit First Allocations:</strong> For business owners to ensure they get paid.</li>
+                                <li><strong>Tax Prep Organizer:</strong> Tag expenses instantly for stress-free tax seasons.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 8: The "Time" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">How much time does this take per week?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            We built this for busy entrepreneurs. Once you complete the initial setup (about 60-90 minutes), maintenance takes less than <strong>15 minutes a week</strong>. The system automates the heavy lifting of data entry, so you're just reviewing, categorizing, and making decisions.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 9: The "Support" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">What if I get stuck or have a question?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            You are never alone! All plans include access to our <strong>Clarity AI Guide</strong> for instant answers. Momentum and Fierce Financials members get access to our <strong>Community Collective</strong> for peer support. Plus, our support team is just a ticket away for any technical issues.
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 10: The "Business vs Personal" Hurdle -->
+                    <div class="border border-brand-accent/50 rounded-lg overflow-hidden">
+                        <button class="w-full px-6 py-4 text-left bg-white hover:bg-brand-offwhite flex justify-between items-center transition-colors focus:outline-none" onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('i').classList.toggle('rotate-180')">
+                            <span class="font-medium text-brand-secondary text-lg">Can I track both my business and personal finances?</span>
+                            <i class="fa-solid fa-chevron-down transition-transform duration-300 text-brand-pop"></i>
+                        </button>
+                        <div class="hidden bg-brand-offwhite/50 px-6 py-4 text-sm text-brand-dark/80 leading-relaxed">
+                            Yes! This is a core feature. Most entrepreneurs have messy crossovers between personal and business expenses. Our system allows you to tag transactions as "Business" or "Personal" instantly, giving you clear, separate Profit & Loss views for your business and Budget views for your home life—all in one login.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (Same as Home) -->
+    <footer class="bg-brand-offwhite border-t border-brand-secondary/10 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-1">
+                    <span class="font-serif font-bold text-2xl tracking-wide block mb-6 text-brand-secondary">RISING & THRIVING</span>
+                    <p class="text-sm text-brand-dark/70 leading-relaxed mb-6">Empowering women entrepreneurs to master their money with confidence, clarity, and zero judgment.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-secondary hover:bg-brand-secondary hover:text-white transition-all shadow-sm"><i class="fa-brands fa-instagram text-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-secondary hover:bg-brand-secondary hover:text-white transition-all shadow-sm"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-secondary hover:bg-brand-secondary hover:text-white transition-all shadow-sm"><i class="fa-brands fa-linkedin text-lg"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-brand-dark mb-6 uppercase text-sm tracking-wider">Explore</h4>
+                    <ul class="space-y-3 text-sm text-brand-dark/70">
+                        <li><a href="index.html" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> Home</a></li>
+                        <li><a href="index.html#how-it-works" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> How It Works</a></li>
+                        <li><a href="pricing.html" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> Pricing</a></li>
+                        <li><a href="index.html#about" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> About Founder</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-brand-dark mb-6 uppercase text-sm tracking-wider">Legal & Support</h4>
+                    <ul class="space-y-3 text-sm text-brand-dark/70">
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Support Center</a></li>
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-brand-dark mb-6 uppercase text-sm tracking-wider">Security</h4>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-brand-accent/30 space-y-4">
+                        <div class="flex items-center gap-3 text-sm text-brand-dark/80">
+                            <i class="fa-solid fa-lock text-brand-pop text-lg"></i>
+                            <span class="font-medium">256-bit SSL Encrypted</span>
+                        </div>
+                        <div class="h-px bg-brand-accent/50 w-full"></div>
+                        <div class="flex items-center gap-3 text-sm text-brand-dark/80">
+                            <i class="fa-brands fa-stripe text-brand-secondary text-2xl"></i>
+                            <span class="font-medium">Secured Payment Processing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-brand-secondary/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-brand-dark/50">
+                <p>&copy; 2026 Rising & Thriving LLC. All rights reserved.</p>
+                <p>Designed with <i class="fa-solid fa-heart text-brand-pop"></i> for Entrepreneurs.</p>
+            </div>
+        </footer>
+    
+    <script src="js/main.js"></script>
+</body>
+</html>

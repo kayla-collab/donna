@@ -1,0 +1,176 @@
+/* Custom Styles that extend Tailwind */
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Triangle for chat bubble */
+.triangle-bottom-right::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 20px;
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #FFFFFF transparent;
+    display: block;
+    width: 0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px; /* For horizontal scroll */
+}
+
+::-webkit-scrollbar-track {
+    background: #fbfbf4;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ab9478;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #567b84;
+}
+
+/* Chatbot Specific Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f9f9f9;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #ab9478;
+}
+
+/* Hide Scrollbar for Horizontal Chips */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Animation Utilities - REFINED */
+
+/* 1. Reveal on Scroll (Base Class) */
+body.animations-enabled .reveal-on-scroll,
+body.animations-enabled .fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.5, 0, 0, 1), transform 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+body.animations-enabled .reveal-on-scroll.is-visible,
+body.animations-enabled .fade-in-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.animations-enabled .fade-in-up.is-visible {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 2. Chat Bubble Pulse */
+@keyframes blob-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(171, 148, 120, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(171, 148, 120, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(171, 148, 120, 0);
+    }
+}
+
+.animate-blob-pulse {
+    animation: blob-pulse 2s infinite;
+}
+
+/* 3. Gold Shimmer Effect (for Buttons/Cards) */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.shimmer-gold {
+    background: linear-gradient(
+        90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.2) 50%, 
+        rgba(255,255,255,0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s infinite linear;
+}
+
+/* 4. Hover Lift (Cards) */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Legacy Fade In (Base State to ensure visibility without JS) */
+.fade-in-up,
+.reveal-on-scroll {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+
+/* Range Slider Customization */
+input[type=range] {
+    -webkit-appearance: none; 
+    width: 100%; 
+    background: transparent; 
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #ab9478;
+    cursor: pointer;
+    margin-top: -8px; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: #e4e0d8;
+    border-radius: 2px;
+}
+
+input[type=range]:focus {
+    outline: none;
+}

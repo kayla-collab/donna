@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Mastery System | AI-Powered Financial Clarity</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            primary: '#8B7355', // Darker Gold for Text/BG Contrast (ADA Compliant)
+                            accent: '#e4e0d8',  // Light Beige
+                            secondary: '#3E5C65', // Darker Teal for Text Contrast (ADA Compliant)
+                            pop: '#ab9478',      // Original Gold for large graphical elements
+                            dark: '#394144',     // Dark Charcoal/Slate
+                            bg: '#ffffff',       // Pure White
+                            offwhite: '#fbfbf4', // Ivory
+                            text: '#394144',    // Dark Charcoal
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-brand-bg text-brand-text font-sans antialiased">
+    
+    <!-- Navigation -->
+    <nav class="bg-white/95 backdrop-blur-md fixed w-full z-50 transition-all duration-300 border-b border-brand-secondary/10 shadow-sm" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="font-serif font-bold text-2xl tracking-wide text-brand-secondary">RISING & THRIVING</span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="index.html" class="text-brand-dark hover:text-brand-pop transition-colors font-medium">Home</a>
+                    <a href="#how-it-works" class="text-brand-dark hover:text-brand-pop transition-colors font-medium">How It Works</a>
+                    <a href="pricing.html" class="text-brand-dark hover:text-brand-pop transition-colors font-medium">Pricing</a>
+                    <a href="#about" class="text-brand-dark hover:text-brand-pop transition-colors font-medium">About</a>
+                    <a href="#quiz" class="px-6 py-2 bg-brand-secondary text-white rounded-full hover:bg-brand-dark transition-colors font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5">Take the Quiz</a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-text hover:text-brand-primary focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-bg border-t border-brand-primary/20">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-accent/30">Home</a>
+                <a href="#how-it-works" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-accent/30">How It Works</a>
+                <a href="pricing.html" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-accent/30">Pricing</a>
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-brand-accent/30">About</a>
+                <a href="#quiz" class="block px-3 py-2 rounded-md text-base font-medium bg-brand-primary text-white mt-4 text-center">Take the Quiz</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20">
+        <!-- HERO SECTION - Part 1: Strong Tagline & CTA -->
+        <section class="relative bg-white pt-20 pb-16 md:pt-32 md:pb-24 overflow-hidden text-center">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-full h-full bg-brand-offwhite opacity-30 -z-10"></div>
+            
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="space-y-8 fade-in-up">
+                    <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl font-bold leading-tight text-brand-secondary tracking-tight">
+                        AI-Powered Clarity <br/>
+                        <span class="text-brand-pop italic">For Your Money.</span>
+                    </h1>
+                    
+                    <p class="text-xl md:text-2xl text-brand-dark/80 font-serif italic max-w-3xl mx-auto">
+                        Real-Time Insights That Actually Help. Your Money Mastered. Your Life Elevated.
+                    </p>
+                    
+                    <p class="text-lg text-brand-text/80 leading-relaxed max-w-2xl mx-auto">
+                        You're not bad with money. You just haven't had a system that actually makes sense. In less than 5 minutes a week, finally know where your money's going—and feel good about it.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-6 pt-8 justify-center">
+                        <a href="#quiz" class="px-10 py-5 bg-brand-pop text-white text-xl font-bold rounded-full shadow-xl hover:bg-brand-secondary transition-all transform hover:-translate-y-1 hover:shadow-2xl min-w-[280px]">
+                            Start Your Free Walkthrough
+                        </a>
+                        <a href="pricing.html" class="px-10 py-5 border-2 border-brand-secondary text-brand-secondary text-xl font-bold rounded-full hover:bg-brand-secondary hover:text-white transition-colors min-w-[280px]">
+                            See Pricing
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HERO SECTION - Part 2: Demo Visual -->
+        <section class="bg-brand-secondary py-20 relative">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10 fade-in-up">
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-4">See The System In Action</h2>
+                    <p class="text-brand-accent text-lg">Watch how simple money management can be.</p>
+                </div>
+                
+                <div class="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-brand-pop/50 fade-in-up delay-200">
+                    <img src="images/demo-thumbnail.png" alt="Money Mastery System Demo" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center group cursor-pointer hover:bg-black/40 transition-colors">
+                        <div class="w-24 h-24 bg-brand-pop rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-play text-4xl text-white ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAIN POINTS SECTION -->
+        <section class="py-24 bg-brand-offwhite">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16 fade-in-up">
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold mb-4 text-brand-dark">If This Resonates... <br/><span class="italic text-brand-secondary">We've Built This For You</span></h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Card 1: Gold Background -->
+                    <div class="bg-brand-pop p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 fade-in-up delay-100 text-white h-full flex flex-col">
+                        <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-6 shadow-inner text-white text-2xl">
+                            <i class="fa-solid fa-wind"></i>
+                        </div>
+                        <h3 class="font-serif font-bold text-xl mb-3">Feeling A Bit Behind?</h3>
+                        <p class="text-sm opacity-90 leading-relaxed flex-grow">It feels like everyone else has the secret handbook. You're working hard, but the financial clarity just isn't matching your effort yet.</p>
+                    </div>
+
+                    <!-- Card 2: Deep Blue Background -->
+                    <div class="bg-brand-secondary p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 fade-in-up delay-200 text-white h-full flex flex-col">
+                        <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mb-6 shadow-inner text-white text-2xl">
+                            <i class="fa-regular fa-compass"></i>
+                        </div>
+                        <h3 class="font-serif font-bold text-xl mb-3">Need A Clear Direction?</h3>
+                        <p class="text-sm opacity-90 leading-relaxed flex-grow">You don't need another complex app. You need a simple, step-by-step roadmap that respects your time and intelligence.</p>
+                    </div>
+
+                    <!-- Card 3: Dark Mode (Charcoal) Background -->
+                    <div class="bg-brand-dark p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 fade-in-up delay-300 text-white h-full flex flex-col border border-gray-700">
+                        <div class="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center mb-6 shadow-inner text-brand-pop text-2xl">
+                            <i class="fa-regular fa-calendar-check"></i>
+                        </div>
+                        <h3 class="font-serif font-bold text-xl mb-3">Dreading Due Dates?</h3>
+                        <p class="text-sm opacity-90 leading-relaxed flex-grow">That low-level anxiety about what's due when? Let's replace it with calm confidence and a calendar that thinks for you.</p>
+                    </div>
+
+                    <!-- Card 4: White Background with Strong Border -->
+                    <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 fade-in-up delay-100 border-2 border-brand-pop h-full flex flex-col">
+                        <div class="w-14 h-14 bg-brand-offwhite rounded-full flex items-center justify-center mb-6 shadow-inner text-brand-secondary text-2xl">
+                            <i class="fa-regular fa-lightbulb"></i>
+                        </div>
+                        <h3 class="font-serif font-bold text-xl mb-3 text-brand-secondary">Ready for Simplicity?</h3>
+                        <p class="text-sm text-brand-dark/80 leading-relaxed flex-grow">Traditional systems weren't designed for modern entrepreneurs. This one is. It's not you, it's the system.</p>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12 max-w-2xl mx-auto fade-in-up delay-200">
+                    <p class="text-xl font-medium italic text-brand-secondary">
+                        "You're not broken. You just need the right system. And maybe a little help from Clarity (our AI money guide who actually gets it)."
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SOLUTION SECTION -->
+        <section id="how-it-works" class="py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-20 fade-in-up">
+                    <h2 class="font-serif text-4xl md:text-5xl font-bold mb-4 text-brand-dark">From Chaos to Control: <br/><span class="italic text-brand-pop border-b-4 border-brand-accent">Your Journey</span></h2>
+                </div>
+
+                <!-- THE JOURNEY (Storytelling Flow) -->
+                <div class="space-y-20 mb-24">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col md:flex-row items-center gap-12">
+                        <div class="md:w-1/2 relative">
+                            <div class="absolute -left-4 -top-4 text-9xl font-serif font-bold text-brand-offwhite -z-10">1</div>
+                            <h3 class="font-serif text-3xl font-bold text-brand-secondary mb-4">The Cleanup</h3>
+                            <p class="text-lg text-brand-dark/80 leading-relaxed">
+                                First, we stop the bleeding. You connect your accounts (securely via Stripe), and Clarity helps you categorize the mess. No shame. Just facts. You'll see exactly where every dollar went in the last 30 days.
+                            </p>
+                            <ul class="mt-6 space-y-3">
+                                <li class="flex items-center gap-3 text-brand-dark font-medium"><div class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i class="fa-solid fa-check text-xs"></i></div> instant Transaction Sync</li>
+                                <li class="flex items-center gap-3 text-brand-dark font-medium"><div class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i class="fa-solid fa-check text-xs"></i></div> Judgment-Free Analysis</li>
+                            </ul>
+                        </div>
+                        <div class="md:w-1/2">
+                            <div class="bg-brand-offwhite p-6 rounded-xl border border-brand-accent/50 shadow-sm">
+                                <!-- Abstract Visual for Cleanup -->
+                                <div class="flex items-center justify-center h-48 bg-white rounded-lg border-2 border-dashed border-brand-accent text-brand-secondary/30">
+                                    <i class="fa-solid fa-broom text-5xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="flex flex-col md:flex-row-reverse items-center gap-12">
+                        <div class="md:w-1/2 relative">
+                            <div class="absolute -right-4 -top-4 text-9xl font-serif font-bold text-brand-offwhite -z-10">2</div>
+                            <h3 class="font-serif text-3xl font-bold text-brand-secondary mb-4">The Automation</h3>
+                            <p class="text-lg text-brand-dark/80 leading-relaxed">
+                                Next, we build your safety net. We set up the calendar so you never miss a bill. We create the "Pay Yourself First" rule. You stop checking your bank account out of fear and start checking it out of boredom.
+                            </p>
+                        </div>
+                        <div class="md:w-1/2">
+                            <div class="bg-brand-secondary p-6 rounded-xl shadow-lg transform rotate-1">
+                                <!-- Abstract Visual for Automation -->
+                                <div class="flex items-center justify-center h-48 bg-white/10 rounded-lg border border-white/20 text-white">
+                                    <i class="fa-solid fa-gears text-5xl animate-spin-slow"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="flex flex-col md:flex-row items-center gap-12">
+                        <div class="md:w-1/2 relative">
+                            <div class="absolute -left-4 -top-4 text-9xl font-serif font-bold text-brand-offwhite -z-10">3</div>
+                            <h3 class="font-serif text-3xl font-bold text-brand-secondary mb-4">The Growth</h3>
+                            <p class="text-lg text-brand-dark/80 leading-relaxed">
+                                Finally, you build wealth. You watch your net worth graph go up (even if it starts negative). You plan for the future—vacations, investments, freedom. You become the CEO of your life.
+                            </p>
+                        </div>
+                        <div class="md:w-1/2">
+                            <div class="bg-brand-pop p-6 rounded-xl shadow-lg transform -rotate-1">
+                                <!-- Abstract Visual for Growth -->
+                                <div class="flex items-center justify-center h-48 bg-white/10 rounded-lg border border-white/20 text-white">
+                                    <i class="fa-solid fa-arrow-trend-up text-5xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-12">
+                    <h3 class="font-serif text-3xl font-bold text-brand-dark">Everything You Need To Make It Happen</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1: The Problem Solver (Visibility) -->
+                    <div class="bg-brand-offwhite p-8 rounded-xl hover:shadow-lg transition-all flex flex-col gap-5 items-start fade-in-up delay-100 border border-transparent hover:border-brand-secondary/30 h-full">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-brand-pop shadow-sm">
+                            <i class="fa-solid fa-chart-pie text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-xl mb-3 text-brand-secondary">Know Where You Stand—Always</h3>
+                            <p class="text-sm opacity-80 leading-relaxed text-brand-dark">One dashboard that shows you everything. No digging through bank apps or old receipts. Instant clarity on your total financial picture.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2: The Time Saver (Automation) -->
+                    <div class="bg-brand-secondary text-white p-8 rounded-xl shadow-xl hover:shadow-2xl transition-all flex flex-col gap-5 items-start fade-in-up delay-200 transform md:-translate-y-4 h-full relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-4 opacity-10 text-6xl group-hover:opacity-20 transition-opacity">
+                            <i class="fa-brands fa-stripe"></i>
+                        </div>
+                        <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white shadow-sm backdrop-blur-sm">
+                            <i class="fa-solid fa-bolt text-2xl"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <h3 class="font-serif font-bold text-xl mb-3 text-white">Never Look at Another CSV Again</h3>
+                            <p class="text-sm opacity-90 leading-relaxed">Integrated with <span class="font-bold underline decoration-brand-pop">Stripe</span>. Your transactions update automatically. No manual downloads. No tedious data entry.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3: The Guide (Support) -->
+                    <div class="bg-brand-offwhite p-8 rounded-xl hover:shadow-lg transition-all flex flex-col gap-5 items-start fade-in-up delay-300 border border-transparent hover:border-brand-secondary/30 h-full">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-brand-pop shadow-sm">
+                            <i class="fa-solid fa-robot text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-xl mb-3 text-brand-secondary">Personalized Help from Clarity</h3>
+                            <p class="text-sm opacity-80 leading-relaxed text-brand-dark">Ask her anything. "Can I afford this?" "When should I pay that off?" She'll help you figure it out instantly, 24/7.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4: The Motivator (Progress) -->
+                    <div class="bg-brand-offwhite p-8 rounded-xl hover:shadow-lg transition-all flex flex-col gap-5 items-start fade-in-up delay-100 border border-transparent hover:border-brand-secondary/30 h-full">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-brand-pop shadow-sm">
+                            <i class="fa-solid fa-trophy text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-xl mb-3 text-brand-secondary">Track Your Wins</h3>
+                            <p class="text-sm opacity-80 leading-relaxed text-brand-dark">Finally see you're making progress. Because you ARE—even when it doesn't feel like it. Visualize your net worth growing.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 5: The Safety Net (Security) -->
+                    <div class="bg-brand-offwhite p-8 rounded-xl hover:shadow-lg transition-all flex flex-col gap-5 items-start fade-in-up delay-200 border border-transparent hover:border-brand-secondary/30 h-full">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-brand-pop shadow-sm">
+                            <i class="fa-solid fa-bell text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-xl mb-3 text-brand-secondary">Never Miss a Payment</h3>
+                            <p class="text-sm opacity-80 leading-relaxed text-brand-dark">Built-in calendar that reminds you what's due and when. No more late fees or panic. Sleep easy knowing it's handled.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 6: The Community (Connection) -->
+                    <div class="bg-brand-offwhite p-8 rounded-xl hover:shadow-lg transition-all flex flex-col gap-5 items-start fade-in-up delay-300 border border-transparent hover:border-brand-secondary/30 h-full">
+                        <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center text-brand-pop shadow-sm">
+                            <i class="fa-solid fa-users text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-xl mb-3 text-brand-secondary">You Are Not Alone</h3>
+                            <p class="text-sm opacity-80 leading-relaxed text-brand-dark">Join the Money Mastery Collective. Share wins, ask questions, and grow alongside other ambitious women.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-16 fade-in-up delay-300">
+                    <a href="#demo" class="px-8 py-3 rounded-full border-2 border-brand-secondary text-brand-secondary font-bold hover:bg-brand-secondary hover:text-white transition-all">
+                        Show Me How It Works <i class="fa-solid fa-arrow-down ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- MEET CLARITY SECTION -->
+        <section class="py-20 bg-white overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="lg:w-1/2 relative fade-in-up">
+                        <div class="aspect-square rounded-full overflow-hidden border-8 border-brand-bg shadow-2xl max-w-md mx-auto relative z-10">
+                            <img src="images/clarity-avatar-v2.png" alt="Clarity - Your AI Money Guide" class="w-full h-full object-cover">
+                        </div>
+                        <div class="absolute top-10 -left-10 w-32 h-32 bg-brand-accent/30 rounded-full blur-2xl -z-10"></div>
+                        <div class="absolute bottom-10 -right-10 w-40 h-40 bg-brand-primary/20 rounded-full blur-2xl -z-10"></div>
+                    </div>
+                    <div class="lg:w-1/2 space-y-6 fade-in-up delay-100">
+                        <h2 class="font-serif text-3xl md:text-4xl font-bold text-brand-text">
+                            Meet Clarity: Your Personal Money Guide <br/>
+                            <span class="text-brand-primary italic text-2xl md:text-3xl">(Who Never Judges)</span>
+                        </h2>
+                        <p class="text-lg text-brand-text/80 leading-relaxed">
+                            Clarity isn't just AI. She's the calm, knowledgeable friend you wish you had when you opened your bank account.
+                        </p>
+                        <p class="text-brand-text/80 leading-relaxed">
+                            She'll help you understand your spending patterns, answer your questions (yes, even the 'dumb' ones—they're not dumb), and give you personalized next steps.
+                        </p>
+                        <div class="p-4 bg-brand-bg rounded-lg border-l-4 border-brand-primary">
+                            <p class="font-medium italic text-brand-text">"No finance bro talk. No shame. Just clarity."</p>
+                        </div>
+                        
+                        <!-- Demo Placeholder -->
+                        <div class="mt-8 p-6 border-2 border-dashed border-brand-primary/30 rounded-xl bg-brand-bg/20 text-center">
+                            <h4 class="font-bold mb-2">See Clarity in Action</h4>
+                            <div class="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center relative overflow-hidden group cursor-pointer">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors"></div>
+                                <i class="fa-solid fa-play text-4xl text-white drop-shadow-lg transform group-hover:scale-110 transition-transform"></i>
+                                <span class="sr-only">Play Demo Video</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURE SHOWCASES -->
+        <section id="demo" class="py-0">
+            <!-- Feature 1 -->
+            <div class="py-20 bg-brand-bg">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row items-center gap-12">
+                        <div class="lg:w-1/2 space-y-6 fade-in-up">
+                            <span class="text-brand-primary font-bold tracking-widest text-sm uppercase">Live Dashboard</span>
+                            <h2 class="font-serif text-3xl md:text-4xl font-bold">Your Money, At a Glance</h2>
+                            <p class="text-lg font-medium text-brand-text/90">Integrated with Stripe. No More Messy CSVs.</p>
+                            <p class="text-brand-text/70 leading-relaxed">
+                                See your income, expenses, and what's left in real time. Our live dashboard connects directly to Stripe, so your transactions are always up-to-date. Spend less than 5 minutes a week staying on top of everything.
+                            </p>
+                        </div>
+                        <div class="lg:w-1/2 fade-in-up delay-100">
+                             <div class="bg-white rounded-xl shadow-xl p-4 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
+                                <img src="images/dashboard-mockup.png" alt="Live Dashboard Interface" class="w-full rounded-lg shadow-inner">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row-reverse items-center gap-12">
+                        <div class="lg:w-1/2 space-y-6 fade-in-up">
+                            <span class="text-brand-primary font-bold tracking-widest text-sm uppercase">Progress Tracker</span>
+                            <h2 class="font-serif text-3xl md:text-4xl font-bold">See Your Wins—Even the Small Ones</h2>
+                            <p class="text-brand-text/70 leading-relaxed">
+                                You're building something, even when it feels slow. Our tracker shows you what's growing: savings, paid-off debt, your overall worth. Celebrate the progress you're making.
+                            </p>
+                        </div>
+                        <div class="lg:w-1/2 fade-in-up delay-100">
+                             <div class="bg-brand-bg rounded-xl shadow-xl p-8 flex items-center justify-center h-64 border border-brand-accent/50">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-chart-line text-6xl text-brand-primary mb-4"></i>
+                                    <p class="text-brand-text/50 font-serif italic">Visualization of Net Worth Growth</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="py-20 bg-brand-bg">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row items-center gap-12">
+                        <div class="lg:w-1/2 space-y-6 fade-in-up">
+                            <span class="text-brand-primary font-bold tracking-widest text-sm uppercase">Debt Payoff Planning</span>
+                            <h2 class="font-serif text-3xl md:text-4xl font-bold">Your Path Out (That Actually Makes Sense)</h2>
+                            <p class="text-brand-text/70 leading-relaxed">
+                                We'll show you exactly how to pay things off—without the confusing math. Should you tackle the credit card or the car loan first? We'll help you decide. And then we'll map it out so you can see the finish line.
+                            </p>
+                        </div>
+                        <div class="lg:w-1/2 fade-in-up delay-100">
+                             <div class="bg-white rounded-xl shadow-xl p-8 flex items-center justify-center h-64 border border-brand-accent/50">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-route text-6xl text-brand-primary mb-4"></i>
+                                    <p class="text-brand-text/50 font-serif italic">Interactive Roadmap Visual</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex flex-col lg:flex-row-reverse items-center gap-12">
+                        <div class="lg:w-1/2 space-y-6 fade-in-up">
+                            <span class="text-brand-primary font-bold tracking-widest text-sm uppercase">Bill Calendar</span>
+                            <h2 class="font-serif text-3xl md:text-4xl font-bold">Never Get Caught Off Guard Again</h2>
+                            <p class="text-brand-text/70 leading-relaxed">
+                                See what's coming up. Mark what's paid. Breathe easier knowing nothing's going to sneak up on you. It's like having a personal assistant for your bills.
+                            </p>
+                        </div>
+                        <div class="lg:w-1/2 fade-in-up delay-100">
+                             <div class="bg-brand-bg rounded-xl shadow-xl p-8 flex items-center justify-center h-64 border border-brand-accent/50">
+                                <div class="text-center">
+                                    <i class="fa-regular fa-calendar-check text-6xl text-brand-primary mb-4"></i>
+                                    <p class="text-brand-text/50 font-serif italic">Smart Calendar Interface</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COST OF CHAOS CALCULATOR -->
+        <section class="py-24 bg-brand-offwhite">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-brand-accent">
+                    <div class="p-8 md:p-12 text-center">
+                        <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4 text-brand-secondary">What Is Financial Stress <span class="text-brand-pop italic">Really</span> Costing You?</h2>
+                        <p class="text-lg text-brand-dark/70 mb-8">It's not just a feeling. It's lost time and money. Let's see the numbers.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <div class="space-y-2 text-left">
+                                <label class="font-bold text-brand-dark text-sm uppercase tracking-wide">Hours spent worrying/managing money (per week)</label>
+                                <input type="number" id="calc-hours" placeholder="e.g. 3" class="w-full p-4 bg-brand-offwhite border-2 border-brand-accent rounded-lg focus:border-brand-secondary focus:outline-none text-xl font-bold text-brand-secondary placeholder-brand-secondary/30">
+                            </div>
+                            <div class="space-y-2 text-left">
+                                <label class="font-bold text-brand-dark text-sm uppercase tracking-wide">Your Hourly Rate (Estimate)</label>
+                                <input type="number" id="calc-rate" placeholder="e.g. 100" class="w-full p-4 bg-brand-offwhite border-2 border-brand-accent rounded-lg focus:border-brand-secondary focus:outline-none text-xl font-bold text-brand-secondary placeholder-brand-secondary/30">
+                            </div>
+                        </div>
+
+                        <button id="calc-btn" class="w-full md:w-auto px-10 py-4 bg-brand-secondary text-white font-bold text-lg rounded-full hover:bg-brand-pop transition-colors shadow-lg">
+                            Calculate My Cost
+                        </button>
+
+                        <div id="calc-result" class="hidden mt-10 p-6 bg-brand-offwhite rounded-xl border-2 border-brand-pop/20">
+                            <p class="text-brand-dark/70 mb-2 font-medium">You are effectively losing:</p>
+                            <p id="calc-loss-amount" class="text-5xl font-serif font-bold text-red-500 mb-6">$0</p>
+                            <p class="text-brand-dark text-lg">
+                                The Money Mastery System ($888) pays for itself in just <span id="calc-roi-weeks" class="font-bold text-green-600 text-2xl underline decoration-brand-pop">0 weeks</span> of reclaimed time.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRICING TEASER -->
+        <section class="py-20 bg-brand-secondary text-white relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-brand-pop/10 rounded-full blur-3xl -z-10 -translate-x-1/3 translate-y-1/3"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="max-w-3xl mx-auto space-y-8 fade-in-up">
+                    <h2 class="font-serif text-3xl md:text-5xl font-bold tracking-tight">Affordable. Powerful. <br/><span class="text-brand-pop">Worth Every Penny.</span></h2>
+                    <p class="text-xl opacity-90 leading-relaxed font-light">
+                        For less than a latte a day (seriously—under $3), you get full AI guidance, live transaction tracking, debt payoff planning, and a supportive community.
+                    </p>
+                    
+                    <div class="bg-white/10 p-8 rounded-2xl backdrop-blur-md border border-white/20 inline-block mx-auto mb-6 transform hover:scale-105 transition-transform duration-300">
+                        <p class="text-5xl font-serif font-bold mb-1">$2.43<span class="text-xl font-normal opacity-70">/day</span></p>
+                        <p class="text-sm opacity-60 mt-2">Billed annually at $888/year</p>
+                    </div>
+
+                    <div class="bg-brand-dark/20 p-4 rounded-lg inline-block w-full max-w-lg mx-auto mb-8 border border-white/10">
+                        <p class="font-medium text-sm flex items-center justify-center gap-2"><i class="fa-solid fa-gift text-brand-pop"></i> Plus, every plan includes 10% off your next year's renewal.</p>
+                    </div>
+                    
+                    <div>
+                        <a href="pricing.html" class="inline-block px-10 py-4 bg-white text-brand-secondary font-bold text-lg rounded-full shadow-lg hover:bg-brand-pop hover:text-white transition-all transform hover:-translate-y-1">
+                            See All Plans & Pricing
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ LEAD MAGNET -->
+        <section id="quiz" class="py-20 bg-brand-bg relative overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+                    <div id="quiz-intro" class="text-center space-y-6">
+                        <h2 class="font-serif text-3xl md:text-4xl font-bold">Not Sure Where to Start? <br/><span class="text-brand-primary italic">Take the 2-Minute Money Check-In</span></h2>
+                        <p class="text-lg opacity-80">Answer a few questions, and we'll send you a personalized plan (plus tips that actually apply to YOUR situation).</p>
+                        <div class="p-4 bg-brand-bg/50 rounded-lg inline-block">
+                            <p class="text-sm font-medium italic">"No judgment. No pressure. Just clarity."</p>
+                        </div>
+                        <button id="start-quiz-btn" class="block w-full md:w-auto mx-auto px-10 py-4 bg-brand-primary text-white font-bold rounded-md hover:bg-[#C4B5A0] transition-colors mt-6">
+                            Start Quiz
+                        </button>
+                    </div>
+
+                    <!-- Quiz Container (Hidden initially) -->
+                    <div id="quiz-container" class="hidden">
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-8">
+                            <div id="quiz-progress" class="bg-brand-primary h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        
+                        <!-- Question Wrapper -->
+                        <div id="question-wrapper" class="mb-8">
+                            <!-- Questions injected via JS -->
+                        </div>
+
+                        <!-- Navigation -->
+                        <div class="flex justify-between mt-8">
+                            <button id="prev-btn" class="px-6 py-2 text-brand-text opacity-50 hover:opacity-100 disabled:opacity-30">Back</button>
+                            <button id="next-btn" class="px-8 py-3 bg-brand-text text-white rounded-md hover:bg-black transition-colors">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Results (Hidden initially) -->
+                    <div id="quiz-results" class="hidden text-center space-y-6">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600 text-3xl">
+                            <i class="fa-solid fa-check"></i>
+                        </div>
+                        <h3 class="font-serif text-3xl font-bold">Your Personalized Plan is Ready!</h3>
+                        <p class="text-lg opacity-80">Based on your answers, we've identified exactly where to start.</p>
+                        
+                        <div class="bg-brand-bg p-6 rounded-lg text-left space-y-4 my-8 border border-brand-primary/20">
+                            <h4 class="font-bold text-xl mb-2">Recommended Focus: <span id="result-focus" class="text-brand-primary">The Foundation Reset</span></h4>
+                            <p class="text-sm opacity-80" id="result-desc">You need clarity before complexity. Your plan focuses on automating the basics so you can stop stressing about the day-to-day.</p>
+                            <ul class="space-y-2 text-sm mt-4">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Immediate Action Step Included</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Clarity AI Prompt Custom to You</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-green-500"></i> Resource Library Access</li>
+                            </ul>
+                        </div>
+
+                        <p class="font-medium">Check your email for the full detailed breakdown!</p>
+                        <a href="pricing.html" class="inline-block px-8 py-3 bg-brand-primary text-white rounded-md hover:bg-[#C4B5A0] transition-colors">
+                            View Recommended Tools
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Background Decorations -->
+            <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+                <div class="absolute top-1/4 -left-20 w-80 h-80 bg-brand-primary/10 rounded-full blur-3xl"></div>
+                <div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-brand-accent/20 rounded-full blur-3xl"></div>
+            </div>
+        </section>
+
+        <!-- FOUNDER CREDIBILITY -->
+        <section id="about" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center gap-12 max-w-5xl mx-auto">
+                    <div class="md:w-1/3">
+                        <div class="aspect-[3/4] bg-gray-200 rounded-lg overflow-hidden shadow-lg relative">
+                            <!-- Placeholder for Founder Image -->
+                            <div class="w-full h-full bg-brand-accent flex items-center justify-center text-brand-text/30 flex-col">
+                                <i class="fa-solid fa-user text-6xl mb-4"></i>
+                                <span class="font-serif">Donna Roggio</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 space-y-6">
+                        <h2 class="font-serif text-3xl font-bold">Created by a Trusted Expert Who Gets It</h2>
+                        <p class="text-lg text-brand-text/80 leading-relaxed">
+                            Money Mastery was created by <strong>Donna Roggio</strong>, a money mentor and business coach who's helped hundreds of women go from financial chaos to clarity.
+                        </p>
+                        <p class="text-brand-text/70 leading-relaxed">
+                            She's spent years building systems that actually work for real people (not finance experts). This isn't theory—it's battle-tested, real-world money management that makes sense.
+                        </p>
+                        <p class="text-brand-text/70 leading-relaxed">
+                            Donna's clients have paid off debt, launched businesses, and finally stopped stressing about money. Now, it's your turn.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-4 pt-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-brand-bg text-sm font-medium border border-brand-primary/20">
+                                <i class="fa-solid fa-star text-brand-primary mr-2"></i> 50+ Five-Star Reviews
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-brand-bg text-sm font-medium border border-brand-primary/20">
+                                <i class="fa-solid fa-lock text-brand-primary mr-2"></i> Secured by Stripe
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-brand-bg text-sm font-medium border border-brand-primary/20">
+                                <i class="fa-solid fa-users text-brand-primary mr-2"></i> Trusted by Entrepreneurs
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TESTIMONIALS -->
+        <section class="py-20 bg-brand-bg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="font-serif text-3xl md:text-4xl font-bold mb-4">Here's What Happens When You Finally Get the Right System</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Review 1 -->
+                    <div class="bg-white p-8 rounded-xl shadow-sm border border-brand-accent/20 flex flex-col justify-between h-full">
+                        <div>
+                            <div class="flex text-brand-primary mb-4 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="italic text-brand-text/80 mb-6">"This system has exceeded my expectations! It's so comprehensive and easy to follow. My whole team is grateful for the support."</p>
+                        </div>
+                        <div>
+                            <p class="font-bold font-serif">— Dulce A.</p>
+                            <p class="text-xs text-brand-text/50 uppercase tracking-wide">Pennsylvania</p>
+                        </div>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="bg-white p-8 rounded-xl shadow-sm border border-brand-accent/20 flex flex-col justify-between h-full transform md:-translate-y-4">
+                        <div>
+                            <div class="flex text-brand-primary mb-4 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <p class="italic text-brand-text/80 mb-6">"I used to avoid looking at my finances. Now I actually feel in control. Game changer."</p>
+                        </div>
+                        <div>
+                            <p class="font-bold font-serif">— Sarah J.</p>
+                            <p class="text-xs text-brand-text/50 uppercase tracking-wide">Entrepreneur</p>
+                        </div>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="bg-white p-8 rounded-xl shadow-sm border border-brand-accent/20 flex flex-col justify-between h-full">
+                        <div>
+                            <div class="flex text-brand-primary mb-4 text-sm">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            </div>
+                            <div class="space-y-3 mb-6">
+                                <div class="bg-red-50 p-2 rounded text-xs text-red-700 border border-red-100">
+                                    <span class="font-bold block">Before:</span> "I didn't even know how I was paying my mortgage."
+                                </div>
+                                <div class="bg-green-50 p-2 rounded text-xs text-green-700 border border-green-100">
+                                    <span class="font-bold block">After:</span> "I just paid for a new patio AND have money for a shopping trip!"
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-bold font-serif">— Michelle R.</p>
+                            <p class="text-xs text-brand-text/50 uppercase tracking-wide">Business Owner</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="py-24 bg-white text-center">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                <h2 class="font-serif text-4xl md:text-5xl font-bold">Ready to Feel Good About Your Money?</h2>
+                <p class="text-xl opacity-80 max-w-2xl mx-auto">You don't have to do this alone. Let Clarity (and the Money Mastery System) guide you.</p>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                    <a href="#quiz" class="px-10 py-5 bg-brand-primary text-white text-lg font-bold rounded-md shadow-lg hover:bg-[#C4B5A0] transition-transform transform hover:-translate-y-1">
+                        Start Your Free Walkthrough
+                    </a>
+                    <a href="#contact" class="px-10 py-5 border-2 border-brand-primary text-brand-text text-lg font-bold rounded-md hover:bg-brand-bg transition-colors">
+                        Book a Free Consultation
+                    </a>
+                </div>
+                
+                <p class="text-sm opacity-60 mt-8">Still have questions? We're here. Email us anytime at support@risingandthriving.com</p>
+            </div>
+        </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-offwhite border-t border-brand-secondary/10 pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-1">
+                    <span class="font-serif font-bold text-2xl tracking-wide block mb-6 text-brand-secondary">RISING & THRIVING</span>
+                    <p class="text-sm text-brand-dark/70 leading-relaxed mb-6">Empowering women entrepreneurs to master their money with confidence, clarity, and zero judgment.</p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-secondary hover:bg-brand-secondary hover:text-white transition-all shadow-sm"><i class="fa-brands fa-instagram text-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-secondary hover:bg-brand-secondary hover:text-white transition-all shadow-sm"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-brand-secondary hover:bg-brand-secondary hover:text-white transition-all shadow-sm"><i class="fa-brands fa-linkedin text-lg"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold text-brand-dark mb-6 uppercase text-sm tracking-wider">Explore</h4>
+                    <ul class="space-y-3 text-sm text-brand-dark/70">
+                        <li><a href="index.html" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> Home</a></li>
+                        <li><a href="#how-it-works" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> How It Works</a></li>
+                        <li><a href="pricing.html" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> Pricing</a></li>
+                        <li><a href="#about" class="hover:text-brand-pop transition-colors flex items-center gap-2"><i class="fa-solid fa-chevron-right text-xs text-brand-pop/50"></i> About Founder</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-brand-dark mb-6 uppercase text-sm tracking-wider">Legal & Support</h4>
+                    <ul class="space-y-3 text-sm text-brand-dark/70">
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Support Center</a></li>
+                        <li><a href="#" class="hover:text-brand-pop transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-brand-dark mb-6 uppercase text-sm tracking-wider">Security</h4>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-brand-accent/30 space-y-4">
+                        <div class="flex items-center gap-3 text-sm text-brand-dark/80">
+                            <i class="fa-solid fa-lock text-brand-pop text-lg"></i>
+                            <span class="font-medium">256-bit SSL Encrypted</span>
+                        </div>
+                        <div class="h-px bg-brand-accent/50 w-full"></div>
+                        <div class="flex items-center gap-3 text-sm text-brand-dark/80">
+                            <i class="fa-brands fa-stripe text-brand-secondary text-2xl"></i>
+                            <span class="font-medium">Secured Payment Processing</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-brand-secondary/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-brand-dark/50">
+                <p>&copy; 2026 Rising & Thriving LLC. All rights reserved.</p>
+                <p>Designed with <i class="fa-solid fa-heart text-brand-pop"></i> for Entrepreneurs.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Sticky Clarity Bubble & Chat Window -->
+    <!-- Chat Bubble -->
+    <div id="clarity-bubble" class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2 cursor-pointer transition-transform duration-300 hover:scale-105">
+        <div class="bg-white p-3 rounded-lg shadow-lg border border-brand-accent/50 mb-2 relative triangle-bottom-right animate-bounce-slow">
+            <p class="text-xs font-medium text-brand-dark">Need help? Ask Clarity!</p>
+        </div>
+        <div class="relative group">
+            <div class="w-16 h-16 rounded-full border-4 border-white shadow-xl overflow-hidden relative z-10">
+                <img src="images/clarity-avatar-v2.png" alt="Clarity AI" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute bottom-1 right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white z-20"></div>
+        </div>
+    </div>
+
+    <!-- Chat Window (Fixed Layout) -->
+    <div id="clarity-chat-window" class="fixed bottom-24 right-4 left-4 md:left-auto md:right-6 z-50 md:w-[450px] bg-white rounded-2xl shadow-2xl border border-gray-100 hidden flex-col transition-all duration-300 transform scale-95 opacity-0 origin-bottom-right h-[600px] max-h-[70vh] flex">
+        <!-- 1. Fixed Header -->
+        <div class="bg-white p-5 border-b border-gray-100 flex items-center justify-between flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full p-0.5 border border-brand-accent/50">
+                    <img src="images/clarity-avatar-v2.png" alt="Clarity" class="w-full h-full object-cover rounded-full">
+                </div>
+                <div>
+                    <h4 class="font-serif font-bold text-brand-secondary text-lg leading-tight">Clarity AI</h4>
+                    <p class="text-xs text-gray-400 font-medium">Financial Guide</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button id="close-chat-btn" class="w-8 h-8 rounded-full hover:bg-gray-50 flex items-center justify-center text-gray-400 transition-colors">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- 2. Flexible Scrollable Messages Area -->
+        <div id="chat-messages" class="flex-1 p-6 overflow-y-auto bg-white space-y-6 scroll-smooth custom-scrollbar min-h-0">
+            <!-- Time Divider -->
+            <div class="text-center">
+                <span class="text-[10px] uppercase tracking-widest text-gray-300 font-bold">Today</span>
+            </div>
+
+            <!-- Initial Message -->
+            <div class="flex gap-4 items-start">
+                <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 mt-1">
+                    <img src="images/clarity-avatar-v2.png" class="w-full h-full object-cover">
+                </div>
+                <div class="space-y-4 max-w-[85%]">
+                    <div class="bg-brand-offwhite p-4 rounded-2xl rounded-tl-none text-brand-dark text-sm leading-relaxed border border-gray-100 shadow-sm">
+                        <p class="font-bold text-brand-secondary mb-1">Hi, I'm Clarity!</p>
+                        I've been trained on the <strong>Money Mastery User Guide</strong>. I can teach you how to label transactions, set up your debt snowball, or just chat about your goals.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Fixed Bottom Area (Chips + Input) -->
+        <div class="bg-white border-t border-gray-100 flex-shrink-0 z-20">
+            <!-- Wrapped Chips (No Scroll) -->
+            <div id="quick-prompts" class="flex flex-wrap gap-2 px-4 py-3 bg-gray-50/50">
+                <!-- Chips injected via JS -->
+            </div>
+            
+            <div class="p-4 pt-2">
+                <form id="chat-form" class="relative">
+                    <input type="text" id="chat-input" placeholder="Ask me anything..." class="w-full bg-gray-50 rounded-full pl-5 pr-12 py-4 text-sm text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-pop/20 focus:bg-white transition-all placeholder-gray-400 shadow-inner">
+                    <button type="submit" class="absolute right-2 top-2 w-8 h-8 rounded-full bg-brand-secondary text-white flex items-center justify-center hover:bg-brand-pop transition-colors shadow-sm transform hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-arrow-up text-xs"></i>
+                    </button>
+                </form>
+                <div class="text-center mt-3 flex items-center justify-center gap-1 opacity-40">
+                    <i class="fa-solid fa-lock text-[8px]"></i>
+                    <p class="text-[10px] font-medium">Private & Secure Conversation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+    <script src="js/quiz.js"></script>
+    <script src="js/calculator.js"></script>
+</body>
+</html>
