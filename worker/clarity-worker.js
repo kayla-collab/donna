@@ -26,15 +26,6 @@ const corsHeaders = (origin) => ({
   "Access-Control-Max-Age": String(CORS_MAX_AGE)
 });
 
-const mapHistoryToContents = (history = []) => {
-  return history
-    .filter((entry) => entry && entry.role && entry.content)
-    .map((entry) => ({
-      role: entry.role === "assistant" ? "model" : "user",
-      parts: [{ text: entry.content }]
-    }));
-};
-
 const buildCacheKey = (url) => new Request(url, { method: "GET" });
 
 const sanitizeDocumentText = (text) => {
@@ -81,29 +72,39 @@ const fetchLivingDocument = async (env) => {
   }
 };
 
-const buildGeminiPayload = (prompt, docText, history, generationConfig) => {
-  const contents = mapHistoryToContents(history);
-  const promptParts = [{ text: prompt }];
+const buildLlamaMessages = (systemPrompt, docText, history, userMessage) => {
+  const messages = [];
 
+  // System message with context
+  let fullSystemPrompt = systemPrompt;
   if (docText) {
-    promptParts.push({ text: `Reference Document (excerpt):\n${docText}` });
+    fullSystemPrompt += `\n\nReference Document (excerpt):\n${docText}`;
+  }
+  messages.push({ role: 'system', content: fullSystemPrompt });
+
+  // History - Assuming history comes in as { role: 'user'|'model'|'assistant', content: 'text' }
+  if (Array.isArray(history)) {
+    history.forEach(entry => {
+      if (entry.role && entry.content) {
+        let role = entry.role;
+        // Map 'model' to 'assistant' for Llama compatibility
+        if (role === 'model') role = 'assistant';
+        
+        messages.push({
+          role: role,
+          content: entry.content
+        });
+      }
+    });
   }
 
-  return {
-    contents: [
-      {
-        role: "user",
-        parts: promptParts
-      },
-      ...contents
-    ],
-    generationConfig: generationConfig || {
-      temperature: 0.4,
-      topK: 32,
-      topP: 0.95,
-      maxOutputTokens: 1024
-    }
-  };
+  // Current user message (if not already in history)
+  const lastEntry = messages[messages.length - 1];
+  if (!lastEntry || lastEntry.role !== 'user' || lastEntry.content !== userMessage) {
+    messages.push({ role: 'user', content: userMessage });
+  }
+
+  return messages;
 };
 
 export default {
@@ -125,8 +126,10 @@ export default {
       });
     }
 
-    if (!env.GEMINI_API_KEY) {
-      return new Response(JSON.stringify({ error: "Server missing Gemini API key" }), {
+    // Workers AI uses the AI binding, so no specific API key check needed here
+    // unless you want to protect your own endpoint with a custom token.
+    if (!env.AI) {
+      return new Response(JSON.stringify({ error: "Server missing AI binding" }), {
         status: 500,
         headers
       });
@@ -134,7 +137,7 @@ export default {
 
     try {
       const body = await request.json();
-      const { message, history = [], generationConfig } = body || {};
+      const { message, history = [] } = body || {};
 
       if (!message || typeof message !== "string") {
         return new Response(JSON.stringify({ error: "Missing user message" }), {
@@ -146,43 +149,14 @@ export default {
       const docText = await fetchLivingDocument(env);
       const prompt = env.SYSTEM_PROMPT ? `${env.SYSTEM_PROMPT}` : DEFAULT_PROMPT;
 
-      const payload = buildGeminiPayload(prompt, docText, history, generationConfig);
+      const messages = buildLlamaMessages(prompt, docText, history, message);
 
-      // Ensure latest user message is appended if not already captured in history.
-      const lastEntry = history[history.length - 1];
-      if (!lastEntry || lastEntry.content !== message) {
-        payload.contents.push({
-          role: "user",
-          parts: [{ text: message }]
-        });
-      }
+      const response = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
+        messages: messages
+      });
 
-      const model = env.GEMINI_MODEL || "gemini-1.5-flash";
-
-      const geminiResponse = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }
-      );
-
-      const result = await geminiResponse.json();
-
-      if (!geminiResponse.ok) {
-        console.error("Gemini API error", result);
-        return new Response(JSON.stringify({ error: "Gemini API request failed" }), {
-          status: geminiResponse.status,
-          headers
-        });
-      }
-
-      const reply =
-        result?.candidates?.[0]?.content?.parts
-          ?.map((part) => part.text)
-          .filter(Boolean)
-          .join("\n") || null;
+      // Workers AI result typically { response: "text" }
+      const reply = response.response;
 
       if (!reply) {
         return new Response(JSON.stringify({ error: "No response generated" }), {
@@ -197,7 +171,7 @@ export default {
       });
     } catch (error) {
       console.error("Unhandled worker error", error);
-      return new Response(JSON.stringify({ error: "Unexpected server error" }), {
+      return new Response(JSON.stringify({ error: "Unexpected server error", details: error.message }), {
         status: 500,
         headers
       });
