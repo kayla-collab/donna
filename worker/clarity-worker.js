@@ -118,6 +118,42 @@ export default {
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers });
     }
+    
+    const url = new URL(request.url);
+
+    // --- Image Function Integration ---
+    if (url.pathname === '/image' || url.pathname === '/process-image') {
+       if (request.method !== "POST") {
+         return new Response(JSON.stringify({ error: "Method not allowed for image endpoint" }), {
+            status: 405, headers 
+         });
+       }
+
+       if (!env["image-function"]) {
+         return new Response(JSON.stringify({ error: "Image function binding not configured" }), {
+            status: 500, headers
+         });
+       }
+
+       try {
+         // The user's snippet suggests using request body as the image stream
+         // and chaining .input().output().response()
+         // Note: .draw() is omitted as its parameters are unknown, but the structure is preserved
+         const imageResponse = await env["image-function"]
+            .input(request.body)
+            // .draw(...) // Placeholder for draw operations if needed
+            .output({ format: "image/avif" })
+            .response();
+         
+         return imageResponse;
+       } catch (e) {
+         console.error("Image processing error:", e);
+         return new Response(JSON.stringify({ error: "Image processing failed", details: e.message }), {
+            status: 500, headers
+         });
+       }
+    }
+    // ----------------------------------
 
     if (request.method !== "POST") {
       return new Response(JSON.stringify({ error: "Method not allowed" }), {
