@@ -7,11 +7,5 @@
   },
   "ai": {
     "binding": "AI"
-  },
-  "services": [
-    {
-      "binding": "image-function",
-      "service": "image-function"
-    }
-  ]
+  }
 }
