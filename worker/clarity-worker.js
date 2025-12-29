@@ -155,6 +155,20 @@ export default {
     }
     // ----------------------------------
 
+    // --- Static Assets Fallback (GET requests) ---
+    // If it's a GET request, try to serve static assets (HTML, CSS, JS, etc.)
+    if (request.method === "GET") {
+      if (env.ASSETS) {
+        return env.ASSETS.fetch(request);
+      }
+      // If no assets binding (e.g. pure worker), return a simple message
+      return new Response("Clarity AI Worker is running. Send POST requests to interact.", {
+        status: 200,
+        headers: { "Content-Type": "text/plain" }
+      });
+    }
+
+    // --- API Logic (POST requests) ---
     if (request.method !== "POST") {
       return new Response(JSON.stringify({ error: "Method not allowed" }), {
         status: 405,
