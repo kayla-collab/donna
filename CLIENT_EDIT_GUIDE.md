@@ -42,6 +42,18 @@ The file looks like code, but the **content** is plain text.
 
 ---
 
+## 🤖 How to Update Clarity AI (The Chatbot)
+
+You can change Clarity's "Personality" and basic knowledge instructions.
+
+1.  Go to this file: 👉 **[worker/clarity-worker.js](https://github.com/kayla-collab/donna/blob/main/worker/clarity-worker.js)**
+2.  Click the **Pencil Icon** ✏️.
+3.  Look at the top for the section `const DEFAULT_PROMPT = ...`.
+4.  Edit the text inside the backticks (` `). This is exactly what the AI reads.
+5.  Click **Commit changes** to save.
+
+---
+
 ## 🖼️ How to Swap Images
 
 1.  Rename your new image on your computer to match the exact name of the old image (e.g., `dashboard-mockup.png`).
