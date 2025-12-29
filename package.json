@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install:worker": "wrangler deploy",
-    "dev:worker": "wrangler dev",
+    "install:worker": "wrangler pages deploy .",
+    "dev:worker": "wrangler pages dev .",
     "deploy:pages": "wrangler pages deploy .",
-    "deploy": "npm run deploy:pages"
+    "deploy": "wrangler pages deploy ."
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251229.0",
