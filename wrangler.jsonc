@@ -1,5 +1,5 @@
 {
-  "name": "clarity-proxy",
+  "name": "money-mastery-system",
   "main": "worker/clarity-worker.js",
   "compatibility_date": "2024-01-01",
   "assets": {
