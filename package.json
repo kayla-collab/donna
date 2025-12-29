@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install:worker": "wrangler pages deploy .",
-    "dev:worker": "wrangler pages dev .",
+    "install:worker": "wrangler deploy",
+    "dev:worker": "wrangler dev",
     "deploy:pages": "wrangler pages deploy .",
-    "deploy": "echo 'No build step required - Cloudflare Pages automatically deploys static assets and functions'",
-    "build": "echo 'No build step required'"
+    "deploy": "wrangler deploy"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20251229.0",
