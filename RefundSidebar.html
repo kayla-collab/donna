@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #ab9478;
+      --color-lightest: #d4c9bb;
+      --color-light: #c2b199;
+      --color-dark: #8a7760;
+      --color-darkest: #6d5f4c;
+      --color-income: #51cf66;
+      --color-expense: #ff6b6b;
+      --color-refund: #ffd43b;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8f6f3;
+      color: #333;
+    }
+    
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+    
+    .header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header h1 { font-size: 18px; margin-bottom: 4px; }
+    .header p { font-size: 12px; opacity: 0.9; }
+    
+    .content { padding: 16px; }
+    
+    .info-box {
+      background: linear-gradient(135deg, rgba(255, 212, 59, 0.2) 0%, rgba(255, 212, 59, 0.1) 100%);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--color-refund);
+    }
+    
+    .info-box p { font-size: 13px; color: #666; line-height: 1.5; }
+    
+    .section {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--color-darkest);
+      margin-bottom: 12px;
+    }
+    
+    .refund-types {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .refund-type-btn {
+      padding: 14px 16px;
+      border: 2px solid #e8e4df;
+      background: #f8f6f3;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .refund-type-btn:hover {
+      border-color: var(--color-primary);
+      background: var(--color-lightest);
+    }
+    
+    .refund-type-btn.selected {
+      border-color: var(--color-refund);
+      background: rgba(255, 212, 59, 0.15);
+    }
+    
+    .refund-type-btn .icon { font-size: 20px; }
+    
+    .field-group { margin-bottom: 16px; }
+    .field-label { font-size: 12px; color: #666; margin-bottom: 6px; display: block; }
+    
+    .field-select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+    
+    .field-select:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(171, 148, 120, 0.15);
+    }
+    
+    .mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .mode-btn {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .mode-btn.active {
+      border-color: var(--color-primary);
+      background: var(--color-lightest);
+    }
+    
+    .apply-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--color-refund) 0%, #f5c518 100%);
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .apply-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .apply-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .loading { text-align: center; padding: 40px; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Refunds & Returns</h1>
+    <p>Categorize refund transactions properly</p>
+  </div>
+  
+  <div class="content">
+    <div class="info-box">
+      <p><strong>Tip:</strong> Refunds appear as positive amounts on expense accounts. Link them to the original expense category for accurate tracking.</p>
+    </div>
+    
+    <div class="section">
+      <div class="section-title">Refund Type</div>
+      <div class="refund-types">
+        <button class="refund-type-btn selected" onclick="selectRefundType(this, 'Refund')">
+          <span class="icon">&#x21A9;</span>
+          <span>Refund</span>
+        </button>
+        <button class="refund-type-btn" onclick="selectRefundType(this, 'Return')">
+          <span class="icon">&#x1F4E6;</span>
+          <span>Return</span>
+        </button>
+        <button class="refund-type-btn" onclick="selectRefundType(this, 'Reimbursement')">
+          <span class="icon">&#x1F4B5;</span>
+          <span>Reimbursement</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-title">Link to Original Category</div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="personalBtn" onclick="setMode('personal')">Personal</button>
+        <button class="mode-btn" id="businessBtn" onclick="setMode('business')">Business</button>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Original Expense Category</label>
+        <select class="field-select" id="categorySelect" onchange="updateApplyBtn()">
+          <option value="">Select original category...</option>
+        </select>
+      </div>
+    </div>
+    
+    <button class="apply-btn" id="applyBtn" onclick="applyRefund()" disabled>Process Refund</button>
+  </div>
+
+  <script>
+    let state = { refundType: 'Refund', mode: 'personal', categories: { expense: [], business: [] } };
+
+    document.addEventListener('DOMContentLoaded', loadCategories);
+
+    function loadCategories() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          state.categories.expense = data.expenseCategories || [];
+          state.categories.business = data.businessCategories || [];
+          renderCategories();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('categorySelect').innerHTML = '<option value="">Error loading categories</option>';
+        })
+        .getRefundCategories();
+    }
+
+    function renderCategories() {
+      const categories = state.mode === 'business' ? state.categories.business : state.categories.expense;
+      const select = document.getElementById('categorySelect');
+      
+      select.innerHTML = '<option value="">Select original category...</option>' +
+        categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+
+    function selectRefundType(btn, type) {
+      state.refundType = type;
+      document.querySelectorAll('.refund-type-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      updateApplyBtn();
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      document.getElementById('personalBtn').classList.toggle('active', mode === 'personal');
+      document.getElementById('businessBtn').classList.toggle('active', mode === 'business');
+      renderCategories();
+      updateApplyBtn();
+    }
+
+    function updateApplyBtn() {
+      const category = document.getElementById('categorySelect').value;
+      document.getElementById('applyBtn').disabled = !category;
+    }
+
+    function applyRefund() {
+      const category = document.getElementById('categorySelect').value;
+      if (!category) return;
+      
+      google.script.run
+        .withSuccessHandler(function() { google.script.host.close(); })
+        .withFailureHandler(function(error) { alert('Error: ' + error.message); })
+        .processRefund({
+          refundType: state.refundType,
+          expenseCategory: category,
+          isBusiness: state.mode === 'business'
+        });
+    }
+
+    function escapeHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+  </script>
+</body>
+</html>

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ==================== CSS VARIABLES ==================== */
+    :root {
+      --primary: #ab9478;
+      --primary-dark: #8b7860;
+      --primary-light: #c4b19e;
+      --primary-rgb: 171, 148, 120;
+      --bg-gradient: linear-gradient(135deg, #f5f5f0 0%, #e9e4dc 100%);
+      --text-dark: #3f362b;
+      --text-medium: #5b4f43;
+      --text-light: #7a6752;
+      --border-light: rgba(171, 148, 120, 0.3);
+      --success: #276749;
+      --error: #c53030;
+    }
+
+    /* ==================== RESET & BASE ==================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dark);
+    }
+
+    /* ==================== CENTERED CONTAINER ==================== */
+    .modal-container {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(139, 120, 96, 0.22);
+      padding: 40px;
+      animation: slideIn 0.4s ease-out;
+      margin: 20px;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==================== HEADER ==================== */
+    .modal-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .icon-circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: #fff;
+      font-size: 28px;
+    }
+
+    .modal-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .modal-header p {
+      font-size: 14px;
+      color: var(--text-light);
+      font-weight: 400;
+    }
+
+    /* ==================== EMAIL DISPLAY ==================== */
+    .email-display {
+      background-color: #f9f7f4;
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: var(--text-medium);
+      font-weight: 500;
+      letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid var(--border-light);
+    }
+
+    .email-display i {
+      color: var(--primary);
+    }
+
+    /* ==================== FORM ELEMENTS ==================== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* PIN Input - Individual Digits */
+    .pin-input-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .pin-digit {
+      width: 52px;
+      height: 56px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      background-color: #fafafa;
+      transition: all 0.2s ease;
+      color: var(--primary);
+      /* HIDE PIN DIGITS (PASSWORD MODE) */
+      -webkit-text-security: disc;
+      -moz-text-security: disc;
+      text-security: disc;
+    }
+
+    .pin-digit:focus {
+      outline: none;
+      border-color: var(--primary);
+      background-color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+    }
+
+    .pin-digit::-webkit-outer-spin-button,
+    .pin-digit::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .pin-digit[type=number] {
+      -moz-appearance: textfield;
+    }
+
+    /* ==================== MESSAGES ==================== */
+    .error-message, .success-message {
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .error-message {
+      background: #fff5f5;
+      border: 1px solid #f5c2c7;
+      color: var(--error);
+    }
+
+    .success-message {
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      color: var(--success);
+    }
+
+    .error-message.show, .success-message.show {
+      display: block;
+    }
+
+    /* ==================== BUTTONS ==================== */
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+      font-family: 'Montserrat', sans-serif;
+      position: relative;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.3);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      padding: 12px;
+      background-color: transparent;
+      color: var(--text-light);
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: underline;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-secondary:hover {
+      color: var(--primary);
+    }
+
+    /* ==================== LOADING SPINNER ==================== */
+    .loading-spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 0.8s linear infinite;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    @keyframes spin {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .btn-primary.loading {
+      color: transparent;
+    }
+
+    .btn-primary.loading .loading-spinner {
+      display: block;
+    }
+
+    /* ==================== DYNAMIC LOADING SCREEN ==================== */
+    .loading-screen {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-gradient);
+      z-index: 1000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .loading-screen.active {
+      display: flex;
+    }
+
+    .loading-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 40px;
+      letter-spacing: -0.5px;
+      text-align: center;
+    }
+
+    .loading-circle {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #e0ddd6;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spinLarge 1s linear infinite;
+      margin-bottom: 30px;
+    }
+
+    @keyframes spinLarge {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .loading-tip {
+      font-size: 14px;
+      color: #666;
+      max-width: 400px;
+      text-align: center;
+      line-height: 1.7;
+      padding: 0 20px;
+      min-height: 60px;
+      transition: opacity 0.3s ease;
+    }
+
+    .loading-tip.fade {
+      opacity: 0;
+    }
+
+    .loading-progress {
+      width: 280px;
+      height: 4px;
+      background: #e0ddd6;
+      border-radius: 2px;
+      margin-top: 30px;
+      overflow: hidden;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+      width: 0%;
+      transition: width 0.5s ease;
+      animation: progressPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes progressPulse {
+      0%, 100% { width: 30%; }
+      50% { width: 70%; }
+    }
+
+    /* ==================== FOOTER HINT ==================== */
+    .footer-hint {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    .footer-hint p {
+      font-size: 11px;
+      color: #999;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main Login Card -->
+  <div class="modal-container" id="loginCard">
+    <div class="modal-header">
+      <div class="icon-circle">
+        <i class="fas fa-lock"></i>
+      </div>
+      <h1>Welcome Back</h1>
+      <p>Secure Login</p>
+    </div>
+
+    <div class="email-display" id="emailDisplay">
+      <i class="fas fa-envelope"></i>
+      <span><?= email ?></span>
+    </div>
+
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
+
+    <form id="pinForm" onsubmit="return false;">
+      <div class="form-group">
+        <label class="form-label">Enter Your PIN</label>
+        
+        <div class="pin-input-container" id="pinContainer">
+          <!-- PIN inputs will be generated dynamically based on user's PIN length -->
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="btn-primary" id="submitBtn">
+          <span>Unlock Dashboard</span>
+          <div class="loading-spinner"></div>
+        </button>
+        
+        <button type="button" class="btn-secondary" id="forgotPinBtn">
+          Forgot PIN?
+        </button>
+      </div>
+    </form>
+
+    <div class="footer-hint">
+      <p>Your account is protected with bank-level encryption</p>
+    </div>
+    
+    <div style="text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e8e4df;">
+      <a href="#" onclick="showGuestLogin(); return false;" style="color: #888; text-decoration: none; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;">
+        <i class="fas fa-user-friends"></i> Logging in as a Guest?
+      </a>
+    </div>
+  </div>
+
+  <!-- Dynamic Loading Screen (shown after successful login) -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">Money Mastery</div>
+    <div class="loading-circle"></div>
+    <div class="loading-title" id="loadingTitle">Welcome back!</div>
+    <div class="loading-tip" id="loadingTip"></div>
+    <div class="loading-progress">
+      <div class="loading-progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== CONFIGURATION ====================
+    const FINANCIAL_TIPS = [
+      "Your financial data is secure with bank-level 256-bit encryption",
+      "Track all your accounts in one place for a complete financial picture",
+      "Smart categorization learns from your transaction patterns",
+      "Generate detailed profit & loss reports for tax time",
+      "Set financial goals and track your progress over time",
+      "Your Money Mastery dashboard is preparing..."
+    ];
+
+    // ==================== DOM ELEMENTS ====================
+    let pinInputs = [];
+    const pinContainer = document.getElementById('pinContainer');
+    const form = document.getElementById('pinForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    const forgotPinBtn = document.getElementById('forgotPinBtn');
+    const loginCard = document.getElementById('loginCard');
+    const loadingScreen = document.getElementById('loadingScreen');
+    const loadingTip = document.getElementById('loadingTip');
+    const progressBar = document.getElementById('progressBar');
+
+    let currentTipIndex = 0;
+    let tipInterval = null;
+    let userPinLength = 4; // Default, will be updated from server
+
+    // ==================== DYNAMIC PIN INPUT GENERATION ====================
+    function generatePinInputs(length) {
+      pinContainer.innerHTML = '';
+      pinInputs = [];
+      
+      for (let i = 0; i < length; i++) {
+        const input = document.createElement('input');
+        input.className = 'pin-digit';
+        input.type = 'password'; // Use password type to hide digits
+        input.maxLength = 1;
+        input.inputMode = 'numeric';
+        input.pattern = '[0-9]';
+        input.setAttribute('aria-label', 'PIN digit ' + (i + 1));
+        input.setAttribute('data-index', i);
+        
+        // Event handlers
+        input.addEventListener('input', function(e) {
+          handlePinInput(e, i);
+        });
+        
+        input.addEventListener('keydown', function(e) {
+          handlePinKeydown(e, i);
+        });
+        
+        input.addEventListener('paste', function(e) {
+          handlePinPaste(e, i);
+        });
+        
+        pinContainer.appendChild(input);
+        pinInputs.push(input);
+      }
+      
+      // Focus first input
+      if (pinInputs[0]) {
+        pinInputs[0].focus();
+      }
+    }
+
+    // ==================== PIN INPUT HANDLING ====================
+    function handlePinInput(e, index) {
+      const input = e.target;
+      const value = input.value;
+      
+      // Only allow numbers
+      if (!/^\d*$/.test(value)) {
+        input.value = '';
+        return;
+      }
+      
+      // Only allow single digit
+      if (value.length > 1) {
+        input.value = value.slice(-1);
+      }
+      
+      // Clear any error messages when typing
+      hideMessages();
+      
+      // Auto-focus next input
+      if (input.value && index < pinInputs.length - 1) {
+        pinInputs[index + 1].focus();
+      }
+      
+      // Auto-submit if all digits entered
+      const fullPin = getFullPin();
+      if (fullPin.length === userPinLength) {
+        submitPin();
+      }
+    }
+
+    function handlePinKeydown(e, index) {
+      if (e.key === 'Backspace' && !e.target.value && index > 0) {
+        pinInputs[index - 1].focus();
+      }
+      
+      // Handle Enter key
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitPin();
+      }
+    }
+
+    function handlePinPaste(e, index) {
+      e.preventDefault();
+      const pastedData = (e.clipboardData || window.clipboardData).getData('text');
+      const digits = pastedData.replace(/\D/g, '').slice(0, userPinLength);
+      
+      digits.split('').forEach((digit, i) => {
+        if (pinInputs[i]) {
+          pinInputs[i].value = digit;
+        }
+      });
+      
+      // Focus last filled input or next empty one
+      const lastIndex = Math.min(digits.length, pinInputs.length) - 1;
+      if (lastIndex >= 0) {
+        pinInputs[Math.min(lastIndex + 1, pinInputs.length - 1)].focus();
+      }
+      
+      // Auto-submit if full PIN pasted
+      if (digits.length === userPinLength) {
+        submitPin();
+      }
+    }
+
+    // Get user PIN info from server (including PIN length)
+    google.script.run
+      .withSuccessHandler(function(userData) {
+        if (userData && userData.pinLength) {
+          userPinLength = userData.pinLength;
+        }
+        generatePinInputs(userPinLength);
+      })
+      .withFailureHandler(function() {
+        // Default to 4-digit PIN on error
+        generatePinInputs(4);
+      })
+      .getUserPinInfo();
+
+    // ==================== GUEST LOGIN ====================
+    function showGuestLogin() {
+      // Close this modal and open guest login prompt
+      google.script.run
+        .withSuccessHandler(function() {
+          google.script.host.close();
+        })
+        .withFailureHandler(function(err) {
+          showError('Unable to open guest login: ' + err.message);
+        })
+        .MM_showGuestLoginPrompt();
+    }
+
+    // ==================== HELPER FUNCTIONS ====================
+    function getFullPin() {
+      return Array.from(pinInputs).map(input => input.value).join('');
+    }
+
+    function clearPinInputs() {
+      pinInputs.forEach(input => input.value = '');
+      pinInputs[0].focus();
+    }
+
+    function showError(msg) {
+      errorMessage.textContent = msg;
+      errorMessage.classList.add('show');
+      successMessage.classList.remove('show');
+    }
+
+    function showSuccess(msg) {
+      successMessage.textContent = msg;
+      successMessage.classList.add('show');
+      errorMessage.classList.remove('show');
+    }
+
+    function hideMessages() {
+      errorMessage.classList.remove('show');
+      successMessage.classList.remove('show');
+    }
+
+    function setLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      forgotPinBtn.disabled = isLoading;
+      
+      if (isLoading) {
+        submitBtn.classList.add('loading');
+      } else {
+        submitBtn.classList.remove('loading');
+      }
+    }
+
+    // ==================== LOADING SCREEN ====================
+    function showLoadingScreen() {
+      loginCard.style.display = 'none';
+      loadingScreen.classList.add('active');
+      
+      // Start rotating tips
+      currentTipIndex = 0;
+      rotateTip();
+      tipInterval = setInterval(rotateTip, 3000);
+      
+      // Animate progress bar
+      progressBar.style.animation = 'progressPulse 2s ease-in-out infinite';
+    }
+
+    function rotateTip() {
+      loadingTip.classList.add('fade');
+      
+      setTimeout(() => {
+        loadingTip.textContent = FINANCIAL_TIPS[currentTipIndex];
+        loadingTip.classList.remove('fade');
+        currentTipIndex = (currentTipIndex + 1) % FINANCIAL_TIPS.length;
+      }, 300);
+    }
+
+    function hideLoadingScreen() {
+      if (tipInterval) {
+        clearInterval(tipInterval);
+      }
+      loadingScreen.classList.remove('active');
+      loginCard.style.display = 'block';
+    }
+
+    // ==================== FORM SUBMISSION ====================
+    function submitPin() {
+      const pin = getFullPin();
+      
+      if (pin.length < userPinLength) {
+        showError('Please enter your ' + userPinLength + '-digit PIN');
+        if (pinInputs[pin.length]) {
+          pinInputs[pin.length].focus();
+        }
+        return;
+      }
+      
+      hideMessages();
+      setLoading(true);
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result && result.success) {
+            showSuccess('PIN verified successfully!');
+            
+            // Show engaging loading screen
+            setTimeout(() => {
+              showLoadingScreen();
+              
+              // Close dialog after showing tips for 2.5 seconds
+              setTimeout(() => {
+                google.script.host.close();
+              }, 2500);
+            }, 300);
+          } else {
+            setLoading(false);
+            
+            // Handle different error types
+            const errorMsg = (result && result.message) || 'Incorrect PIN. Please try again.';
+            
+            if (errorMsg.includes('locked')) {
+              showError('Account locked. Please use "Forgot PIN?" to reset.');
+            } else if (errorMsg.includes('attempts')) {
+              showError(errorMsg);
+            } else {
+              showError('Incorrect PIN. Please try again.');
+            }
+            
+            // Clear inputs and refocus
+            clearPinInputs();
+          }
+        })
+        .withFailureHandler(function(err) {
+          setLoading(false);
+          console.error('PIN validation failed:', err);
+          showError(err && err.message ? err.message : 'An unexpected error occurred. Please try again.');
+          clearPinInputs();
+        })
+        .validateUserPin(pin);
+    }
+
+    // Form submit handler
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitPin();
+    });
+
+    // Forgot PIN handler
+    forgotPinBtn.addEventListener('click', function() {
+      google.script.host.close();
+      google.script.run.MM_showForgotPinGate();
+    });
+
+    // ==================== INITIALIZATION ====================
+    // Auto-focus first input on load
+    window.addEventListener('DOMContentLoaded', function() {
+      pinInputs[0].focus();
+    });
+  </script>
+</body>
+</html>

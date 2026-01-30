@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #f9f7f5 0%, #f0ebe6 100%);
+      color: #333;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .ai-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .ai-header {
+      background: linear-gradient(135deg, #ab9478 0%, #8a745d 100%);
+      padding: 25px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .ai-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+    
+    .ai-subtitle {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    
+    .ai-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 25px;
+    }
+    
+    .section-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #ab9478;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #ab9478;
+    }
+    
+    .prompt-grid {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    
+    .prompt-card {
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .prompt-card:hover {
+      border-color: #ab9478;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(171, 148, 120, 0.2);
+    }
+    
+    .prompt-card.selected {
+      border-color: #ab9478;
+      background: linear-gradient(135deg, #f9f7f5 0%, #fff 100%);
+      box-shadow: 0 4px 12px rgba(171, 148, 120, 0.3);
+    }
+    
+    .prompt-card.selected::before {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      background: #ab9478;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    
+    .prompt-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .prompt-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 6px;
+    }
+    
+    .prompt-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+    
+    .custom-input-section {
+      margin-bottom: 25px;
+    }
+    
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      resize: vertical;
+      transition: border-color 0.3s;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: #ab9478;
+    }
+    
+    .generate-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ab9478 0%, #8a745d 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .generate-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(171, 148, 120, 0.4);
+    }
+    
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.95);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #ab9478;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      font-size: 14px;
+      color: #666;
+      font-weight: 600;
+    }
+    
+    .footer {
+      padding: 15px;
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="ai-container">
+    <div class="ai-header">
+      <h1 class="ai-title">Clarity</h1>
+      <p class="ai-subtitle">Your AI Financial Assistant - Get personalized insights using your real financial data</p>
+    </div>
+    
+    <div class="ai-content">
+      <div class="section-title">Choose a Pre-Made Prompt</div>
+      
+      <div class="prompt-grid">
+        <div class="prompt-card" onclick="selectPrompt('budget')">
+          <div class="prompt-icon">💰</div>
+          <div class="prompt-title">Budget Analysis</div>
+          <div class="prompt-desc">Get a detailed breakdown of your spending patterns and budget recommendations</div>
+        </div>
+        
+        <div class="prompt-card" onclick="selectPrompt('savings')">
+          <div class="prompt-icon">🏦</div>
+          <div class="prompt-title">Savings Plan</div>
+          <div class="prompt-desc">Create a personalized savings strategy based on your income and expenses</div>
+        </div>
+        
+        <div class="prompt-card" onclick="selectPrompt('expenses')">
+          <div class="prompt-icon">📉</div>
+          <div class="prompt-title">Expense Insights</div>
+          <div class="prompt-desc">Identify areas where you can reduce spending and optimize your budget</div>
+        </div>
+        
+        <div class="prompt-card" onclick="selectPrompt('debt')">
+          <div class="prompt-icon">$</div>
+          <div class="prompt-title">Debt Strategy</div>
+          <div class="prompt-desc">Get advice on managing and paying off debt efficiently</div>
+        </div>
+        
+        <div class="prompt-card" onclick="selectPrompt('goals')">
+          <div class="prompt-icon">🎯</div>
+          <div class="prompt-title">Financial Goals</div>
+          <div class="prompt-desc">Set achievable financial goals and create an action plan</div>
+        </div>
+      </div>
+      
+      <div class="section-title">✍️ Or Write Your Own Prompt</div>
+      
+      <div class="custom-input-section">
+        <textarea id="customPrompt" placeholder="Example: Analyze my spending on dining and suggest ways to save money..."></textarea>
+      </div>
+      
+      <button class="generate-btn" id="generateBtn" onclick="generateAIPrompt()">
+        Open ChatGPT with My Data
+      </button>
+    </div>
+    
+    <div class="footer">
+      © 2026 Donna Roggio LLC. All Rights Reserved.
+    </div>
+  </div>
+  
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">Loading your financial data...</div>
+  </div>
+  
+  <script>
+    let selectedPromptType = null;
+    let financialData = null;
+    
+    window.onload = function() {
+      loadFinancialData();
+    };
+    
+    function selectPrompt(type) {
+      selectedPromptType = type;
+      
+      // Remove all selected states
+      const cards = document.querySelectorAll('.prompt-card');
+      cards.forEach(function(card) {
+        card.classList.remove('selected');
+      });
+      
+      // Add selected state to clicked card
+      event.currentTarget.classList.add('selected');
+      
+      // Clear custom prompt
+      document.getElementById('customPrompt').value = '';
+    }
+    
+    function loadFinancialData() {
+      showLoading('Loading your financial data...');
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideLoading();
+          financialData = data;
+          console.log('Financial data loaded:', data);
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          alert('Error loading data: ' + error.message);
+        })
+        .getFinancialDataForAI();
+    }
+    
+    function generateAIPrompt() {
+      if (!financialData) {
+        alert('Financial data is still loading. Please wait...');
+        return;
+      }
+      
+      const customPrompt = document.getElementById('customPrompt').value.trim();
+      
+      if (!selectedPromptType && !customPrompt) {
+        alert('Please select a pre-made prompt or write your own.');
+        return;
+      }
+      
+      showLoading('Preparing your AI prompt...');
+      
+      let basePrompt = '';
+      
+      if (customPrompt) {
+        basePrompt = customPrompt;
+      } else {
+        basePrompt = buildPrompt(selectedPromptType);
+      }
+      
+      const fullPrompt = basePrompt + '\n\n' + formatFinancialData(financialData);
+      
+      const chatGPTUrl = 'https://chat.openai.com/?q=' + encodeURIComponent(fullPrompt);
+      
+      setTimeout(function() {
+        hideLoading();
+        window.open(chatGPTUrl, '_blank');
+      }, 1000);
+    }
+    
+    function buildPrompt(type) {
+      const prompts = {
+        budget: 'I need a comprehensive budget analysis. Please review my financial data below and provide:\n1. A breakdown of my spending by category\n2. Recommendations for budget allocation\n3. Areas where I might be overspending\n4. Suggested budget targets for each category',
+        
+        savings: 'Help me create a realistic savings plan. Based on my financial data below:\n1. Calculate how much I can realistically save each month\n2. Suggest a savings goal timeline\n3. Identify expenses I could reduce to increase savings\n4. Recommend a savings strategy (emergency fund, investments, etc.)',
+        
+        expenses: 'Analyze my expenses and help me optimize spending. Using my data below:\n1. Identify my top expense categories\n2. Point out any unusual or excessive spending\n3. Suggest specific ways to reduce expenses in each category\n4. Show me potential monthly savings',
+        
+        debt: 'I need a debt management strategy. Based on my financial situation below:\n1. Analyze my current debt situation\n2. Recommend a debt payoff strategy\n3. Calculate how long it will take to become debt-free\n4. Suggest ways to avoid future debt',
+        
+        goals: 'Help me set and achieve financial goals. Using my data below:\n1. Suggest realistic short-term and long-term financial goals\n2. Create a step-by-step action plan\n3. Identify obstacles and how to overcome them\n4. Track milestones and progress indicators'
+      };
+      
+      return prompts[type] || prompts.budget;
+    }
+    
+    function formatFinancialData(data) {
+      let formatted = '=== MY FINANCIAL DATA ===\n\n';
+      
+      formatted += 'OVERVIEW:\n';
+      formatted += '• Total Accounts: ' + data.totalAccounts + '\n';
+      formatted += '• Active Accounts: ' + data.activeAccounts + '\n';
+      formatted += '• Total Transactions: ' + data.totalTransactions + '\n\n';
+      
+      formatted += 'MONTHLY SUMMARY:\n';
+      formatted += '• Total Income: $' + formatNumber(data.monthlyIncome) + '\n';
+      formatted += '• Total Expenses: $' + formatNumber(data.monthlyExpenses) + '\n';
+      formatted += '• Net Income: $' + formatNumber(data.netIncome) + '\n\n';
+      
+      if (data.accountBalances && data.accountBalances.length > 0) {
+        formatted += 'ACCOUNT BALANCES:\n';
+        data.accountBalances.forEach(function(account) {
+          formatted += '• ' + account.name + ': $' + formatNumber(account.balance) + '\n';
+        });
+        formatted += '\n';
+      }
+      
+      if (data.topExpenses && data.topExpenses.length > 0) {
+        formatted += 'TOP EXPENSE CATEGORIES:\n';
+        data.topExpenses.forEach(function(expense, index) {
+          formatted += (index + 1) + '. ' + expense.category + ': $' + formatNumber(expense.amount) + '\n';
+        });
+        formatted += '\n';
+      }
+      
+      if (data.topIncome && data.topIncome.length > 0) {
+        formatted += '📈 TOP INCOME SOURCES:\n';
+        data.topIncome.forEach(function(income, index) {
+          formatted += (index + 1) + '. ' + income.category + ': $' + formatNumber(income.amount) + '\n';
+        });
+        formatted += '\n';
+      }
+      
+      if (data.recentTransactions && data.recentTransactions.length > 0) {
+        formatted += 'RECENT TRANSACTIONS (Last 10):\n';
+        data.recentTransactions.forEach(function(tx) {
+          formatted += '• ' + tx.date + ' | ' + tx.description + ' | $' + formatNumber(tx.amount) + ' | ' + tx.category + '\n';
+        });
+      }
+      
+      return formatted;
+    }
+    
+    function formatNumber(num) {
+      if (!num || isNaN(num)) return '0.00';
+      return parseFloat(num).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    
+    function showLoading(message) {
+      document.getElementById('loadingText').textContent = message;
+      document.getElementById('loadingOverlay').style.display = 'flex';
+      document.getElementById('generateBtn').disabled = true;
+    }
+    
+    function hideLoading() {
+      document.getElementById('loadingOverlay').style.display = 'none';
+      document.getElementById('generateBtn').disabled = false;
+    }
+  </script>
+</body>
+</html>

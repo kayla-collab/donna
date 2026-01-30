@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <title>Welcome Tutorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════
+       DONNA ROGGIO LLC - MONEY MASTERY TUTORIAL
+       Brand Color: #ab9478 (warm brown-tan)
+       2026 Branding Update
+       ═══════════════════════════════════════════════════════════════════ */
+    
+    :root {
+      --color-primary: #ab9478;
+      --color-lightest: #d4c9bb;
+      --color-light: #c2b199;
+      --color-dark: #8a7760;
+      --color-darkest: #6d5f4c;
+      color-scheme: light only;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f5f0 0%, #ebe5dd 100%);
+      color: #3d3429;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+    }
+    
+    h1, h2, h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+    
+    .modal {
+      width: 100%;
+      max-width: 720px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 18px 55px rgba(139, 120, 96, 0.22);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.4s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .modal-header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      padding: 24px 32px;
+      text-align: center;
+    }
+    
+    .modal-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    
+    .modal-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .modal-content {
+      padding: 36px 42px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .lead {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #5a4f43;
+      text-align: center;
+    }
+    
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #000;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+    }
+    
+    .video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+    
+    button {
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 22px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    button.primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(139, 120, 96, 0.25);
+    }
+    
+    button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 30px rgba(139, 120, 96, 0.28);
+    }
+    
+    button.secondary {
+      background: #f5f1ea;
+      color: var(--color-darkest);
+      border: 1px solid rgba(171, 148, 120, 0.35);
+    }
+    
+    button.secondary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(171, 148, 120, 0.18);
+    }
+    
+    .modal-footer {
+      background: #f9f7f4;
+      padding: 16px 32px;
+      text-align: center;
+      border-top: 1px solid #e8e4df;
+    }
+    
+    .footnote {
+      font-size: 12px;
+      color: #7d7163;
+    }
+    
+    @media (max-width: 640px) {
+      .modal-content {
+        padding: 28px 22px;
+      }
+      .modal-header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="modal">
+    <div class="modal-header">
+      <h1>Money Mastery</h1>
+      <p>Financial Management System</p>
+    </div>
+    
+    <div class="modal-content">
+      <p class="lead">Take a quick tour so you know exactly where to start. You can replay this anytime from the Help menu.</p>
+
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0" title="Money Mastery Orientation" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="secondary" id="skipBtn">Skip for Now</button>
+        <button type="button" class="primary" id="continueBtn">Continue to Setup</button>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <div class="footnote">© 2026 Donna Roggio LLC. All Rights Reserved.</div>
+    </div>
+  </div>
+
+  <script>
+    const continueBtn = document.getElementById('continueBtn');
+    const skipBtn = document.getElementById('skipBtn');
+
+    function disableButtons() {
+      continueBtn.disabled = true;
+      skipBtn.disabled = true;
+      continueBtn.classList.add('disabled');
+      skipBtn.classList.add('disabled');
+      continueBtn.style.opacity = '0.75';
+      skipBtn.style.opacity = '0.75';
+      continueBtn.style.cursor = 'wait';
+      skipBtn.style.cursor = 'wait';
+    }
+
+    function proceed() {
+      disableButtons();
+      google.script.run
+        .withSuccessHandler(closeDialog)
+        .withFailureHandler(function(err) {
+          console.error('proceedToSheetAccess failed', err);
+          closeDialog();
+        })
+        .proceedToSheetAccess();
+    }
+
+    function closeDialog() {
+      google.script.host.close();
+    }
+
+    continueBtn.addEventListener('click', proceed);
+    skipBtn.addEventListener('click', proceed);
+  </script>
+</body>
+</html>

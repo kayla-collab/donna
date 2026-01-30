@@ -1,0 +1,103 @@
+═══════════════════════════════════════════════════════════════
+QUICK DEPLOY COMMANDS - Copy & Paste These
+═══════════════════════════════════════════════════════════════
+
+STEP 1: Install clasp (one-time setup)
+───────────────────────────────────────
+npm install -g @google/clasp
+
+
+STEP 2: Login to Google (one-time setup)
+───────────────────────────────────────
+clasp login
+
+
+STEP 3: Get Your Script ID
+───────────────────────────────────────
+1. Open your Google Sheet
+2. Extensions → Apps Script
+3. Project Settings (gear icon)
+4. Copy the "Script ID"
+
+
+STEP 4: Navigate to project folder
+───────────────────────────────────────
+cd /home/user/webapp
+
+
+STEP 5: Clone your Apps Script project
+───────────────────────────────────────
+clasp clone YOUR_SCRIPT_ID_HERE
+
+(Replace YOUR_SCRIPT_ID_HERE with actual ID from Step 3)
+
+
+STEP 6: Push all files to Apps Script
+───────────────────────────────────────
+clasp push --force
+
+
+STEP 7: Open in browser to verify
+───────────────────────────────────────
+clasp open
+
+
+STEP 8: Test the deployment
+───────────────────────────────────────
+Open your Google Sheet and test login/registration flow
+
+
+═══════════════════════════════════════════════════════════════
+WHAT GETS PUSHED?
+═══════════════════════════════════════════════════════════════
+
+✅ WILL BE PUSHED:
+- Welcome_Main.gs (453 lines - safe!)
+- Auth_Core.gs (236 lines)
+- Plaid_Integration.gs (198 lines)
+- Backend.gs
+- Config.gs
+- Helpers.gs
+- Code.gs
+- All other .gs files
+- All .html files
+
+❌ WILL NOT BE PUSHED (excluded by .claspignore):
+- Welcome.gs (4,344 lines - too large)
+- *.md files (documentation)
+- node_modules
+- .git folder
+
+
+═══════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+Error: "Not logged in"
+→ Run: clasp login
+
+Error: "No .clasp.json file"
+→ Run: clasp clone YOUR_SCRIPT_ID
+
+Error: "Push failed"
+→ Run: clasp push --force
+
+Error: "Function not found"
+→ Delete old Welcome.gs in Apps Script manually
+→ Run: clasp push --force
+
+
+═══════════════════════════════════════════════════════════════
+DAILY WORKFLOW (after initial setup)
+═══════════════════════════════════════════════════════════════
+
+1. Make changes to files locally
+2. Run: clasp push
+3. Test in Google Sheet
+
+
+═══════════════════════════════════════════════════════════════
+NEED MORE HELP?
+═══════════════════════════════════════════════════════════════
+
+See: CLASP_DEPLOYMENT_GUIDE.md (in your repo)

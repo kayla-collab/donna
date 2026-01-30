@@ -1,0 +1,114 @@
+═══════════════════════════════════════════════════════════════
+   🔍 RUN DIAGNOSTICS NOW - SIMPLE STEPS
+═══════════════════════════════════════════════════════════════
+
+STEP 1: Deploy the Diagnostic Tool
+───────────────────────────────────────────────────────────────
+
+cd ~/Documents/GitHub/mm-system
+git pull origin main
+clasp push --force
+
+STEP 2: Run the Diagnostic in Apps Script
+───────────────────────────────────────────────────────────────
+
+1. Open your Google Sheet
+2. Go to: Extensions → Apps Script
+3. In the function dropdown (top), select: COMPLETE_DIAGNOSTIC
+4. Click the Run button (▶️ play icon)
+5. Wait for it to finish (watch the "Execution log" at bottom)
+
+STEP 3: Copy ALL the Logs
+───────────────────────────────────────────────────────────────
+
+In Apps Script:
+1. Click "View" → "Executions"
+2. Click on the most recent execution
+3. Copy EVERYTHING from the log
+4. Paste it here and send to me
+
+The log will look like:
+═══════════════════════════════════════
+   COMPLETE SYSTEM DIAGNOSTIC
+═══════════════════════════════════════
+
+[1] HTML FILES:
+  ✓ TutorialEmbed.html
+  ✓ PlaidPrompt.html
+  ...
+
+[2] FUNCTIONS:
+  ✓ MM_registerWithAccessKey
+  ✓ MM_showWelcomeTutorial
+  ...
+
+[3] PLAID CONFIG:
+  ✓ PLAID_CONFIG exists
+  CLIENT_ID: ✓ Set (6953e102...)
+  ...
+
+[4] SHEETS:
+  ✓ DASHBOARD (visible: true)
+  ✓ INCOME TRANSACTIONS (visible: true)
+  ...
+
+[5] DASHBOARD DATA:
+  ✓ Data returned
+  Income: $500.00
+  Expenses: $100.00
+  ...
+
+[6] SCRIPT PROPERTIES:
+  Total mm_ properties: 5
+  mm_registered: true
+  ...
+
+═══════════════════════════════════════
+   DIAGNOSTIC COMPLETE
+═══════════════════════════════════════
+
+STEP 4: Send Me the Logs
+───────────────────────────────────────────────────────────────
+
+Copy the ENTIRE log (all the ✓ and ✗ symbols) and send it to me.
+
+I'll analyze:
+- Why Plaid is showing an error
+- Why dashboard isn't loading data
+- What's misconfigured
+
+═══════════════════════════════════════════════════════════════
+   WHAT I FIXED SO FAR
+═══════════════════════════════════════════════════════════════
+
+✅ FIXED: Sheet visibility
+   - INCOME TRANSACTIONS now visible
+   - EXPENSE TRANSACTIONS now visible
+   - All ACCOUNT sheets now visible
+   - INCOME/EXPENSE LABELS now visible
+   - YEARLY/MONTHLY OVERVIEW now visible
+
+⏳ NEEDS DIAGNOSIS: Plaid error
+   - Error: "You can connect Plaid anytime from Dashboard → Settings"
+   - Likely cause: Missing LINK_KEY in Plaid config
+   - Will know for sure from diagnostic logs
+
+⏳ NEEDS DIAGNOSIS: Dashboard broken
+   - Dashboard opens but shows no data
+   - Need to check if backend data is computing
+   - Will know for sure from diagnostic logs
+
+═══════════════════════════════════════════════════════════════
+   THAT'S IT!
+═══════════════════════════════════════════════════════════════
+
+Just run COMPLETE_DIAGNOSTIC() and send me the logs!
+
+3 commands to deploy:
+  cd ~/Documents/GitHub/mm-system
+  git pull origin main
+  clasp push --force
+
+Then run: COMPLETE_DIAGNOSTIC() in Apps Script
+
+Copy logs and send to me! 🚀

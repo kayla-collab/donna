@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Money Mastery System | Donna Roggio LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #8B4513;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            border-bottom: 3px solid #8B4513;
+            padding-bottom: 15px;
+        }
+        
+        h2 {
+            color: #8B4513;
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-left: 5px solid #8B4513;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #654321;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        
+        h4 {
+            color: #654321;
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .metadata {
+            background: #f9f9f9;
+            border-left: 4px solid #8B4513;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metadata p {
+            margin-bottom: 5px;
+        }
+        
+        .important {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .critical {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #8B4513;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            color: #666;
+        }
+        
+        strong {
+            color: #8B4513;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PRIVACY POLICY</h1>
+        
+        <div class="metadata">
+            <p><strong>Service:</strong> Money Mastery System (Google Apps Script Financial Management Platform)</p>
+            <p><strong>Provider:</strong> Donna Roggio LLC</p>
+            <p><strong>Address:</strong> 720 Edison Furlong Road, Furlong, PA 18925</p>
+            <p><strong>Support Contact:</strong> support@risingandthriving.com</p>
+            <p><strong>Effective Date:</strong> January 1, 2026</p>
+            <p><strong>Last Updated:</strong> January 1, 2026</p>
+        </div>
+
+        <div class="critical">
+            <p><strong>CRITICAL NOTICE:</strong> Money Mastery System processes highly sensitive financial data including bank account information, transaction histories, income records, expense details, and personal financial documents. This Privacy Policy explains how we collect, use, protect, and share your financial information. By using Money Mastery, you consent to the data practices described in this policy.</p>
+        </div>
+
+        <h2>1. DEFINITIONS</h2>
+        
+        <p>For purposes of this Privacy Policy:</p>
+        
+        <ul>
+            <li><strong>"Service" or "Money Mastery"</strong> means the Money Mastery System, a Google Apps Script-based financial management platform provided by Donna Roggio LLC</li>
+            <li><strong>"We," "Us," "Our," or "Licensor"</strong> means Donna Roggio LLC</li>
+            <li><strong>"You," "Your," or "User"</strong> means the individual or entity using the Service</li>
+            <li><strong>"Personal Data"</strong> means any information relating to an identified or identifiable natural person</li>
+            <li><strong>"Financial Data"</strong> means all financial information processed by the Service, including transactions, accounts, balances, and financial documents</li>
+            <li><strong>"Processing"</strong> means any operation performed on Personal Data or Financial Data, including collection, recording, storage, retrieval, use, disclosure, or deletion</li>
+            <li><strong>"Third-Party Services"</strong> means external platforms integrated with Money Mastery, including Google Workspace, Plaid, BigQuery, and Cloud Storage</li>
+        </ul>
+
+        <h2>2. INFORMATION WE COLLECT</h2>
+
+        <h3>2.1 Financial Data</h3>
+        
+        <p>Money Mastery collects and processes the following financial information:</p>
+        
+        <h4>2.1.1 Bank Account Information</h4>
+        <ul>
+            <li>Bank account numbers, routing numbers, and account types (checking, savings, credit)</li>
+            <li>Financial institution names and connection credentials (via Plaid)</li>
+            <li>Account balances, available credit, and credit limits</li>
+            <li>Account ownership information (individual, joint, business)</li>
+        </ul>
+
+        <h4>2.1.2 Transaction Data</h4>
+        <ul>
+            <li>Transaction dates, amounts, and descriptions</li>
+            <li>Merchant names, categories, and transaction types</li>
+            <li>Pending and posted transaction statuses</li>
+            <li>Transaction location data (if provided by financial institution)</li>
+            <li>Check numbers, reference numbers, and transaction IDs</li>
+            <li>User-assigned categories, tags, and notes</li>
+        </ul>
+
+        <h4>2.1.3 Income and Expense Records</h4>
+        <ul>
+            <li>Income sources, amounts, and frequencies</li>
+            <li>Expense categories and spending patterns</li>
+            <li>Budget allocations and financial goals</li>
+            <li>Savings rates and investment contributions</li>
+        </ul>
+
+        <h4>2.1.4 Financial Documents</h4>
+        <ul>
+            <li>Uploaded receipts and invoice images</li>
+            <li>Tax documents and year-end summaries</li>
+            <li>Financial statements and reports</li>
+            <li>Payment confirmations and verification documents</li>
+        </ul>
+
+        <h3>2.2 Personal Information</h3>
+        
+        <h4>2.2.1 Account Registration Data</h4>
+        <ul>
+            <li>Full name and preferred name</li>
+            <li>Email address (Google account email)</li>
+            <li>Phone number (if provided for support)</li>
+            <li>Mailing address (if required for billing or legal purposes)</li>
+        </ul>
+
+        <h4>2.2.2 Authentication Data</h4>
+        <ul>
+            <li>Google account ID and OAuth tokens</li>
+            <li>Session identifiers and authentication timestamps</li>
+            <li>Device fingerprints and browser information</li>
+            <li>IP addresses and geographic location data</li>
+        </ul>
+
+        <h4>2.2.3 Usage Data</h4>
+        <ul>
+            <li>Feature usage patterns and interaction logs</li>
+            <li>Dashboard view preferences and customization settings</li>
+            <li>Time spent in the application and frequency of use</li>
+            <li>Error logs and diagnostic information</li>
+        </ul>
+
+        <h3>2.3 Automatically Collected Data</h3>
+        
+        <ul>
+            <li><strong>Log Data:</strong> Server logs, access times, pages viewed, and actions performed</li>
+            <li><strong>Device Information:</strong> Browser type, operating system, screen resolution, and device type</li>
+            <li><strong>Performance Data:</strong> Load times, response times, and system performance metrics</li>
+            <li><strong>Cookies and Tracking:</strong> Session cookies, preference cookies, and analytics tracking (see Section 8)</li>
+        </ul>
+
+        <h2>3. HOW WE USE YOUR INFORMATION</h2>
+
+        <h3>3.1 Primary Service Delivery</h3>
+        
+        <p>We use your information to:</p>
+        
+        <ul>
+            <li><strong>Provide Financial Management Tools:</strong> Enable transaction categorization, budget tracking, spending analysis, and financial reporting</li>
+            <li><strong>Synchronize Bank Accounts:</strong> Connect to your financial institutions via Plaid to automatically import transactions</li>
+            <li><strong>Generate Reports and Analytics:</strong> Create income statements, expense reports, cash flow analyses, and trend visualizations</li>
+            <li><strong>Power Clarity AI:</strong> Provide AI-driven financial insights, spending recommendations, and personalized coaching advice</li>
+            <li><strong>Store Financial Documents:</strong> Manage uploaded receipts, invoices, and tax documents in secure cloud storage</li>
+        </ul>
+
+        <h3>3.2 Service Improvement and Development</h3>
+        
+        <ul>
+            <li><strong>Analyze Usage Patterns:</strong> Understand which features are most valuable to improve user experience</li>
+            <li><strong>Identify and Fix Bugs:</strong> Debug technical issues and resolve software errors</li>
+            <li><strong>Develop New Features:</strong> Create enhancements based on user needs and feedback</li>
+            <li><strong>Optimize Performance:</strong> Improve load times, reduce errors, and enhance system reliability</li>
+        </ul>
+
+        <h3>3.3 Customer Support and Communication</h3>
+        
+        <ul>
+            <li><strong>Respond to Support Inquiries:</strong> Address technical questions, troubleshoot issues, and provide assistance</li>
+            <li><strong>Send Service Notifications:</strong> Alert users about system updates, maintenance windows, and security incidents</li>
+            <li><strong>Deliver Educational Content:</strong> Provide tutorials, best practices, and financial management tips</li>
+            <li><strong>Facilitate Group Support Calls:</strong> Coordinate monthly support sessions for Momentum and Fierce Financials users</li>
+        </ul>
+
+        <h3>3.4 Security and Fraud Prevention</h3>
+        
+        <ul>
+            <li><strong>Detect Unauthorized Access:</strong> Monitor for suspicious login attempts and unauthorized account activity</li>
+            <li><strong>Prevent Data Breaches:</strong> Implement security measures to protect against hacking and data theft</li>
+            <li><strong>Verify User Identity:</strong> Authenticate users to prevent account takeovers</li>
+            <li><strong>Audit System Access:</strong> Log all data access for security audits and compliance</li>
+        </ul>
+
+        <h3>3.5 Legal and Compliance</h3>
+        
+        <ul>
+            <li><strong>Comply with Legal Obligations:</strong> Respond to subpoenas, court orders, and lawful government requests</li>
+            <li><strong>Enforce Terms of Service:</strong> Detect and prevent violations of our End User License Agreement</li>
+            <li><strong>Protect Our Rights:</strong> Defend against legal claims and protect our intellectual property</li>
+            <li><strong>Tax and Financial Reporting:</strong> Generate year-end tax summaries and financial statements for users</li>
+        </ul>
+
+        <h2>4. HOW WE SHARE YOUR INFORMATION</h2>
+
+        <div class="important">
+            <p><strong>IMPORTANT:</strong> We do not sell, rent, or trade your financial data to third parties for marketing purposes. We only share your information as described below.</p>
+        </div>
+
+        <h3>4.1 Third-Party Service Providers</h3>
+        
+        <p>We share your data with the following categories of service providers who help us operate Money Mastery:</p>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Provider</th>
+                        <th>Data Shared</th>
+                        <th>Purpose</th>
+                        <th>Legal Basis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Google Workspace</strong></td>
+                        <td>All financial and personal data stored in Google Sheets</td>
+                        <td>Cloud hosting, data storage, authentication</td>
+                        <td>Necessary for service delivery</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Plaid Inc.</strong></td>
+                        <td>Bank credentials, account details, transaction history</td>
+                        <td>Bank account connection and transaction synchronization</td>
+                        <td>User consent via OAuth</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Google BigQuery</strong></td>
+                        <td>Aggregated transaction data, spending patterns, analytics</td>
+                        <td>Advanced financial analytics and reporting</td>
+                        <td>User consent via OAuth</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Google Cloud Storage</strong></td>
+                        <td>Receipts, invoices, financial documents, backups</td>
+                        <td>Document storage and automated data backups</td>
+                        <td>User consent via OAuth</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Email Service Providers</strong></td>
+                        <td>Email address, name, notification preferences</td>
+                        <td>Transaction alerts, service updates, support communications</td>
+                        <td>Legitimate business interest</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>4.2 Authorized Users</h3>
+        
+        <p>Depending on your plan, you may authorize up to 2-3 additional users (accountants, bookkeepers, spouses, business partners) to access your Money Mastery data. You are solely responsible for:</p>
+        
+        <ul>
+            <li>Verifying the identity and trustworthiness of Authorized Users</li>
+            <li>Ensuring Authorized Users comply with this Privacy Policy and the End User License Agreement</li>
+            <li>Monitoring and controlling Authorized User access</li>
+            <li>Any data breaches or misuse caused by Authorized Users</li>
+        </ul>
+
+        <h3>4.3 Business Transfers</h3>
+        
+        <p>In the event of a merger, acquisition, reorganization, bankruptcy, or sale of assets, your information may be transferred to the acquiring entity. We will provide notice before your information is transferred and becomes subject to a different privacy policy.</p>
+
+        <h3>4.4 Legal Requirements</h3>
+        
+        <p>We may disclose your information if required by law or in good faith belief that such action is necessary to:</p>
+        
+        <ul>
+            <li>Comply with legal processes (subpoenas, court orders, warrants)</li>
+            <li>Respond to government or regulatory requests</li>
+            <li>Enforce our Terms of Service or End User License Agreement</li>
+            <li>Protect the rights, property, or safety of Donna Roggio LLC, our users, or the public</li>
+            <li>Detect, prevent, or address fraud, security issues, or technical problems</li>
+        </ul>
+
+        <h3>4.5 With Your Consent</h3>
+        
+        <p>We may share your information with third parties not listed above if you provide explicit consent at the time of collection.</p>
+
+        <h2>5. DATA SECURITY MEASURES</h2>
+
+        <h3>5.1 Technical Security Controls</h3>
+        
+        <ul>
+            <li><strong>Encryption in Transit:</strong> All data transmitted between your browser and our servers is encrypted using TLS 1.2 or higher</li>
+            <li><strong>Encryption at Rest:</strong> All financial data stored in Google Cloud Storage and BigQuery is encrypted using AES-256 encryption</li>
+            <li><strong>OAuth 2.0 Authentication:</strong> Secure authentication via Google OAuth prevents password storage and reduces credential theft risks</li>
+            <li><strong>Access Controls:</strong> Role-based access controls limit who can view or modify your data</li>
+            <li><strong>Automated Backups:</strong> Daily encrypted backups ensure data recovery in case of system failure</li>
+        </ul>
+
+        <h3>5.2 Organizational Security Measures</h3>
+        
+        <ul>
+            <li><strong>Limited Employee Access:</strong> Only authorized personnel with legitimate business needs can access user data</li>
+            <li><strong>Confidentiality Agreements:</strong> All employees and contractors sign non-disclosure agreements</li>
+            <li><strong>Security Training:</strong> Regular training on data protection best practices and security protocols</li>
+            <li><strong>Incident Response Plan:</strong> Documented procedures for responding to data breaches and security incidents</li>
+        </ul>
+
+        <h3>5.3 Third-Party Security</h3>
+        
+        <ul>
+            <li><strong>Vendor Assessments:</strong> All third-party service providers (Google, Plaid) undergo security reviews</li>
+            <li><strong>Data Processing Agreements:</strong> Contractual obligations requiring vendors to protect your data</li>
+            <li><strong>Regular Audits:</strong> Periodic reviews of third-party security practices and compliance certifications</li>
+        </ul>
+
+        <h3>5.4 User Security Responsibilities</h3>
+        
+        <div class="important">
+            <p><strong>YOU ARE RESPONSIBLE FOR:</strong></p>
+            <ul>
+                <li>Maintaining the confidentiality of your Google account credentials</li>
+                <li>Using strong, unique passwords and enabling two-factor authentication</li>
+                <li>Logging out of shared or public computers</li>
+                <li>Monitoring your account for unauthorized access</li>
+                <li>Reporting suspected security breaches immediately to support@risingandthriving.com</li>
+            </ul>
+        </div>
+
+        <h3>5.5 Limitations of Security</h3>
+        
+        <p>Despite our best efforts, no method of electronic storage or transmission is 100% secure. We cannot guarantee absolute security of your data. You acknowledge and accept this inherent risk when using Money Mastery.</p>
+
+        <h2>6. DATA RETENTION AND DELETION</h2>
+
+        <h3>6.1 Retention Periods</h3>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data Type</th>
+                        <th>Retention Period</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Financial Transactions</td>
+                        <td>Indefinite (until user deletion request)</td>
+                        <td>Required for historical analysis and tax reporting</td>
+                    </tr>
+                    <tr>
+                        <td>Account Information</td>
+                        <td>Duration of active license + 7 years</td>
+                        <td>Legal and tax compliance requirements</td>
+                    </tr>
+                    <tr>
+                        <td>Uploaded Documents</td>
+                        <td>Indefinite (until user deletion request)</td>
+                        <td>User-controlled storage for receipts and tax documents</td>
+                    </tr>
+                    <tr>
+                        <td>Usage Logs</td>
+                        <td>90 days</td>
+                        <td>Troubleshooting and security monitoring</td>
+                    </tr>
+                    <tr>
+                        <td>Support Communications</td>
+                        <td>3 years</td>
+                        <td>Customer service quality and legal protection</td>
+                    </tr>
+                    <tr>
+                        <td>Backup Data</td>
+                        <td>30 days (rolling backups)</td>
+                        <td>Disaster recovery and data restoration</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>6.2 License Expiration</h3>
+        
+        <p>When your Money Mastery license expires on December 31:</p>
+        
+        <ul>
+            <li><strong>YOU LOSE ACCESS TO:</strong> Money Mastery sheets, new data imports, Group Support Calls</li>
+            <li><strong>YOU RETAIN ACCESS TO:</strong> The Collective community, coaching services, previously downloaded reports</li>
+            <li><strong>YOUR DATA:</strong> Remains stored in Google Sheets, BigQuery, and Cloud Storage but is inaccessible until renewal</li>
+        </ul>
+        
+        <p>Your data is NOT automatically deleted when your license expires. To delete your data, you must submit a written deletion request (see Section 6.3).</p>
+
+        <h3>6.3 User-Requested Deletion</h3>
+        
+        <p>You may request deletion of your data at any time by sending a written request to support@risingandthriving.com. Upon receiving your request, we will:</p>
+        
+        <ol>
+            <li><strong>Verify Your Identity:</strong> Confirm you are the account owner to prevent unauthorized deletion requests</li>
+            <li><strong>Process Within 30 Days:</strong> Delete your data from active systems within 30 business days</li>
+            <li><strong>Delete From:</strong>
+                <ul>
+                    <li>Google Sheets (all transaction and financial data)</li>
+                    <li>BigQuery (analytics and aggregated data)</li>
+                    <li>Cloud Storage (uploaded documents and backups)</li>
+                    <li>Email lists and support databases</li>
+                </ul>
+            </li>
+            <li><strong>Retain For Legal Compliance:</strong> We may retain certain data as required by law (e.g., tax records, payment history) for up to 7 years</li>
+        </ol>
+
+        <div class="critical">
+            <p><strong>DELETION IS PERMANENT AND IRREVERSIBLE.</strong> Once deleted, your financial data cannot be recovered. We recommend downloading all reports and data before requesting deletion.</p>
+        </div>
+
+        <h2>7. YOUR PRIVACY RIGHTS</h2>
+
+        <h3>7.1 Access Rights</h3>
+        
+        <p>You have the right to:</p>
+        
+        <ul>
+            <li>Access all Personal Data and Financial Data we hold about you</li>
+            <li>Request a copy of your data in a machine-readable format (CSV, JSON, Excel)</li>
+            <li>Review how your data is being used and processed</li>
+        </ul>
+        
+        <p><strong>How to Exercise:</strong> Submit a request to support@risingandthriving.com. We will provide your data within 30 days.</p>
+
+        <h3>7.2 Correction Rights</h3>
+        
+        <p>You have the right to:</p>
+        
+        <ul>
+            <li>Correct inaccurate or incomplete Personal Data</li>
+            <li>Update your account information, email address, or preferences</li>
+            <li>Edit transaction categories, tags, and notes directly in Money Mastery</li>
+        </ul>
+        
+        <p><strong>How to Exercise:</strong> Most corrections can be made directly in the Money Mastery interface. For account-level changes, contact support@risingandthriving.com.</p>
+
+        <h3>7.3 Deletion Rights (Right to be Forgotten)</h3>
+        
+        <p>You have the right to request deletion of your data (see Section 6.3 for full details).</p>
+
+        <h3>7.4 Data Portability</h3>
+        
+        <p>You have the right to:</p>
+        
+        <ul>
+            <li>Export your transaction data in CSV or Excel format</li>
+            <li>Download all uploaded receipts and financial documents</li>
+            <li>Transfer your data to another financial management system</li>
+        </ul>
+        
+        <p><strong>How to Exercise:</strong> Use the built-in export features in Money Mastery or contact support@risingandthriving.com for assistance.</p>
+
+        <h3>7.5 Objection and Restriction Rights</h3>
+        
+        <p>You have the right to:</p>
+        
+        <ul>
+            <li>Object to certain types of data processing (e.g., marketing communications)</li>
+            <li>Restrict processing of your data in certain circumstances</li>
+            <li>Opt out of non-essential data collection (analytics, usage tracking)</li>
+        </ul>
+        
+        <p><strong>How to Exercise:</strong> Contact support@risingandthriving.com with your specific objection or restriction request.</p>
+
+        <h3>7.6 Withdrawal of Consent</h3>
+        
+        <p>Where we rely on your consent to process data, you may withdraw consent at any time. However, withdrawing consent may:</p>
+        
+        <ul>
+            <li>Prevent us from providing certain features (e.g., bank synchronization requires Plaid consent)</li>
+            <li>Limit functionality (e.g., revoking BigQuery consent disables advanced analytics)</li>
+            <li>Not affect the lawfulness of processing conducted before withdrawal</li>
+        </ul>
+
+        <h3>7.7 California Privacy Rights (CCPA)</h3>
+        
+        <p>If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA):</p>
+        
+        <ul>
+            <li><strong>Right to Know:</strong> Request disclosure of categories and specific pieces of Personal Data collected</li>
+            <li><strong>Right to Delete:</strong> Request deletion of Personal Data (subject to legal exceptions)</li>
+            <li><strong>Right to Opt-Out:</strong> Opt out of the sale of Personal Data (Note: We do not sell Personal Data)</li>
+            <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising your CCPA rights</li>
+        </ul>
+        
+        <p><strong>How to Exercise CCPA Rights:</strong> Submit a verifiable consumer request to support@risingandthriving.com or call (215) 499-2209.</p>
+
+        <h3>7.8 European Privacy Rights (GDPR)</h3>
+        
+        <p>If you are located in the European Economic Area (EEA), you have rights under the General Data Protection Regulation (GDPR):</p>
+        
+        <ul>
+            <li><strong>Legal Basis for Processing:</strong> We process your data based on contract necessity, legal obligations, and legitimate interests</li>
+            <li><strong>Data Protection Officer:</strong> Contact our Data Protection Officer at support@risingandthriving.com</li>
+            <li><strong>Right to Lodge a Complaint:</strong> You may file a complaint with your local data protection authority</li>
+            <li><strong>International Transfers:</strong> Data may be transferred to the United States; we rely on Standard Contractual Clauses for lawful transfers</li>
+        </ul>
+
+        <h2>8. COOKIES AND TRACKING TECHNOLOGIES</h2>
+
+        <h3>8.1 Types of Cookies We Use</h3>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cookie Type</th>
+                        <th>Purpose</th>
+                        <th>Duration</th>
+                        <th>Can Be Disabled?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Essential Cookies</strong></td>
+                        <td>Authentication, session management, security</td>
+                        <td>Session (deleted on logout)</td>
+                        <td>No (required for service)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Preference Cookies</strong></td>
+                        <td>Save dashboard layout, display preferences, settings</td>
+                        <td>1 year</td>
+                        <td>Yes (resets preferences)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Analytics Cookies</strong></td>
+                        <td>Track feature usage, performance monitoring, error reporting</td>
+                        <td>90 days</td>
+                        <td>Yes (via browser settings)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Performance Cookies</strong></td>
+                        <td>Measure load times, optimize speed, improve UX</td>
+                        <td>30 days</td>
+                        <td>Yes (via browser settings)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>8.2 Third-Party Cookies</h3>
+        
+        <p>Money Mastery integrates with third-party services that may set their own cookies:</p>
+        
+        <ul>
+            <li><strong>Google Analytics:</strong> Tracks usage patterns and user behavior (anonymized)</li>
+            <li><strong>Google Workspace:</strong> Manages authentication and session state</li>
+            <li><strong>Plaid:</strong> Facilitates secure bank connections and transaction syncing</li>
+        </ul>
+        
+        <p>We do not control third-party cookies. Review their privacy policies for details:</p>
+        <ul>
+            <li>Google Privacy Policy: https://policies.google.com/privacy</li>
+            <li>Plaid Privacy Policy: https://plaid.com/legal/#privacy-policy</li>
+        </ul>
+
+        <h3>8.3 How to Control Cookies</h3>
+        
+        <ul>
+            <li><strong>Browser Settings:</strong> Most browsers allow you to block or delete cookies via settings</li>
+            <li><strong>Opt-Out Tools:</strong> Use Google Analytics Opt-out Browser Add-on</li>
+            <li><strong>Do Not Track:</strong> We respect Do Not Track (DNT) signals when technically feasible</li>
+        </ul>
+        
+        <p><strong>Note:</strong> Disabling essential cookies will prevent you from using Money Mastery.</p>
+
+        <h2>9. CHILDREN'S PRIVACY</h2>
+
+        <p>Money Mastery is not intended for use by individuals under the age of 18. We do not knowingly collect Personal Data from children under 18. If you are a parent or guardian and believe your child has provided us with Personal Data, please contact support@risingandthriving.com immediately. We will delete such data within 30 days of verification.</p>
+
+        <h2>10. INTERNATIONAL DATA TRANSFERS</h2>
+
+        <p>Money Mastery is operated from the United States. If you access the Service from outside the United States, your data will be transferred to, stored, and processed in the United States. By using Money Mastery, you consent to the transfer of your data to the United States.</p>
+        
+        <p>The United States may not have the same data protection laws as your jurisdiction. However, we implement appropriate safeguards (encryption, access controls, contractual obligations) to protect your data regardless of location.</p>
+
+        <h2>11. CHANGES TO THIS PRIVACY POLICY</h2>
+
+        <p>We reserve the right to modify this Privacy Policy at any time. Changes will be effective immediately upon posting to our website and within the Money Mastery application.</p>
+        
+        <p>We will notify you of material changes via:</p>
+        <ul>
+            <li>Email notification to your registered email address</li>
+            <li>In-app notification upon next login</li>
+            <li>Prominent notice on our website</li>
+        </ul>
+        
+        <p>Your continued use of Money Mastery after changes are posted constitutes acceptance of the updated Privacy Policy. If you do not agree to the changes, you must discontinue use and request deletion of your data.</p>
+
+        <h2>12. CONTACT INFORMATION</h2>
+
+        <p>For questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact:</p>
+        
+        <div class="metadata">
+            <p><strong>Donna Roggio LLC</strong></p>
+            <p>720 Edison Furlong Road</p>
+            <p>Furlong, PA 18925</p>
+            <p>United States</p>
+            <p><strong>Email:</strong> support@risingandthriving.com</p>
+            <p><strong>Phone:</strong> (215) 499-2209</p>
+            <p><strong>Website:</strong> www.risingandthriving.com</p>
+        </div>
+
+        <p>We will respond to all privacy inquiries within 30 business days.</p>
+
+        <h2>13. DATA PROTECTION OFFICER</h2>
+
+        <p>For GDPR-related inquiries or to exercise your European privacy rights, contact our Data Protection Officer:</p>
+        
+        <p><strong>Email:</strong> support@risingandthriving.com</p>
+        <p><strong>Subject Line:</strong> "GDPR Request - [Your Request Type]"</p>
+
+        <h2>14. DISPUTE RESOLUTION</h2>
+
+        <p>Any disputes arising from this Privacy Policy shall be governed by the laws of Pennsylvania and resolved in the courts of Pennsylvania, consistent with our End User License Agreement.</p>
+
+        <h2>15. SEVERABILITY</h2>
+
+        <p>If any provision of this Privacy Policy is found to be invalid or unenforceable, the remaining provisions shall remain in full force and effect.</p>
+
+        <div class="footer">
+            <p><strong>Last Updated:</strong> January 1, 2026</p>
+            <p><strong>Version:</strong> 1.0</p>
+            <p>&copy; 2026 Donna Roggio LLC. All rights reserved.</p>
+            <p>This Privacy Policy is effective as of January 1, 2026 and supersedes all prior versions.</p>
+        </div>
+    </div>
+</body>
+</html>

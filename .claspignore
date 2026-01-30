@@ -1,0 +1,24 @@
+# Git files
+.git/**
+.gitignore
+
+# Documentation - DO NOT PUSH
+*.md
+*.txt
+*.xlsx
+*.bin
+README*
+
+# Node modules
+node_modules/**
+package*.json
+package-lock.json
+
+# Config files (keep in git, exclude from clasp)
+.clasp.json
+.claspignore
+
+# Temporary files
+*.tmp
+*.log
+.DS_Store

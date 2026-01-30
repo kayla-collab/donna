@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* ==================== CSS VARIABLES ==================== */
+    :root {
+      --primary: #ab9478;
+      --primary-dark: #8b7860;
+      --primary-light: #c4b19e;
+      --success: #28a745;
+      --error: #dc3545;
+      --warning: #ffc107;
+      --bg-dark: #1a1a2e;
+      --bg-darker: #16213e;
+      --bg-card: rgba(255,255,255,0.05);
+      --bg-card-hover: rgba(255,255,255,0.08);
+      --text-light: #e0e0e0;
+      --text-muted: #888;
+      --border-color: #333;
+      --border-light: #444;
+      --shadow-glow: 0 0 20px rgba(171, 148, 120, 0.2);
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+      min-height: 100vh;
+      padding: 15px;
+      color: var(--text-light);
+    }
+    
+    .container {
+      max-width: 100%;
+    }
+    
+    /* ==================== HEADER ==================== */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      color: var(--primary);
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .header h1 i {
+      color: var(--primary-light);
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    /* ==================== BUTTONS ==================== */
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(171, 148, 120, 0.3);
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(171, 148, 120, 0.4);
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, var(--success) 0%, #1e7e34 100%);
+      color: white;
+    }
+    
+    .btn-success:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--error) 0%, #c82333 100%);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: var(--bg-card);
+      color: #ccc;
+      border: 1px solid var(--border-light);
+    }
+    
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    /* ==================== SUMMARY BAR ==================== */
+    .summary-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      padding: 18px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .summary-item {
+      text-align: center;
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+    
+    .summary-item:hover {
+      background: var(--bg-card-hover);
+    }
+    
+    .summary-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      transition: transform 0.2s ease;
+    }
+    
+    .summary-item:hover .summary-value {
+      transform: scale(1.05);
+    }
+    
+    .summary-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    
+    .summary-item.passed .summary-value { color: var(--success); }
+    .summary-item.failed .summary-value { color: var(--error); }
+    .summary-item.total .summary-value { color: var(--primary); }
+    
+    /* ==================== TABS ==================== */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    
+    .tab {
+      padding: 10px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .tab:hover {
+      background: var(--bg-card-hover);
+      color: #fff;
+      border-color: var(--border-light);
+    }
+    
+    .tab.active {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(171, 148, 120, 0.3);
+    }
+    
+    /* ==================== TEST CATEGORIES ==================== */
+    .test-category {
+      background: var(--bg-card);
+      border-radius: 10px;
+      margin-bottom: 15px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+    
+    .test-category:hover {
+      border-color: var(--border-light);
+    }
+    
+    .category-header {
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    
+    .category-header:hover {
+      background: var(--bg-card-hover);
+    }
+    
+    .category-title {
+      font-weight: 600;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .category-stats {
+      display: flex;
+      gap: 15px;
+      font-size: 12px;
+      align-items: center;
+    }
+    
+    .stat-passed { color: var(--success); font-weight: 500; }
+    .stat-failed { color: var(--error); font-weight: 500; }
+    
+    .test-list {
+      padding: 0 15px 15px;
+      display: none;
+    }
+    
+    .test-list.expanded {
+      display: block;
+    }
+    
+    /* ==================== TEST ITEMS ==================== */
+    .test-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 12px 14px;
+      margin-top: 8px;
+      background: rgba(0,0,0,0.25);
+      border-radius: 8px;
+      border-left: 4px solid var(--border-light);
+      transition: all 0.2s ease;
+    }
+    
+    .test-item:hover {
+      background: rgba(0,0,0,0.35);
+    }
+    
+    .test-item.passed {
+      border-left-color: var(--success);
+    }
+    
+    .test-item.failed {
+      border-left-color: var(--error);
+    }
+    
+    .test-name {
+      font-size: 13px;
+      color: #ddd;
+      font-weight: 500;
+    }
+    
+    .test-details {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+    }
+    
+    .test-status {
+      font-size: 16px;
+    }
+    
+    .test-status.passed { color: #28a745; }
+    .test-status.failed { color: #dc3545; }
+    
+    /* ==================== QUICK ACTIONS ==================== */
+    .quick-actions {
+      margin-top: 24px;
+      padding: 18px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .quick-actions h3 {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .quick-actions h3 i {
+      color: var(--primary-light);
+    }
+    
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    
+    .action-btn {
+      padding: 14px 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: #ccc;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    
+    .action-btn:hover {
+      background: rgba(171, 148, 120, 0.15);
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .action-btn i {
+      margin-right: 8px;
+      color: var(--primary);
+    }
+    
+    .log-area {
+      margin-top: 15px;
+      padding: 12px;
+      background: #0d0d0d;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 11px;
+      max-height: 150px;
+      overflow-y: auto;
+      color: #0f0;
+    }
+    
+    .log-entry {
+      margin: 2px 0;
+    }
+    
+    .log-entry.error { color: #f00; }
+    .log-entry.warn { color: #ff0; }
+    .log-entry.info { color: #0ff; }
+    
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .loading.show {
+      display: block;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid #333;
+      border-top-color: #ab9478;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* ==================== FOOTER ==================== */
+    .footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 10px;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 2px solid var(--border-color);
+    }
+    
+    .system-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      font-size: 11px;
+      display: none;
+    }
+    
+    .system-info.show {
+      display: block;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .info-label { color: #888; }
+    .info-value { color: #ab9478; font-family: monospace; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-flask"></i> Test Control Panel</h1>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="runAllTests()">
+          <i class="fas fa-play"></i> Run All Tests
+        </button>
+        <button class="btn btn-secondary" onclick="google.script.host.close()">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+    
+    <div class="summary-bar" id="summaryBar">
+      <div class="summary-item total">
+        <div class="summary-value" id="totalTests">-</div>
+        <div class="summary-label">Total Tests</div>
+      </div>
+      <div class="summary-item passed">
+        <div class="summary-value" id="passedTests">-</div>
+        <div class="summary-label">Passed</div>
+      </div>
+      <div class="summary-item failed">
+        <div class="summary-value" id="failedTests">-</div>
+        <div class="summary-label">Failed</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-value" id="passRate">-</div>
+        <div class="summary-label">Pass Rate</div>
+      </div>
+    </div>
+    
+    <div class="tabs">
+      <div class="tab active" data-tab="all">All Tests</div>
+      <div class="tab" data-tab="copyProtection">Copy Protection</div>
+      <div class="tab" data-tab="remoteControl">Remote Control</div>
+      <div class="tab" data-tab="authentication">Authentication</div>
+      <div class="tab" data-tab="guestManagement">Guests</div>
+      <div class="tab" data-tab="businessAccounts">Business</div>
+      <div class="tab" data-tab="dataIntegrity">Data</div>
+      <div class="tab" data-tab="emailSystem">Email</div>
+      <div class="tab" data-tab="uiComponents">UI</div>
+      <div class="tab" data-tab="sheetStructure">Structure</div>
+    </div>
+    
+    <div class="loading" id="loadingIndicator">
+      <div class="spinner"></div>
+      <p style="margin-top: 15px; color: #888;">Running tests...</p>
+    </div>
+    
+    <div id="resultsContainer"></div>
+    
+    <div class="quick-actions">
+      <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+      <div class="action-grid">
+        <button class="action-btn" onclick="testEmailAction()">
+          <i class="fas fa-envelope"></i> Test Send Email
+        </button>
+        <button class="action-btn" onclick="testMasterConnection()">
+          <i class="fas fa-database"></i> Test NEW SHEET LOG
+        </button>
+        <button class="action-btn" onclick="showSystemInfo()">
+          <i class="fas fa-info-circle"></i> System Info
+        </button>
+        <button class="action-btn" onclick="resetTests()">
+          <i class="fas fa-redo"></i> Reset Test Data
+        </button>
+        <button class="action-btn" onclick="openInitModal()">
+          <i class="fas fa-magic"></i> Open Init Modal
+        </button>
+        <button class="action-btn" onclick="openSettingsModal()">
+          <i class="fas fa-cog"></i> Open Settings
+        </button>
+        <button class="action-btn" onclick="checkFlaggedStatus()">
+          <i class="fas fa-flag"></i> Check Flagged
+        </button>
+        <button class="action-btn" onclick="checkCopyStatus()">
+          <i class="fas fa-copy"></i> Check Copy
+        </button>
+      </div>
+    </div>
+    
+    <div class="system-info" id="systemInfo">
+      <h4 style="color: #ab9478; margin-bottom: 10px;">System Information</h4>
+      <div class="info-grid" id="infoGrid"></div>
+    </div>
+    
+    <div class="log-area" id="logArea">
+      <div class="log-entry info">[READY] Test Control Panel initialized</div>
+    </div>
+    
+    <div class="footer">
+      Test Control Panel v1.0 &copy; 2026 Donna Roggio LLC
+    </div>
+  </div>
+  
+  <script>
+    // State
+    var state = {
+      results: null,
+      activeTab: 'all',
+      expandedCategories: {}
+    };
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      setupTabs();
+      log('Panel ready. Click "Run All Tests" to begin.', 'info');
+    });
+    
+    // Tab handling
+    function setupTabs() {
+      document.querySelectorAll('.tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+          this.classList.add('active');
+          state.activeTab = this.dataset.tab;
+          renderResults();
+        });
+      });
+    }
+    
+    // Run all tests
+    function runAllTests() {
+      log('Starting all tests...', 'info');
+      showLoading(true);
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+          showLoading(false);
+          if (response.success) {
+            state.results = response.results;
+            updateSummary(response.results.summary);
+            renderResults();
+            log('All tests completed. ' + response.results.summary.passed + '/' + response.results.summary.total + ' passed', 
+                response.results.summary.failed > 0 ? 'warn' : 'info');
+          } else {
+            log('Error: ' + response.error, 'error');
+          }
+        })
+        .withFailureHandler(function(err) {
+          showLoading(false);
+          log('Error: ' + err.message, 'error');
+        })
+        .runAllTests();
+    }
+    
+    // Run single category test
+    function runCategoryTest(category) {
+      log('Running ' + category + ' tests...', 'info');
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response.success) {
+            if (!state.results) {
+              state.results = { categories: {} };
+            }
+            state.results.categories[category] = response.result;
+            renderResults();
+            
+            var passed = response.result.tests.filter(function(t) { return t.passed; }).length;
+            log(category + ': ' + passed + '/' + response.result.tests.length + ' passed', 
+                passed < response.result.tests.length ? 'warn' : 'info');
+          } else {
+            log('Error: ' + response.error, 'error');
+          }
+        })
+        .withFailureHandler(function(err) {
+          log('Error: ' + err.message, 'error');
+        })
+        .runSingleCategoryTest(category);
+    }
+    
+    // Update summary bar
+    function updateSummary(summary) {
+      document.getElementById('totalTests').textContent = summary.total;
+      document.getElementById('passedTests').textContent = summary.passed;
+      document.getElementById('failedTests').textContent = summary.failed;
+      document.getElementById('passRate').textContent = summary.percentage + '%';
+    }
+    
+    // Render results
+    function renderResults() {
+      var container = document.getElementById('resultsContainer');
+      
+      if (!state.results || !state.results.categories) {
+        container.innerHTML = '<p style="color: #888; text-align: center; padding: 30px;">No test results yet. Click "Run All Tests" to start.</p>';
+        return;
+      }
+      
+      var html = '';
+      var categories = state.results.categories;
+      
+      for (var catKey in categories) {
+        if (state.activeTab !== 'all' && state.activeTab !== catKey) continue;
+        
+        var cat = categories[catKey];
+        if (!cat || !cat.tests) continue;
+        
+        var passed = cat.tests.filter(function(t) { return t.passed; }).length;
+        var failed = cat.tests.length - passed;
+        var isExpanded = state.expandedCategories[catKey];
+        
+        html += '<div class="test-category">';
+        html += '<div class="category-header" onclick="toggleCategory(\'' + catKey + '\')">';
+        html += '<span class="category-title">';
+        html += '<i class="fas fa-' + (isExpanded ? 'chevron-down' : 'chevron-right') + '"></i> ';
+        html += cat.name;
+        html += '</span>';
+        html += '<span class="category-stats">';
+        html += '<span class="stat-passed"><i class="fas fa-check"></i> ' + passed + '</span>';
+        if (failed > 0) {
+          html += '<span class="stat-failed"><i class="fas fa-times"></i> ' + failed + '</span>';
+        }
+        html += '<button class="btn btn-secondary" style="padding: 4px 10px; font-size: 10px;" onclick="event.stopPropagation(); runCategoryTest(\'' + catKey + '\')">Re-run</button>';
+        html += '</span>';
+        html += '</div>';
+        
+        html += '<div class="test-list ' + (isExpanded ? 'expanded' : '') + '">';
+        cat.tests.forEach(function(test) {
+          html += '<div class="test-item ' + (test.passed ? 'passed' : 'failed') + '">';
+          html += '<div class="test-info">';
+          html += '<div class="test-name">' + test.name + '</div>';
+          html += '<div class="test-details">' + test.details + '</div>';
+          html += '</div>';
+          html += '<div class="test-status ' + (test.passed ? 'passed' : 'failed') + '">';
+          html += test.passed ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-times-circle"></i>';
+          html += '</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+        html += '</div>';
+      }
+      
+      container.innerHTML = html;
+    }
+    
+    // Toggle category expansion
+    function toggleCategory(catKey) {
+      state.expandedCategories[catKey] = !state.expandedCategories[catKey];
+      renderResults();
+    }
+    
+    // Quick actions
+    function testEmailAction() {
+      log('Sending test email...', 'info');
+      google.script.run
+        .withSuccessHandler(function(r) {
+          log(r.success ? r.message : 'Error: ' + r.error, r.success ? 'info' : 'error');
+        })
+        .withFailureHandler(function(e) { log('Error: ' + e.message, 'error'); })
+        .testSendEmail();
+    }
+    
+    function testMasterConnection() {
+      log('Testing NEW SHEET LOG connection...', 'info');
+      google.script.run
+        .withSuccessHandler(function(r) {
+          if (r.success) {
+            log('Connected! Sheets: ' + r.sheetNames.join(', '), 'info');
+          } else {
+            log('Error: ' + r.error, 'error');
+          }
+        })
+        .withFailureHandler(function(e) { log('Error: ' + e.message, 'error'); })
+        .testMasterSheetConnection();
+    }
+    
+    function showSystemInfo() {
+      log('Loading system info...', 'info');
+      google.script.run
+        .withSuccessHandler(function(r) {
+          if (r.success) {
+            var infoHtml = '';
+            for (var key in r.info) {
+              var val = r.info[key];
+              if (Array.isArray(val)) val = val.join(', ');
+              infoHtml += '<div class="info-item"><span class="info-label">' + key + ':</span><span class="info-value">' + val + '</span></div>';
+            }
+            document.getElementById('infoGrid').innerHTML = infoHtml;
+            document.getElementById('systemInfo').classList.add('show');
+            log('System info loaded', 'info');
+          } else {
+            log('Error: ' + r.error, 'error');
+          }
+        })
+        .withFailureHandler(function(e) { log('Error: ' + e.message, 'error'); })
+        .getSystemInfo();
+    }
+    
+    function resetTests() {
+      if (!confirm('Reset all test data?')) return;
+      log('Resetting test data...', 'info');
+      google.script.run
+        .withSuccessHandler(function(r) {
+          log(r.success ? r.message : 'Error: ' + r.error, r.success ? 'info' : 'error');
+        })
+        .withFailureHandler(function(e) { log('Error: ' + e.message, 'error'); })
+        .resetTestData();
+    }
+    
+    function openInitModal() {
+      google.script.host.close();
+      google.script.run.showAdminInitializationModal();
+    }
+    
+    function openSettingsModal() {
+      google.script.host.close();
+      google.script.run.showAdminSettingsModal();
+    }
+    
+    function checkFlaggedStatus() {
+      log('Checking flagged status...', 'info');
+      google.script.run
+        .withSuccessHandler(function(r) {
+          log('Flagged: ' + r.flagged + ', Reason: ' + r.reason, r.flagged ? 'warn' : 'info');
+        })
+        .withFailureHandler(function(e) { log('Error: ' + e.message, 'error'); })
+        .checkFlaggedStatus();
+    }
+    
+    function checkCopyStatus() {
+      log('Checking copy protection status...', 'info');
+      google.script.run
+        .withSuccessHandler(function(r) {
+          log('isCopy: ' + r.isCopy + ', Reason: ' + r.reason, r.isCopy ? 'error' : 'info');
+        })
+        .withFailureHandler(function(e) { log('Error: ' + e.message, 'error'); })
+        .checkCopyProtection();
+    }
+    
+    // Utility functions
+    function showLoading(show) {
+      document.getElementById('loadingIndicator').classList.toggle('show', show);
+    }
+    
+    function log(message, type) {
+      var logArea = document.getElementById('logArea');
+      var time = new Date().toLocaleTimeString();
+      var entry = document.createElement('div');
+      entry.className = 'log-entry ' + (type || '');
+      entry.textContent = '[' + time + '] ' + message;
+      logArea.appendChild(entry);
+      logArea.scrollTop = logArea.scrollHeight;
+      
+      // Limit log entries
+      while (logArea.children.length > 50) {
+        logArea.removeChild(logArea.firstChild);
+      }
+    }
+  </script>
+</body>
+</html>

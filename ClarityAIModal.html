@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #ab9478 0%, #8a7760 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      padding: 40px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #394144;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: #666;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .prompt-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .prompt-option {
+      padding: 16px 20px;
+      background-color: #f9f7f4;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .prompt-option:hover {
+      border-color: #ab9478;
+      background-color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .prompt-option h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ab9478;
+      margin-bottom: 4px;
+    }
+
+    .prompt-option p {
+      font-size: 12px;
+      color: #666;
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading-overlay.show {
+      display: flex;
+    }
+
+    .loading-content {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #ab9478;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-content p {
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Clarity AI Assistant</h1>
+      <p>Select the type of financial guidance you'd like from Clarity</p>
+    </div>
+
+    <div class="prompt-selector">
+      <div class="prompt-option" onclick="selectPrompt('spending')">
+        <h3>Spending Analysis</h3>
+        <p>Get insights on where your money goes and optimization tips</p>
+      </div>
+
+      <div class="prompt-option" onclick="selectPrompt('income')">
+        <h3>Income Growth Strategy</h3>
+        <p>Explore opportunities to increase your income streams</p>
+      </div>
+
+      <div class="prompt-option" onclick="selectPrompt('savings')">
+        <h3>Savings & Goals</h3>
+        <p>Create a personalized savings plan for your financial goals</p>
+      </div>
+
+      <div class="prompt-option" onclick="selectPrompt('comprehensive')">
+        <h3>Complete Financial Overview</h3>
+        <p>Full analysis with spending, income, and recommendations</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p id="loadingTip">Generating your personalized prompt...</p>
+      <p style="font-size: 12px; color: #ab9478; margin-top: 12px; font-style: italic;" id="loadingSubtip"></p>
+    </div>
+  </div>
+
+  <script>
+    // Dynamic loading tips about Clarity, reviews, and coaching with Donna
+    const loadingTips = [
+      {
+        main: "Analyzing your financial data...",
+        sub: "Clarity understands your money story - no judgment, just facts."
+      },
+      {
+        main: "Did you know?",
+        sub: "Clarity users save an average of $500/month by optimizing their spending."
+      },
+      {
+        main: "Pro Tip:",
+        sub: "Review your Money Mastery dashboard weekly to stay on track."
+      },
+      {
+        main: "Love Money Mastery?",
+        sub: "Leave us a review! Your feedback helps other entrepreneurs like you."
+      },
+      {
+        main: "Want personalized guidance?",
+        sub: "Book a FREE discovery call with Donna Roggio for 1-on-1 coaching."
+      },
+      {
+        main: "Fun Fact:",
+        sub: "Clarity analyzes patterns you might miss - she's looking out for you."
+      },
+      {
+        main: "Get More from Coaching:",
+        sub: "Donna helps you build wealth systems that actually work for YOUR life."
+      },
+      {
+        main: "Remember:",
+        sub: "You're not bad with money. You just needed the right system."
+      },
+      {
+        main: "Building your prompt...",
+        sub: "Clarity is reviewing your income, expenses, and opportunities."
+      },
+      {
+        main: "Coaching Tip:",
+        sub: "Working with Donna means real accountability and personalized strategies."
+      }
+    ];
+    
+    let currentTipIndex = 0;
+    let tipInterval;
+    
+    function rotateTips() {
+      const tipElement = document.getElementById('loadingTip');
+      const subtipElement = document.getElementById('loadingSubtip');
+      
+      if (tipElement && subtipElement) {
+        currentTipIndex = (currentTipIndex + 1) % loadingTips.length;
+        tipElement.textContent = loadingTips[currentTipIndex].main;
+        subtipElement.textContent = loadingTips[currentTipIndex].sub;
+      }
+    }
+    
+    function selectPrompt(type) {
+      // Show loading with first tip
+      document.getElementById('loadingOverlay').classList.add('show');
+      document.getElementById('loadingTip').textContent = loadingTips[0].main;
+      document.getElementById('loadingSubtip').textContent = loadingTips[0].sub;
+      
+      // Start rotating tips every 2.5 seconds
+      currentTipIndex = 0;
+      tipInterval = setInterval(rotateTips, 2500);
+
+      // Call server to generate prompt
+      google.script.run
+        .withSuccessHandler(function(prompt) {
+          // Stop rotating tips
+          clearInterval(tipInterval);
+          
+          // Copy to clipboard
+          copyToClipboard(prompt);
+          
+          // Open ChatGPT in new tab
+          window.open('https://chatgpt.com', '_blank');
+          
+          // Close this modal
+          setTimeout(() => {
+            google.script.host.close();
+          }, 500);
+        })
+        .withFailureHandler(function(error) {
+          clearInterval(tipInterval);
+          alert('Error generating prompt: ' + error);
+          document.getElementById('loadingOverlay').classList.remove('show');
+        })
+        .generateClarityPrompt(type);
+    }
+
+    function copyToClipboard(text) {
+      // Create temporary textarea
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      
+      // Select and copy
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      
+      // Remove textarea
+      document.body.removeChild(textarea);
+    }
+  </script>
+</body>
+</html>

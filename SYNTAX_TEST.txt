@@ -1,0 +1,91 @@
+# 🔧 Syntax Error Debug
+
+## Test This in Apps Script:
+
+### Option 1: Use Apps Script's Built-in Checker
+
+1. Open **Welcome.gs** in Apps Script Editor
+2. Press **Ctrl+S** (or Cmd+S) to save
+3. Look for red X or error message
+
+**Copy the EXACT error here:**
+```
+_____________________________________________
+```
+
+### Option 2: Run This Function
+
+Paste this into Apps Script and run it:
+
+```javascript
+function TEST_FindSyntaxError() {
+  try {
+    // Test calling the modified function
+    Logger.log('Testing MM_registerWithAccessKey...');
+    
+    // Don't actually register, just test if function exists
+    if (typeof MM_registerWithAccessKey === 'function') {
+      Logger.log('✓ MM_registerWithAccessKey function exists');
+    } else {
+      Logger.log('✗ MM_registerWithAccessKey NOT FOUND');
+    }
+    
+    if (typeof MM_showWelcomeTutorial === 'function') {
+      Logger.log('✓ MM_showWelcomeTutorial function exists');
+    } else {
+      Logger.log('✗ MM_showWelcomeTutorial NOT FOUND');
+    }
+    
+    Logger.log('✓ No syntax errors detected!');
+    
+  } catch(e) {
+    Logger.log('✗ SYNTAX ERROR FOUND:');
+    Logger.log('Message: ' + e.message);
+    Logger.log('Line: ' + e.lineNumber);
+    Logger.log('File: ' + e.fileName);
+  }
+}
+```
+
+**Copy the logs here:**
+```
+_____________________________________________
+```
+
+### Option 3: Check GitHub Assistant Error
+
+When you pull with GitHub Assistant, **what's the exact error message?**
+
+Screenshot or copy:
+```
+_____________________________________________
+```
+
+---
+
+## If It's A Real Syntax Error:
+
+Tell me:
+1. **File name**: Welcome.gs
+2. **Line number**: ______
+3. **Error text**: "Unexpected token" or "Missing )" etc.
+
+And I'll fix it immediately!
+
+---
+
+## My Suspicion:
+
+The bracket checker is probably confused by:
+- Comments containing parentheses
+- String literals with brackets
+- Regex patterns
+
+The file is syntactically valid in JavaScript, so it should work in Apps Script.
+
+**Try deploying it anyway with:**
+```bash
+clasp push --force
+```
+
+It might push successfully despite the checker warning!

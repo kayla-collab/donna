@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════
+       DONNA ROGGIO LLC - MONEY MASTERY
+       Manual Entry Information Screen
+       Brand Color: #ab9478 (warm brown-tan)
+       2026 Update: Bank sync features disabled
+       ═══════════════════════════════════════════════════════════════════ */
+    
+    :root {
+      --color-primary: #ab9478;
+      --color-lightest: #d4c9bb;
+      --color-light: #c2b199;
+      --color-dark: #8a7760;
+      --color-darkest: #6d5f4c;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f5f5f0 0%, #ebe5dd 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    
+    h1, h2, h3 {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+    
+    .notice-container {
+      max-width: 480px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(139, 120, 96, 0.2);
+      overflow: hidden;
+      animation: slideUp 0.4s ease-out;
+    }
+    
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .notice-header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      padding: 24px 30px;
+      text-align: center;
+    }
+    
+    .notice-header h1 {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+    
+    .notice-header p {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    
+    .notice-content {
+      padding: 30px;
+    }
+    
+    .icon-box {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--color-lightest) 0%, var(--color-light) 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 32px;
+    }
+    
+    .message-text {
+      text-align: center;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    
+    .message-text strong {
+      color: var(--color-darkest);
+    }
+    
+    .info-box {
+      background: linear-gradient(135deg, #f9f7f4 0%, #f0ebe6 100%);
+      border-left: 4px solid var(--color-primary);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+    
+    .info-box h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-darkest);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-box ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #666;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(139, 120, 96, 0.3);
+    }
+    
+    .notice-footer {
+      background: #f9f7f4;
+      padding: 16px 30px;
+      text-align: center;
+      border-top: 1px solid #e8e4df;
+    }
+    
+    .footer-text {
+      font-size: 11px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="notice-container">
+    <div class="notice-header">
+      <h1>Money Mastery</h1>
+      <p>Transaction Entry Guide</p>
+    </div>
+    
+    <div class="notice-content">
+      <div class="icon-box">✨</div>
+      
+      <div class="message-text">
+        You're in control! Simply copy/paste from your bank statements and let Money Mastery's <strong>smart categorization</strong> do the rest.
+      </div>
+      
+      <div class="info-box">
+        <h3>Getting Started is Easy</h3>
+        <ul>
+          <li>Head to any <strong>ACCOUNT</strong> sheet (1-10)</li>
+          <li>Paste your transactions starting at <strong>row 11</strong></li>
+          <li>Just 3 columns: <strong>Date</strong>, <strong>Description</strong>, <strong>Amount</strong></li>
+          <li>Use the <strong>Categorization</strong> menu to categorize in bulk — it's fast!</li>
+        </ul>
+      </div>
+      
+      <button class="btn" onclick="google.script.host.close()">Let's Do This!</button>
+    </div>
+    
+    <div class="notice-footer">
+      <div class="footer-text">© 2026 Donna Roggio LLC. All Rights Reserved.</div>
+    </div>
+  </div>
+</body>
+</html>

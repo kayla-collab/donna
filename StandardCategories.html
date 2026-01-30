@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #ab9478;
+      --color-lightest: #d4c9bb;
+      --color-light: #c2b199;
+      --color-dark: #8a7760;
+      --color-darkest: #6d5f4c;
+      --color-income: #51cf66;
+      --color-expense: #ff6b6b;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8f6f3;
+      color: #333;
+    }
+    
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+    
+    .header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header h1 { font-size: 18px; margin-bottom: 4px; }
+    .header p { font-size: 12px; opacity: 0.9; }
+    
+    .content { padding: 16px; }
+    
+    .transaction-info {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--color-primary);
+    }
+    
+    .tx-label { font-size: 11px; color: #999; text-transform: uppercase; }
+    .tx-value { font-size: 15px; font-weight: 600; color: #333; margin-top: 4px; }
+    .tx-amount { font-size: 20px; font-weight: 700; }
+    .tx-amount.income { color: var(--color-income); }
+    .tx-amount.expense { color: var(--color-expense); }
+    
+    .mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .mode-btn {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .mode-btn.active {
+      border-color: var(--color-primary);
+      background: var(--color-lightest);
+      color: var(--color-darkest);
+    }
+    
+    .categories-section {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--color-darkest);
+      margin-bottom: 12px;
+    }
+    
+    .category-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      border: 1px solid #e8e4df;
+      background: #f8f6f3;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      text-align: left;
+      transition: all 0.2s;
+    }
+    
+    .category-btn:hover {
+      background: var(--color-lightest);
+      border-color: var(--color-primary);
+    }
+    
+    .category-btn.selected {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-dark);
+    }
+    
+    .apply-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.2s;
+    }
+    
+    .apply-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .apply-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .loading { text-align: center; padding: 40px; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Standard Categories</h1>
+    <p>Assign a category to the selected transaction</p>
+  </div>
+  
+  <div class="content">
+    <div class="transaction-info" id="txInfo">
+      <div class="loading">Loading transaction...</div>
+    </div>
+    
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="personalBtn" onclick="setMode('personal')">Personal</button>
+      <button class="mode-btn" id="businessBtn" onclick="setMode('business')">Business</button>
+    </div>
+    
+    <div class="categories-section" id="categoriesSection">
+      <div class="loading">Loading categories...</div>
+    </div>
+    
+    <button class="apply-btn" id="applyBtn" onclick="applyCategory()" disabled>Apply Category</button>
+  </div>
+
+  <script>
+    let state = { mode: 'personal', categories: [], selectedCategory: null, txInfo: null };
+
+    document.addEventListener('DOMContentLoaded', loadData);
+
+    function loadData() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          state.txInfo = data;
+          renderTxInfo(data);
+          loadCategories();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('txInfo').innerHTML = '<div class="loading">Error: ' + error.message + '</div>';
+        })
+        .getCategoriesForTransaction(state.mode === 'business');
+    }
+
+    function loadCategories() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          state.categories = data.categories || [];
+          renderCategories();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('categoriesSection').innerHTML = '<div class="loading">Error loading categories</div>';
+        })
+        .getCategoriesForTransaction(state.mode === 'business');
+    }
+
+    function renderTxInfo(data) {
+      const isIncome = data.amount > 0;
+      document.getElementById('txInfo').innerHTML = `
+        <div class="tx-label">Transaction Type</div>
+        <div class="tx-value">${isIncome ? 'Income' : 'Expense'}</div>
+        <div class="tx-amount ${isIncome ? 'income' : 'expense'}" style="margin-top: 8px;">
+          ${isIncome ? '+' : ''}$${Math.abs(data.amount).toFixed(2)}
+        </div>
+      `;
+    }
+
+    function renderCategories() {
+      if (state.categories.length === 0) {
+        document.getElementById('categoriesSection').innerHTML = '<div class="loading">No categories found</div>';
+        return;
+      }
+      
+      const html = state.categories.map(cat => 
+        `<button class="category-btn ${state.selectedCategory === cat ? 'selected' : ''}" onclick="selectCategory('${escapeJs(cat)}')">${escapeHtml(cat)}</button>`
+      ).join('');
+      
+      document.getElementById('categoriesSection').innerHTML = '<div class="section-title">' + (state.mode === 'business' ? 'Business' : 'Personal') + ' Categories</div>' + html;
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      state.selectedCategory = null;
+      document.getElementById('personalBtn').classList.toggle('active', mode === 'personal');
+      document.getElementById('businessBtn').classList.toggle('active', mode === 'business');
+      document.getElementById('applyBtn').disabled = true;
+      loadCategories();
+    }
+
+    function selectCategory(category) {
+      state.selectedCategory = category;
+      renderCategories();
+      document.getElementById('applyBtn').disabled = false;
+    }
+
+    function applyCategory() {
+      if (!state.selectedCategory) return;
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          google.script.host.close();
+        })
+        .withFailureHandler(function(error) {
+          alert('Error: ' + error.message);
+        })
+        .assignCategoryOptimized(state.selectedCategory, state.mode === 'business');
+    }
+
+    function escapeHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+    function escapeJs(str) { return String(str).replace(/'/g, "\\'"); }
+  </script>
+</body>
+</html>

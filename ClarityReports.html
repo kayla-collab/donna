@@ -1,0 +1,2062 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════
+       DONNA ROGGIO LLC - CLARITY AI & REPORTS
+       Brand Colors: Gold #ab9478, Teal #567b84
+       Modal Size: 1400x900px
+       © 2026 Donna Roggio LLC. All Rights Reserved.
+       ═══════════════════════════════════════════════════════════════════ */
+    
+    :root {
+      --gold: #9a8368;
+      --gold-dark: #7a6858;
+      --gold-light: #b4a08a;
+      --gold-lightest: #d4c9bb;
+      --teal: #456a73;
+      --teal-dark: #3a5a62;
+      --teal-light: #5a8a94;
+      --bg: #f5f3f0;
+      --bg-light: #faf9f7;
+      --text: #1a1a1a;
+      --text-light: #333333;
+      --text-muted: #666666;
+      --white: #ffffff;
+      --success: #1a7a4c;
+      --error: #b91c1c;
+      --warning: #d97706;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       LOADING SCREEN - Dynamic & Engaging
+       ═══════════════════════════════════════════════════════════════════ */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, var(--bg) 0%, #ebe6df 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .loading-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    
+    .loading-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    
+    .loading-logo-accent {
+      color: var(--teal);
+    }
+    
+    .loading-spinner-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin-bottom: 30px;
+    }
+    
+    .loading-spinner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 80px;
+      height: 80px;
+      border: 4px solid var(--gold-lightest);
+      border-top: 4px solid var(--teal);
+      border-right: 4px solid var(--gold);
+      border-radius: 50%;
+      animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+    
+    .loading-spinner-inner {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--gold-light);
+      border-bottom: 3px solid var(--teal-light);
+      border-radius: 50%;
+      animation: spinReverse 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes spinReverse {
+      0% { transform: rotate(360deg); }
+      100% { transform: rotate(0deg); }
+    }
+    
+    .loading-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      min-height: 24px;
+    }
+    
+    .loading-subtext {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+      max-width: 400px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    
+    .loading-progress-container {
+      width: 320px;
+    }
+    
+    .loading-progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--gold-lightest);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    
+    .loading-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--teal), var(--gold));
+      background-size: 200% 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.5s ease;
+      animation: shimmer 2s ease-in-out infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
+    .loading-percent {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold-dark);
+      text-align: center;
+    }
+    
+    .loading-tip {
+      margin-top: 30px;
+      padding: 16px 24px;
+      background: var(--white);
+      border-radius: 10px;
+      border-left: 4px solid var(--teal);
+      max-width: 420px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .loading-tip-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    
+    .loading-tip-text {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       MAIN LAYOUT
+       ═══════════════════════════════════════════════════════════════════ */
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════════════════════════════ */
+    .header {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      color: var(--white);
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .header-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .header-icon .material-icons-outlined {
+      font-size: 26px;
+      color: var(--gold-light);
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .header-subtitle {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-top: 2px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .header-btn {
+      padding: 10px 18px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .header-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+    
+    .header-btn .material-icons-outlined {
+      font-size: 18px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       CONTENT AREA
+       ═══════════════════════════════════════════════════════════════════ */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+    }
+    
+    .content::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .content::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    
+    .content::-webkit-scrollbar-thumb {
+      background: var(--gold-light);
+      border-radius: 4px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       SECTION TITLES
+       ═══════════════════════════════════════════════════════════════════ */
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title .material-icons-outlined {
+      color: var(--gold);
+      font-size: 22px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       CALM & SIMPLE REPORT SELECTION
+       ═══════════════════════════════════════════════════════════════════ */
+    .report-intro {
+      text-align: center;
+      margin-bottom: 24px;
+      padding: 0 20px;
+    }
+    
+    .report-intro p {
+      color: var(--text-light);
+      font-size: 14px;
+      margin: 0;
+    }
+    
+    .report-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 700px;
+      margin: 0 auto 24px;
+    }
+    
+    .report-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--white);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 16px 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .report-item:hover {
+      background: var(--bg-light);
+      border-color: var(--gold-light);
+    }
+    
+    .report-item.selected {
+      background: linear-gradient(135deg, rgba(86, 123, 132, 0.08) 0%, rgba(171, 148, 120, 0.05) 100%);
+      border-color: var(--teal);
+    }
+    
+    .report-item-radio {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--gold-light);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    
+    .report-item.selected .report-item-radio {
+      border-color: var(--teal);
+      background: var(--teal);
+    }
+    
+    .report-item.selected .report-item-radio::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--white);
+      border-radius: 50%;
+    }
+    
+    .report-item-content {
+      flex: 1;
+    }
+    
+    .report-item-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    
+    .report-item-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .report-item-icon {
+      color: var(--gold);
+      font-size: 22px;
+    }
+    
+    .report-item.selected .report-item-icon {
+      color: var(--teal);
+    }
+    
+    /* Custom Builder - Special Treatment */
+    .custom-builder-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      margin: 24px auto 0;
+      max-width: 300px;
+      background: transparent;
+      border: 2px dashed var(--gold-light);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-light);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .custom-builder-link:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: rgba(86, 123, 132, 0.05);
+    }
+    
+    .custom-builder-link.selected {
+      border-color: var(--teal);
+      border-style: solid;
+      color: var(--teal);
+      background: rgba(86, 123, 132, 0.08);
+    }
+    
+    .custom-builder-link .material-icons-outlined {
+      font-size: 18px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       FILTERS SECTION
+       ═══════════════════════════════════════════════════════════════════ */
+    .filters-section {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #e8e4df;
+      display: none;
+    }
+    
+    .filters-section.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .filters-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--gold-lightest);
+    }
+    
+    .filters-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .filters-title .material-icons-outlined {
+      color: var(--gold);
+    }
+    
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .filter-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .filter-input,
+    .filter-select {
+      padding: 12px 14px;
+      border: 2px solid #e8e4df;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg-light);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    
+    .filter-input:focus,
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--teal);
+      background: var(--white);
+      box-shadow: 0 0 0 3px rgba(86, 123, 132, 0.1);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       CATEGORY PILLS
+       ═══════════════════════════════════════════════════════════════════ */
+    .pills-container {
+      margin-bottom: 20px;
+    }
+    
+    .pills-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    
+    .pills-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .pill {
+      padding: 8px 16px;
+      background: var(--bg-light);
+      border: 2px solid #e8e4df;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .pill:hover {
+      border-color: var(--gold);
+      color: var(--gold-dark);
+    }
+    
+    .pill.selected {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: var(--white);
+    }
+    
+    .pill .material-icons-outlined {
+      font-size: 16px;
+    }
+    
+    .pill.selected .pill-check {
+      display: inline;
+    }
+    
+    .pill .pill-check {
+      display: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       CUSTOM BUILDER SECTION
+       ═══════════════════════════════════════════════════════════════════ */
+    .custom-builder-section {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #e8e4df;
+      display: none;
+    }
+    
+    .custom-builder-section.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+    
+    .custom-prompt-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 14px;
+      border: 2px solid #e8e4df;
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg-light);
+      color: var(--text);
+      resize: vertical;
+      margin-bottom: 16px;
+      transition: all 0.2s;
+    }
+    
+    .custom-prompt-textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      background: var(--white);
+    }
+    
+    .custom-prompt-textarea::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .data-blocks-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    
+    .data-blocks-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    
+    .data-block {
+      padding: 12px;
+      background: var(--bg-light);
+      border: 2px solid #e8e4df;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    
+    .data-block:hover {
+      border-color: var(--gold);
+    }
+    
+    .data-block.selected {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      border-color: var(--teal);
+      color: var(--white);
+    }
+    
+    .data-block-icon {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+    
+    .data-block-name {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       PREVIEW SECTION
+       ═══════════════════════════════════════════════════════════════════ */
+    .preview-section {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid #e8e4df;
+      display: none;
+    }
+    
+    .preview-section.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+    
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--gold-lightest);
+    }
+    
+    .preview-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: var(--bg-light);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      border-left: 4px solid var(--gold);
+    }
+    
+    .stat-card.income { border-left-color: var(--success); }
+    .stat-card.expense { border-left-color: var(--error); }
+    .stat-card.profit { border-left-color: var(--success); }
+    .stat-card.count { border-left-color: var(--teal); }
+    
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    
+    .stat-value.positive { color: var(--success); }
+    .stat-value.negative { color: var(--error); }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       ACTION BUTTONS
+       ═══════════════════════════════════════════════════════════════════ */
+    .actions-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    
+    .action-btn {
+      padding: 16px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .action-btn .material-icons-outlined {
+      font-size: 20px;
+    }
+    
+    .action-btn-primary {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--white);
+      box-shadow: 0 4px 15px rgba(171, 148, 120, 0.3);
+    }
+    
+    .action-btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(171, 148, 120, 0.4);
+    }
+    
+    .action-btn-secondary {
+      background: var(--white);
+      color: var(--teal);
+      border: 2px solid var(--teal);
+    }
+    
+    .action-btn-secondary:hover:not(:disabled) {
+      background: var(--teal);
+      color: var(--white);
+    }
+    
+    .action-btn-clarity {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      color: var(--white);
+      box-shadow: 0 4px 15px rgba(86, 123, 132, 0.3);
+    }
+    
+    .action-btn-clarity:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(86, 123, 132, 0.4);
+    }
+    
+    .action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       GENERATE BUTTON (Standalone)
+       ═══════════════════════════════════════════════════════════════════ */
+    .generate-btn-container {
+      margin-bottom: 24px;
+    }
+    
+    .generate-btn {
+      width: 100%;
+      padding: 18px 24px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(171, 148, 120, 0.3);
+    }
+    
+    .generate-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(171, 148, 120, 0.4);
+    }
+    
+    .generate-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .generate-btn .material-icons-outlined {
+      font-size: 22px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       EMAIL MODAL
+       ═══════════════════════════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+    }
+    
+    .modal-overlay.show {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: var(--white);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      color: var(--white);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-header h3 {
+      font-size: 18px;
+      margin: 0;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      padding: 4px;
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    .modal-footer {
+      padding: 16px 24px;
+      background: var(--bg-light);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    /* Format Selection Options */
+    .format-option {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 12px;
+      background: var(--bg-light);
+      border: 2px solid #e5e2dd;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    
+    .format-option:hover {
+      border-color: var(--gold);
+      background: var(--white);
+    }
+    
+    .format-option.selected {
+      border-color: var(--teal);
+      background: linear-gradient(135deg, rgba(69, 106, 115, 0.08) 0%, rgba(154, 131, 104, 0.05) 100%);
+    }
+    
+    .format-option.selected .material-icons-outlined {
+      color: var(--teal);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       INLINE LOADING STATE
+       ═══════════════════════════════════════════════════════════════════ */
+    .inline-loading {
+      text-align: center;
+      padding: 40px;
+      display: none;
+    }
+    
+    .inline-loading.show {
+      display: block;
+    }
+    
+    .inline-loading .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--gold-lightest);
+      border-top: 4px solid var(--teal);
+      border-right: 4px solid var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    
+    .inline-loading p {
+      color: var(--text-light);
+      font-size: 14px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       TOAST NOTIFICATIONS
+       ═══════════════════════════════════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 16px 24px;
+      border-radius: 10px;
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast.success {
+      background: linear-gradient(135deg, var(--success) 0%, #40c057 100%);
+    }
+    
+    .toast.error {
+      background: linear-gradient(135deg, var(--error) 0%, #e53935 100%);
+    }
+    
+    .toast.info {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════════════ */
+    .footer {
+      text-align: center;
+      padding: 16px 24px;
+      background: var(--white);
+      border-top: 1px solid #e8e4df;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .footer a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- ═══════════════════════════════════════════════════════════════════
+       LOADING SCREEN
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-brand">
+      <span class="loading-logo">Clarity <span class="loading-logo-accent">AI</span></span>
+    </div>
+    <div class="loading-spinner-container">
+      <div class="loading-spinner"></div>
+      <div class="loading-spinner-inner"></div>
+    </div>
+    <p class="loading-text" id="loadingText">Connecting to your financial data...</p>
+    <p class="loading-subtext" id="loadingSubtext">We're analyzing up to 1 million cells to bring you personalized insights</p>
+    <div class="loading-progress-container">
+      <div class="loading-progress-bar">
+        <div class="loading-progress-fill" id="loadingProgressFill"></div>
+      </div>
+      <p class="loading-percent" id="loadingPercent">0%</p>
+    </div>
+    <div class="loading-tip">
+      <div class="loading-tip-label">Did you know?</div>
+      <p class="loading-tip-text" id="loadingTipText">Clarity AI can help you understand your spending patterns without judgment or jargon.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MAIN CONTAINER
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="main-container">
+    <!-- Header - Clean & Calm -->
+    <div class="header">
+      <div class="header-left">
+        <div class="header-icon">
+          <span class="material-icons-outlined">insights</span>
+        </div>
+        <div>
+          <h1>Reports</h1>
+          <p class="header-subtitle">See your finances clearly</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" onclick="goToDashboard()">
+          <span class="material-icons-outlined">arrow_back</span>
+          Dashboard
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Report Type Selection - Calm & Simple -->
+      <div class="section-title">
+        <span class="material-icons-outlined">description</span>
+        What would you like to see?
+      </div>
+      
+      <div class="report-intro">
+        <p>Select a report below, then choose your date range and filters.</p>
+      </div>
+      
+      <div class="report-list" id="reportList">
+        <div class="report-item" data-report="all-transactions" onclick="selectReport('all-transactions')">
+          <div class="report-item-radio"></div>
+          <div class="report-item-content">
+            <div class="report-item-title">All Transactions</div>
+            <div class="report-item-desc">Complete list with optional category filters</div>
+          </div>
+          <span class="material-icons-outlined report-item-icon">receipt_long</span>
+        </div>
+        
+        <div class="report-item" data-report="profit-loss" onclick="selectReport('profit-loss')">
+          <div class="report-item-radio"></div>
+          <div class="report-item-content">
+            <div class="report-item-title">Profit & Loss</div>
+            <div class="report-item-desc">Professional income vs expense statement</div>
+          </div>
+          <span class="material-icons-outlined report-item-icon">trending_up</span>
+        </div>
+        
+        <div class="report-item" data-report="needs-desires" onclick="selectReport('needs-desires')">
+          <div class="report-item-radio"></div>
+          <div class="report-item-content">
+            <div class="report-item-title">Needs vs Wants</div>
+            <div class="report-item-desc">See where your money goes by priority</div>
+          </div>
+          <span class="material-icons-outlined report-item-icon">balance</span>
+        </div>
+        
+        <div class="report-item" data-report="monthly" onclick="selectReport('monthly')">
+          <div class="report-item-radio"></div>
+          <div class="report-item-content">
+            <div class="report-item-title">Monthly Trends</div>
+            <div class="report-item-desc">Compare month-over-month patterns</div>
+          </div>
+          <span class="material-icons-outlined report-item-icon">calendar_month</span>
+        </div>
+        
+        <div class="report-item" data-report="account-summary" onclick="selectReport('account-summary')">
+          <div class="report-item-radio"></div>
+          <div class="report-item-content">
+            <div class="report-item-title">By Account</div>
+            <div class="report-item-desc">Breakdown by each bank account</div>
+          </div>
+          <span class="material-icons-outlined report-item-icon">account_balance</span>
+        </div>
+        
+        <div class="report-item" data-report="payments" onclick="selectReport('payments')">
+          <div class="report-item-radio"></div>
+          <div class="report-item-content">
+            <div class="report-item-title">Payments & Transfers</div>
+            <div class="report-item-desc">Credit card payments, transfers, excluded items</div>
+          </div>
+          <span class="material-icons-outlined report-item-icon">swap_horiz</span>
+        </div>
+      </div>
+      
+      <!-- Custom Builder - Simple Link -->
+      <div class="custom-builder-link" data-report="custom" onclick="selectReport('custom')">
+        <span class="material-icons-outlined">build</span>
+        <span>Build a Custom Report</span>
+      </div>
+
+      <!-- Filters Section - Clean & Simple -->
+      <div class="filters-section" id="filtersSection">
+        <p class="filters-subtitle" id="filtersTitleText" style="text-align: center; color: var(--text-light); margin-bottom: 20px; font-size: 14px;">Choose your date range</p>
+        
+        <div class="filters-grid" id="filtersGrid" style="max-width: 600px; margin: 0 auto; grid-template-columns: 1fr 1fr 1fr;">
+          <div class="filter-group">
+            <label class="filter-label">From</label>
+            <input type="date" class="filter-input" id="startDate">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">To</label>
+            <input type="date" class="filter-input" id="endDate">
+          </div>
+          <div class="filter-group" id="datePresetGroup">
+            <label class="filter-label">Quick Select</label>
+            <select class="filter-select" id="datePreset" onchange="applyDatePreset()">
+              <option value="">Choose...</option>
+              <option value="current-month">This Month</option>
+              <option value="last-30">Last 30 Days</option>
+              <option value="last-90">Last 90 Days</option>
+              <option value="ytd">Year to Date</option>
+              <option value="all">All Time</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Category Filter - Collapsible -->
+        <div class="pills-container" id="categoryPillsContainer" style="display: none; max-width: 600px; margin: 20px auto 0;">
+          <button type="button" id="categoryToggleBtn" onclick="toggleCategoryFilter()" style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--bg-light); border: 1px solid #e8e4df; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-light); width: 100%; justify-content: center;">
+            <span class="material-icons-outlined" style="font-size: 18px;">filter_list</span>
+            <span id="categoryToggleText">Filter by Categories</span>
+            <span class="material-icons-outlined" id="categoryToggleIcon" style="font-size: 18px; margin-left: auto;">expand_more</span>
+          </button>
+          <div id="categoryPillsInner" style="display: none; margin-top: 12px; padding: 16px; background: var(--bg-light); border-radius: 8px;">
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <button type="button" onclick="selectAllCategories()" style="padding: 6px 14px; font-size: 12px; background: var(--teal); color: white; border: none; border-radius: 6px; cursor: pointer;">Select All</button>
+              <button type="button" onclick="clearAllCategories()" style="padding: 6px 14px; font-size: 12px; background: var(--white); color: var(--text); border: 1px solid #e8e4df; border-radius: 6px; cursor: pointer;">Clear</button>
+            </div>
+            <div class="pills-wrapper" id="categoryPills">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="generate-btn-container" style="max-width: 400px; margin: 24px auto 0;">
+          <button class="generate-btn" id="generateBtn" onclick="generateReport()">
+            <span class="material-icons-outlined">play_arrow</span>
+            Generate Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Custom Builder Section -->
+      <div class="custom-builder-section" id="customBuilderSection">
+        <div class="filters-header">
+          <div class="filters-title">
+            <span class="material-icons-outlined">build</span>
+            Custom Report Builder
+          </div>
+        </div>
+        
+        <textarea class="custom-prompt-textarea" id="customPrompt" placeholder="What would you like to know about your finances? For example: 'Show me my largest expenses this month' or 'How much did I spend on food?'"></textarea>
+        
+        <div class="data-blocks-title">Select data to include in your report:</div>
+        <div class="data-blocks-grid" id="dataBlocksGrid">
+          <div class="data-block" data-block="income" onclick="toggleDataBlock('income')">
+            <div class="data-block-icon">💵</div>
+            <div class="data-block-name">Income Summary</div>
+          </div>
+          <div class="data-block" data-block="expenses" onclick="toggleDataBlock('expenses')">
+            <div class="data-block-icon">💸</div>
+            <div class="data-block-name">Expense Summary</div>
+          </div>
+          <div class="data-block" data-block="categories" onclick="toggleDataBlock('categories')">
+            <div class="data-block-icon">📂</div>
+            <div class="data-block-name">Categories</div>
+          </div>
+          <div class="data-block" data-block="needs-desires" onclick="toggleDataBlock('needs-desires')">
+            <div class="data-block-icon">⚖️</div>
+            <div class="data-block-name">Needs vs Desires</div>
+          </div>
+          <div class="data-block" data-block="top-expenses" onclick="toggleDataBlock('top-expenses')">
+            <div class="data-block-icon">🔝</div>
+            <div class="data-block-name">Top 10 Expenses</div>
+          </div>
+          <div class="data-block" data-block="top-income" onclick="toggleDataBlock('top-income')">
+            <div class="data-block-icon">⬆️</div>
+            <div class="data-block-name">Top 10 Income</div>
+          </div>
+          <div class="data-block" data-block="monthly-trends" onclick="toggleDataBlock('monthly-trends')">
+            <div class="data-block-icon">📈</div>
+            <div class="data-block-name">Monthly Trends</div>
+          </div>
+          <div class="data-block" data-block="accounts" onclick="toggleDataBlock('accounts')">
+            <div class="data-block-icon">🏦</div>
+            <div class="data-block-name">Account Balances</div>
+          </div>
+          <div class="data-block" data-block="uncategorized" onclick="toggleDataBlock('uncategorized')">
+            <div class="data-block-icon">❓</div>
+            <div class="data-block-name">Uncategorized</div>
+          </div>
+          <div class="data-block" data-block="largest" onclick="toggleDataBlock('largest')">
+            <div class="data-block-icon">💎</div>
+            <div class="data-block-name">Largest Transactions</div>
+          </div>
+          <div class="data-block" data-block="recurring" onclick="toggleDataBlock('recurring')">
+            <div class="data-block-icon">🔄</div>
+            <div class="data-block-name">Recurring Payments</div>
+          </div>
+          <div class="data-block" data-block="business" onclick="toggleDataBlock('business')">
+            <div class="data-block-icon">💼</div>
+            <div class="data-block-name">Business vs Personal</div>
+          </div>
+        </div>
+        
+        <div class="filters-grid" style="margin-top: 20px;">
+          <div class="filter-group">
+            <label class="filter-label">Start Date</label>
+            <input type="date" class="filter-input" id="customStartDate">
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">End Date</label>
+            <input type="date" class="filter-input" id="customEndDate">
+          </div>
+        </div>
+        
+        <div class="generate-btn-container">
+          <button class="generate-btn" onclick="generateCustomReport()">
+            <span class="material-icons-outlined">auto_awesome</span>
+            Build Custom Report
+          </button>
+        </div>
+      </div>
+
+      <!-- Inline Loading -->
+      <div class="inline-loading" id="inlineLoading">
+        <div class="spinner"></div>
+        <p id="inlineLoadingText">Generating your report...</p>
+      </div>
+
+      <!-- Preview Section -->
+      <div class="preview-section" id="previewSection">
+        <div class="preview-header">
+          <div class="filters-title">
+            <span class="material-icons-outlined">preview</span>
+            <span>Report Preview</span>
+          </div>
+          <span id="reportDateRange" style="font-size: 13px; color: var(--text-muted);"></span>
+        </div>
+        
+        <div class="preview-stats" id="previewStats">
+          <!-- Populated dynamically -->
+        </div>
+        
+        <div class="actions-row">
+          <button class="action-btn action-btn-primary" onclick="downloadReport()">
+            <span class="material-icons-outlined">download</span>
+            Download PDF
+          </button>
+          <button class="action-btn action-btn-secondary" onclick="showEmailModal()">
+            <span class="material-icons-outlined">email</span>
+            Share via Email
+          </button>
+          <button class="action-btn action-btn-clarity" onclick="askClarityAI()">
+            <span class="material-icons-outlined">psychology</span>
+            Ask Clarity AI
+          </button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        © 2026 Donna Roggio LLC. All Rights Reserved. | 
+        <a href="https://risingandthriving.com/membershiphub" target="_blank">Membership Hub</a> | 
+        Created with the Money Mastery System
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       EMAIL MODAL - Share Report
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="emailModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Share Report</h3>
+        <button class="modal-close" onclick="hideEmailModal()">
+          <span class="material-icons-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Format Selection -->
+        <div class="filter-group">
+          <label class="filter-label">Export Format</label>
+          <div style="display: flex; gap: 12px; margin-top: 8px;">
+            <label class="format-option selected" id="formatDocOption" onclick="selectExportFormat('doc')">
+              <span class="material-icons-outlined" style="font-size: 24px; margin-bottom: 4px;">description</span>
+              <span style="font-weight: 600;">Google Doc</span>
+              <span style="font-size: 11px; color: var(--text-muted);">Formatted report</span>
+            </label>
+            <label class="format-option" id="formatCsvOption" onclick="selectExportFormat('csv')">
+              <span class="material-icons-outlined" style="font-size: 24px; margin-bottom: 4px;">table_chart</span>
+              <span style="font-weight: 600;">CSV File</span>
+              <span style="font-size: 11px; color: var(--text-muted);">Raw data</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="filter-group" style="margin-top: 16px;">
+          <label class="filter-label">Recipient Email</label>
+          <input type="email" class="filter-input" id="recipientEmail" placeholder="accountant@example.com">
+        </div>
+        <div class="filter-group" style="margin-top: 16px;">
+          <label class="filter-label">Add a Message (Optional)</label>
+          <textarea class="custom-prompt-textarea" id="emailMessage" placeholder="Hi, here's my financial report for your review..." style="min-height: 80px;"></textarea>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+          <span class="material-icons-outlined" style="font-size: 14px; vertical-align: middle;">info</span>
+          The recipient will receive a link to view/download your report. The file will be saved to your Google Drive in a "Money Mastery Reports" folder.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn action-btn-secondary" onclick="hideEmailModal()" style="padding: 12px 20px;">Cancel</button>
+        <button class="action-btn action-btn-primary" onclick="sendReportEmail()" id="sendEmailBtn" style="padding: 12px 20px;">
+          <span class="material-icons-outlined">send</span>
+          Share Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       CLARITY AI MODAL
+       ═══════════════════════════════════════════════════════════════════ -->
+  <div class="modal-overlay" id="clarityModal">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);">
+        <h3>✨ Ask Clarity AI</h3>
+        <button class="modal-close" onclick="hideClarityModal()">
+          <span class="material-icons-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 24px;">
+        <div style="background: linear-gradient(135deg, rgba(86, 123, 132, 0.1) 0%, rgba(171, 148, 120, 0.1) 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--teal);">
+          <p style="font-size: 15px; color: var(--text); margin: 0; line-height: 1.6;">
+            <strong>Here's how it works:</strong><br>
+            1. Copy your personalized prompt below<br>
+            2. Click "Open ChatGPT"<br>
+            3. Paste in ChatGPT and let Clarity do the magic! ✨
+          </p>
+        </div>
+        
+        <div class="filter-group">
+          <label class="filter-label">Your Clarity AI Prompt</label>
+          <textarea id="clarityPromptText" readonly style="width: 100%; min-height: 200px; padding: 14px; border: 2px solid #e8e4df; border-radius: 10px; font-size: 13px; font-family: 'Montserrat', sans-serif; background: var(--bg-light); color: var(--text); resize: vertical; line-height: 1.5;"></textarea>
+        </div>
+        
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px; text-align: center;">
+          Clarity AI helps you understand your finances with kindness and clarity — no judgment, no jargon.
+        </p>
+      </div>
+      <div class="modal-footer" style="display: flex; gap: 12px; justify-content: center;">
+        <button class="action-btn action-btn-secondary" onclick="copyPromptToClipboard()" style="padding: 14px 24px;">
+          <span class="material-icons-outlined">content_copy</span>
+          Copy Prompt
+        </button>
+        <button class="action-btn action-btn-clarity" onclick="openChatGPT()" style="padding: 14px 24px;">
+          <span class="material-icons-outlined">open_in_new</span>
+          Open ChatGPT
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       JAVASCRIPT
+       ═══════════════════════════════════════════════════════════════════ -->
+  <script>
+    // ═══════════════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════════════
+    let selectedReport = null;
+    let generatedReportData = null;
+    let selectedCategories = [];
+    let selectedDataBlocks = [];
+    let availableCategories = [];
+    let currentClarityPrompt = '';
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // LOADING SCREEN
+    // ═══════════════════════════════════════════════════════════════════
+    const loadingMessages = [
+      { text: 'Connecting to your financial data...', sub: 'We\'re analyzing up to 1 million cells to bring you personalized insights' },
+      { text: 'Reading your transactions...', sub: 'Processing income and expense data from all your accounts' },
+      { text: 'Calculating totals...', sub: 'Crunching the numbers to give you accurate summaries' },
+      { text: 'Organizing categories...', sub: 'Grouping your spending into meaningful categories' },
+      { text: 'Almost ready...', sub: 'Putting the finishing touches on your report' }
+    ];
+    
+    const loadingTips = [
+      'Clarity AI can help you understand your spending patterns without judgment or jargon.',
+      'You can share any report with your accountant or financial advisor directly via email.',
+      'The Custom Builder lets you create exactly the report you need.',
+      'Need help understanding your finances? Visit risingandthriving.com/membershiphub',
+      'Donna offers intensive sessions to break down your reports in detail.'
+    ];
+    
+    let loadingStage = 0;
+    let loadingInterval = null;
+    
+    function startLoading() {
+      loadingStage = 0;
+      updateLoadingUI();
+      loadingInterval = setInterval(() => {
+        if (loadingStage < loadingMessages.length - 1) {
+          loadingStage++;
+          updateLoadingUI();
+        }
+      }, 1500);
+    }
+    
+    function updateLoadingUI() {
+      const msg = loadingMessages[loadingStage];
+      document.getElementById('loadingText').textContent = msg.text;
+      document.getElementById('loadingSubtext').textContent = msg.sub;
+      const progress = ((loadingStage + 1) / loadingMessages.length) * 100;
+      document.getElementById('loadingProgressFill').style.width = progress + '%';
+      document.getElementById('loadingPercent').textContent = Math.round(progress) + '%';
+      
+      // Random tip
+      const tip = loadingTips[Math.floor(Math.random() * loadingTips.length)];
+      document.getElementById('loadingTipText').textContent = tip;
+    }
+    
+    function hideLoading() {
+      clearInterval(loadingInterval);
+      document.getElementById('loadingProgressFill').style.width = '100%';
+      document.getElementById('loadingPercent').textContent = '100%';
+      setTimeout(() => {
+        document.getElementById('loadingOverlay').classList.add('hidden');
+      }, 500);
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // INITIALIZATION
+    // ═══════════════════════════════════════════════════════════════════
+    window.addEventListener('load', function() {
+      startLoading();
+      
+      // Set default dates
+      const today = new Date();
+      const firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+      
+      document.getElementById('startDate').valueAsDate = firstOfMonth;
+      document.getElementById('endDate').valueAsDate = today;
+      document.getElementById('customStartDate').valueAsDate = firstOfMonth;
+      document.getElementById('customEndDate').valueAsDate = today;
+      
+      // Load categories
+      google.script.run
+        .withSuccessHandler(function(data) {
+          availableCategories = data.categories || [];
+          hideLoading();
+        })
+        .withFailureHandler(function(error) {
+          console.error('Error loading categories:', error);
+          hideLoading();
+        })
+        .getReportCategories();
+    });
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // REPORT SELECTION
+    // ═══════════════════════════════════════════════════════════════════
+    function selectReport(reportType) {
+      selectedReport = reportType;
+      
+      // Update selection visuals
+      document.querySelectorAll('.report-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      document.querySelectorAll('.custom-builder-link').forEach(link => {
+        link.classList.remove('selected');
+      });
+      
+      const selectedElement = document.querySelector(`[data-report="${reportType}"]`);
+      if (selectedElement) {
+        selectedElement.classList.add('selected');
+      }
+      
+      // Hide all sections first
+      document.getElementById('filtersSection').classList.remove('show');
+      document.getElementById('customBuilderSection').classList.remove('show');
+      document.getElementById('previewSection').classList.remove('show');
+      document.getElementById('categoryPillsContainer').style.display = 'none';
+      
+      // Show appropriate section
+      if (reportType === 'custom') {
+        document.getElementById('customBuilderSection').classList.add('show');
+      } else {
+        document.getElementById('filtersSection').classList.add('show');
+        
+        // Show category pills for all-transactions and profit-loss (allow filtering)
+        if (reportType === 'all-transactions' || reportType === 'profit-loss') {
+          document.getElementById('categoryPillsContainer').style.display = 'block';
+          populateCategoryPills();
+        }
+        
+        updateFilterTitle(reportType);
+      }
+      
+      // Scroll to section
+      setTimeout(() => {
+        const section = reportType === 'custom' 
+          ? document.getElementById('customBuilderSection')
+          : document.getElementById('filtersSection');
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+    
+    function updateFilterTitle(reportType) {
+      const titles = {
+        'all-transactions': 'Choose your date range and categories',
+        'profit-loss': 'Choose your date range',
+        'needs-desires': 'Choose your date range',
+        'monthly': 'Choose your date range',
+        'account-summary': 'Choose your date range',
+        'payments': 'Choose your date range'
+      };
+      document.getElementById('filtersTitleText').textContent = titles[reportType] || 'Report Options';
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // DATE PRESETS
+    // ═══════════════════════════════════════════════════════════════════
+    function applyDatePreset() {
+      const preset = document.getElementById('datePreset').value;
+      const today = new Date();
+      let startDate = new Date();
+      
+      switch(preset) {
+        case 'current-month':
+          startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+          break;
+        case 'last-30':
+          startDate.setDate(today.getDate() - 30);
+          break;
+        case 'last-90':
+          startDate.setDate(today.getDate() - 90);
+          break;
+        case 'ytd':
+          startDate = new Date(today.getFullYear(), 0, 1);
+          break;
+        case 'all':
+          startDate = new Date(2020, 0, 1);
+          break;
+        default:
+          return;
+      }
+      
+      document.getElementById('startDate').valueAsDate = startDate;
+      document.getElementById('endDate').valueAsDate = today;
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // CATEGORY PILLS
+    // ═══════════════════════════════════════════════════════════════════
+    function populateCategoryPills() {
+      const container = document.getElementById('categoryPills');
+      container.innerHTML = availableCategories.map(cat => `
+        <div class="pill ${selectedCategories.includes(cat) ? 'selected' : ''}" onclick="toggleCategory('${escapeHtml(cat)}')">
+          <span class="material-icons-outlined pill-check">check</span>
+          ${escapeHtml(cat)}
+        </div>
+      `).join('');
+    }
+    
+    function toggleCategory(category) {
+      const idx = selectedCategories.indexOf(category);
+      if (idx > -1) {
+        selectedCategories.splice(idx, 1);
+      } else {
+        selectedCategories.push(category);
+      }
+      populateCategoryPills();
+      updateCategoryToggleText();
+    }
+    
+    function selectAllCategories() {
+      selectedCategories = [...availableCategories];
+      populateCategoryPills();
+      updateCategoryToggleText();
+    }
+    
+    function clearAllCategories() {
+      selectedCategories = [];
+      populateCategoryPills();
+      updateCategoryToggleText();
+    }
+    
+    function toggleCategoryFilter() {
+      const inner = document.getElementById('categoryPillsInner');
+      const icon = document.getElementById('categoryToggleIcon');
+      if (inner.style.display === 'none') {
+        inner.style.display = 'block';
+        icon.textContent = 'expand_less';
+      } else {
+        inner.style.display = 'none';
+        icon.textContent = 'expand_more';
+      }
+    }
+    
+    function updateCategoryToggleText() {
+      const text = document.getElementById('categoryToggleText');
+      if (selectedCategories.length === 0) {
+        text.textContent = 'Filter by Categories';
+      } else if (selectedCategories.length === availableCategories.length) {
+        text.textContent = 'All Categories Selected';
+      } else {
+        text.textContent = selectedCategories.length + ' Categories Selected';
+      }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // DATA BLOCKS (Custom Builder)
+    // ═══════════════════════════════════════════════════════════════════
+    function toggleDataBlock(block) {
+      const idx = selectedDataBlocks.indexOf(block);
+      if (idx > -1) {
+        selectedDataBlocks.splice(idx, 1);
+      } else {
+        selectedDataBlocks.push(block);
+      }
+      
+      document.querySelectorAll('.data-block').forEach(el => {
+        if (selectedDataBlocks.includes(el.dataset.block)) {
+          el.classList.add('selected');
+        } else {
+          el.classList.remove('selected');
+        }
+      });
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // REPORT GENERATION
+    // ═══════════════════════════════════════════════════════════════════
+    function generateReport() {
+      if (!selectedReport) {
+        showToast('Please select a report type', 'error');
+        return;
+      }
+      
+      const filters = {
+        reportType: selectedReport,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        categories: selectedCategories
+      };
+      
+      showInlineLoading('Generating your report...');
+      
+      google.script.run
+        .withSuccessHandler(handleReportGenerated)
+        .withFailureHandler(handleReportError)
+        .generateClarityReport(filters);
+    }
+    
+    function generateCustomReport() {
+      const customPrompt = document.getElementById('customPrompt').value;
+      
+      if (selectedDataBlocks.length === 0) {
+        showToast('Please select at least one data block', 'error');
+        return;
+      }
+      
+      const filters = {
+        reportType: 'custom',
+        startDate: document.getElementById('customStartDate').value,
+        endDate: document.getElementById('customEndDate').value,
+        customPrompt: customPrompt,
+        dataBlocks: selectedDataBlocks
+      };
+      
+      showInlineLoading('Building your custom report...');
+      
+      google.script.run
+        .withSuccessHandler(handleReportGenerated)
+        .withFailureHandler(handleReportError)
+        .generateClarityReport(filters);
+    }
+    
+    function handleReportGenerated(result) {
+      console.log('handleReportGenerated called with:', result);
+      hideInlineLoading();
+      
+      if (!result) {
+        console.error('Result is null or undefined');
+        showToast('Error: No response received from server', 'error');
+        return;
+      }
+      
+      if (result.success) {
+        console.log('Report successful, stats:', result.stats);
+        generatedReportData = result;
+        displayPreview(result);
+        showToast('Report generated successfully!', 'success');
+      } else {
+        console.error('Report generation failed:', result.message);
+        showToast('Error: ' + (result.message || 'Failed to generate report'), 'error');
+      }
+    }
+    
+    function handleReportError(error) {
+      console.error('handleReportError called with:', error);
+      hideInlineLoading();
+      showToast('Error: ' + (error.message || error || 'Something went wrong'), 'error');
+    }
+    
+    function displayPreview(result) {
+      console.log('displayPreview called');
+      const statsContainer = document.getElementById('previewStats');
+      const dateRange = document.getElementById('reportDateRange');
+      
+      if (!statsContainer) {
+        console.error('previewStats element not found');
+        return;
+      }
+      
+      // Format date range
+      if (result.startDate && result.endDate) {
+        const start = new Date(result.startDate);
+        const end = new Date(result.endDate);
+        dateRange.textContent = formatDate(start) + ' - ' + formatDate(end);
+        console.log('Date range set:', dateRange.textContent);
+      }
+      
+      // Build stats cards
+      let statsHTML = '';
+      
+      if (result.stats) {
+        if (result.stats.totalIncome !== undefined) {
+          statsHTML += `
+            <div class="stat-card income">
+              <div class="stat-label">Total Income</div>
+              <div class="stat-value positive">$${formatNumber(result.stats.totalIncome)}</div>
+            </div>
+          `;
+        }
+        if (result.stats.totalExpenses !== undefined) {
+          statsHTML += `
+            <div class="stat-card expense">
+              <div class="stat-label">Total Expenses</div>
+              <div class="stat-value negative">-$${formatNumber(result.stats.totalExpenses)}</div>
+            </div>
+          `;
+        }
+        if (result.stats.netProfit !== undefined) {
+          const isPositive = result.stats.netProfit >= 0;
+          const netDisplay = isPositive ? '$' + formatNumber(result.stats.netProfit) : '-$' + formatNumber(Math.abs(result.stats.netProfit));
+          statsHTML += `
+            <div class="stat-card ${isPositive ? 'profit' : 'expense'}">
+              <div class="stat-label">Net Balance</div>
+              <div class="stat-value ${isPositive ? 'positive' : 'negative'}">${netDisplay}</div>
+            </div>
+          `;
+        }
+        if (result.stats.transactionCount !== undefined) {
+          statsHTML += `
+            <div class="stat-card count">
+              <div class="stat-label">Transactions</div>
+              <div class="stat-value">${result.stats.transactionCount}</div>
+            </div>
+          `;
+        }
+      }
+      
+      statsContainer.innerHTML = statsHTML;
+      document.getElementById('previewSection').classList.add('show');
+      
+      // Scroll to preview
+      setTimeout(() => {
+        document.getElementById('previewSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // DOWNLOAD PDF
+    // ═══════════════════════════════════════════════════════════════════
+    function downloadReport() {
+      if (!generatedReportData || !generatedReportData.html) {
+        showToast('No report to download', 'error');
+        return;
+      }
+      
+      // Open HTML in new window for printing to PDF
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(generatedReportData.html);
+      printWindow.document.close();
+      
+      // Auto-trigger print dialog
+      printWindow.onload = function() {
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      };
+      
+      showToast('Opening print dialog - select "Save as PDF"', 'info');
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // EMAIL SHARING - Google Doc / CSV Export
+    // ═══════════════════════════════════════════════════════════════════
+    let selectedExportFormat = 'doc'; // Default to Google Doc
+    
+    function selectExportFormat(format) {
+      selectedExportFormat = format;
+      
+      // Update UI
+      document.getElementById('formatDocOption').classList.remove('selected');
+      document.getElementById('formatCsvOption').classList.remove('selected');
+      
+      if (format === 'doc') {
+        document.getElementById('formatDocOption').classList.add('selected');
+      } else {
+        document.getElementById('formatCsvOption').classList.add('selected');
+      }
+    }
+    
+    function showEmailModal() {
+      if (!generatedReportData) {
+        showToast('Please generate a report first', 'error');
+        return;
+      }
+      // Reset format selection to default
+      selectedExportFormat = 'doc';
+      document.getElementById('formatDocOption').classList.add('selected');
+      document.getElementById('formatCsvOption').classList.remove('selected');
+      document.getElementById('emailModal').classList.add('show');
+    }
+    
+    function hideEmailModal() {
+      document.getElementById('emailModal').classList.remove('show');
+    }
+    
+    function sendReportEmail() {
+      const email = document.getElementById('recipientEmail').value;
+      const message = document.getElementById('emailMessage').value;
+      
+      if (!email || !email.includes('@')) {
+        showToast('Please enter a valid email address', 'error');
+        return;
+      }
+      
+      // Disable button and show progress
+      const btn = document.getElementById('sendEmailBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-icons-outlined" style="animation: spin 1s linear infinite;">sync</span> Creating...';
+      
+      showToast('Creating your report file...', 'info');
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-icons-outlined">send</span> Share Report';
+          
+          if (result.success) {
+            hideEmailModal();
+            showToast('Report shared with ' + email + '!', 'success');
+          } else {
+            showToast('Error: ' + (result.message || 'Failed to share report'), 'error');
+          }
+        })
+        .withFailureHandler(function(error) {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-icons-outlined">send</span> Share Report';
+          showToast('Error: ' + (error.message || 'Failed to share report'), 'error');
+        })
+        .shareReportViaEmail(generatedReportData, email, message, selectedExportFormat);
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // CLARITY AI INTEGRATION
+    // ═══════════════════════════════════════════════════════════════════
+    function askClarityAI() {
+      if (!generatedReportData) {
+        showToast('Please generate a report first', 'error');
+        return;
+      }
+      
+      showToast('Generating your Clarity AI prompt...', 'info');
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          if (result.success) {
+            // Store the prompt and show the modal
+            currentClarityPrompt = result.prompt;
+            document.getElementById('clarityPromptText').value = result.prompt;
+            document.getElementById('clarityModal').classList.add('show');
+          } else {
+            showToast('Error: ' + (result.message || 'Failed to generate prompt'), 'error');
+          }
+        })
+        .withFailureHandler(function(error) {
+          showToast('Error: ' + (error.message || 'Something went wrong'), 'error');
+        })
+        .generateClarityAIPrompt(generatedReportData);
+    }
+    
+    function hideClarityModal() {
+      document.getElementById('clarityModal').classList.remove('show');
+    }
+    
+    function copyPromptToClipboard() {
+      const promptText = document.getElementById('clarityPromptText').value;
+      copyToClipboard(promptText);
+      showToast('Prompt copied to clipboard!', 'success');
+    }
+    
+    function openChatGPT() {
+      window.open('https://chat.openai.com', '_blank');
+    }
+    
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // UTILITY FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════════
+    function showInlineLoading(message) {
+      document.getElementById('inlineLoadingText').textContent = message;
+      document.getElementById('inlineLoading').classList.add('show');
+      document.getElementById('previewSection').classList.remove('show');
+    }
+    
+    function hideInlineLoading() {
+      document.getElementById('inlineLoading').classList.remove('show');
+    }
+    
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+    
+    function formatNumber(num) {
+      return (Math.abs(num) || 0).toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+    
+    function formatDate(date) {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+    
+    function goToDashboard() {
+      google.script.run.MM_showDashboard();
+    }
+  </script>
+</body>
+</html>

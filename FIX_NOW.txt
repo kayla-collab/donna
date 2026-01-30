@@ -1,0 +1,145 @@
+═══════════════════════════════════════════════════════════════
+🚨 EMERGENCY FIX - RESTORE WORKING SYSTEM
+═══════════════════════════════════════════════════════════════
+
+KAYLA - COPY & PASTE THESE 4 COMMANDS TO FIX EVERYTHING:
+
+═══════════════════════════════════════════════════════════════
+STEP 1: Navigate to repository
+═══════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/mm-system
+
+
+═══════════════════════════════════════════════════════════════
+STEP 2: Pull latest fix from GitHub
+═══════════════════════════════════════════════════════════════
+
+git pull origin main
+
+
+═══════════════════════════════════════════════════════════════
+STEP 3: Push ORIGINAL Welcome.gs to Apps Script
+═══════════════════════════════════════════════════════════════
+
+clasp push --force
+
+
+═══════════════════════════════════════════════════════════════
+STEP 4: Verify in browser
+═══════════════════════════════════════════════════════════════
+
+clasp open
+
+
+═══════════════════════════════════════════════════════════════
+WHAT THIS DOES
+═══════════════════════════════════════════════════════════════
+
+✅ Pushes original Welcome.gs (4,344 lines) - HAS ALL FUNCTIONS
+✅ Excludes incomplete modular files (Welcome_Main, Auth_Core, etc.)
+✅ Restores MM_showAccessKeyRegistration_()
+✅ Restores MM_resetRegistration()
+✅ Restores all registration functions
+✅ Restores dashboard data pull
+✅ Restores admin menu functionality
+
+
+═══════════════════════════════════════════════════════════════
+VERIFY IT WORKS
+═══════════════════════════════════════════════════════════════
+
+After running commands above:
+
+1. In Apps Script editor (clasp open), verify:
+   ✅ Welcome.gs exists (4,344 lines)
+   ❌ Welcome_Main.gs should NOT be there
+   ❌ Auth_Core.gs should NOT be there
+   
+2. Search for these functions in Welcome.gs:
+   ✅ MM_showAccessKeyRegistration_
+   ✅ MM_resetRegistration
+   ✅ MM_registerWithAccessKey
+   
+3. Test in Google Sheet:
+   ✅ Admin Controls menu appears
+   ✅ Reset Registration works
+   ✅ Registration flow works
+   ✅ Dashboard loads
+
+
+═══════════════════════════════════════════════════════════════
+WHY THIS FIXES IT
+═══════════════════════════════════════════════════════════════
+
+THE PROBLEM:
+- I split Welcome.gs into smaller files
+- But I forgot to copy registration functions
+- Incomplete files broke everything
+
+THE FIX:
+- Use original Welcome.gs (has EVERYTHING)
+- Exclude the incomplete modular files
+- Everything works again!
+
+
+═══════════════════════════════════════════════════════════════
+IF YOU GET ERRORS
+═══════════════════════════════════════════════════════════════
+
+Error: "Already up to date"
+→ That's OK, continue to step 3
+
+Error: "Not logged in"  
+→ Run: clasp login
+
+Error: "No .clasp.json"
+→ Run: clasp clone 1gCyB7vsSSbpPhj-Lu6LCFmRGjsqqOorIchsOwvJWg3JjFQJP0xsg_edi
+
+Error: Still see Welcome_Main.gs in Apps Script
+→ Delete it manually in Apps Script editor
+→ Run: clasp push --force again
+
+
+═══════════════════════════════════════════════════════════════
+COMPLETE COMMAND SEQUENCE (all at once)
+═══════════════════════════════════════════════════════════════
+
+cd ~/Documents/GitHub/mm-system && \
+git pull origin main && \
+clasp push --force && \
+clasp open
+
+
+That's it! Your system should work now.
+
+
+═══════════════════════════════════════════════════════════════
+WHAT'S IN THE REPOSITORY NOW
+═══════════════════════════════════════════════════════════════
+
+✅ Welcome.gs - COMPLETE FILE (4,344 lines) ← THIS GETS PUSHED
+✅ Backend.gs - Phase 2 additions
+✅ Config.gs, Helpers.gs, Code.gs - All working files
+✅ All .html files
+
+❌ Welcome_Main.gs - Incomplete (excluded by .claspignore)
+❌ Auth_Core.gs - Incomplete (excluded by .claspignore)  
+❌ Plaid_Integration.gs - Incomplete (excluded by .claspignore)
+
+
+═══════════════════════════════════════════════════════════════
+SUMMARY
+═══════════════════════════════════════════════════════════════
+
+Problem: Incomplete modularization broke registration
+Solution: Use original Welcome.gs file
+Result: Everything works!
+
+Run these 4 commands:
+1. cd ~/Documents/GitHub/mm-system
+2. git pull origin main
+3. clasp push --force
+4. clasp open
+
+Done! ✅

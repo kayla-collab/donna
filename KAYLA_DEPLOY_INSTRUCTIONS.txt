@@ -1,0 +1,337 @@
+═══════════════════════════════════════════════════════════════
+KAYLA'S EXACT DEPLOYMENT COMMANDS - JUST COPY & PASTE!
+═══════════════════════════════════════════════════════════════
+
+YOUR SCRIPT ID: 1gCyB7vsSSbpPhj-Lu6LCFmRGjsqqOorIchsOwvJWg3JjFQJP0xsg_edi
+
+═══════════════════════════════════════════════════════════════
+STEP 1: Install clasp (only if not already installed)
+═══════════════════════════════════════════════════════════════
+
+npm install -g @google/clasp
+
+# Check if installed successfully:
+clasp --version
+
+
+═══════════════════════════════════════════════════════════════
+STEP 2: Login to Google (only if not already logged in)
+═══════════════════════════════════════════════════════════════
+
+clasp login
+
+# This will:
+# - Open browser
+# - Ask you to select Google account (use Donna's account)
+# - Grant permissions
+# - Close browser automatically
+
+
+═══════════════════════════════════════════════════════════════
+STEP 3: Navigate to the mm-system repository
+═══════════════════════════════════════════════════════════════
+
+# Find where your mm-system repo is located. 
+# Since you have many repos, you need to CD to the RIGHT one.
+# 
+# Common locations:
+# ~/Documents/GitHub/mm-system
+# ~/Projects/mm-system
+# ~/mm-system
+#
+# To find it, use:
+
+find ~ -name "mm-system" -type d 2>/dev/null
+
+# Once you find it, CD into it:
+cd /path/to/mm-system
+
+# For example:
+# cd ~/Documents/GitHub/mm-system
+# or
+# cd ~/Projects/mm-system
+
+
+═══════════════════════════════════════════════════════════════
+STEP 4: Pull latest changes from GitHub (IMPORTANT!)
+═══════════════════════════════════════════════════════════════
+
+git pull origin main
+
+
+═══════════════════════════════════════════════════════════════
+STEP 5: Clone the Apps Script project (creates .clasp.json)
+═══════════════════════════════════════════════════════════════
+
+clasp clone 1gCyB7vsSSbpPhj-Lu6LCFmRGjsqqOorIchsOwvJWg3JjFQJP0xsg_edi
+
+# This creates a .clasp.json file that links this folder to the Apps Script project
+# If you get "Already cloned", that's OK - skip to next step
+
+
+═══════════════════════════════════════════════════════════════
+STEP 6: Verify .claspignore exists
+═══════════════════════════════════════════════════════════════
+
+# Check if file exists:
+ls -la .claspignore
+
+# If it doesn't exist, create it:
+cat > .claspignore << 'EOF'
+.git/**
+.gitignore
+*.md
+README*
+PHASE2*
+FILE_MODULARIZATION*
+QUICK_START*
+CLASP*
+IMPLEMENTATION*
+KAYLA*
+DEPLOY*
+node_modules/**
+package*.json
+Welcome.gs
+*.tmp
+*.log
+.DS_Store
+EOF
+
+
+═══════════════════════════════════════════════════════════════
+STEP 7: PUSH ALL FILES TO APPS SCRIPT!
+═══════════════════════════════════════════════════════════════
+
+clasp push --force
+
+# The --force flag overwrites everything in Apps Script
+# This ensures clean deployment
+
+# You should see output like:
+# └─ Welcome_Main.gs
+# └─ Auth_Core.gs
+# └─ Plaid_Integration.gs
+# └─ Backend.gs
+# └─ Config.gs
+# └─ (and more...)
+# Pushed X files.
+
+
+═══════════════════════════════════════════════════════════════
+STEP 8: Open in browser to verify
+═══════════════════════════════════════════════════════════════
+
+clasp open
+
+# This opens the Apps Script editor in your browser
+# Verify:
+# ✅ Welcome_Main.gs exists
+# ✅ Auth_Core.gs exists
+# ✅ Plaid_Integration.gs exists
+# ✅ Backend.gs exists
+# ❌ Old Welcome.gs should NOT be there (if it is, delete it manually)
+
+
+═══════════════════════════════════════════════════════════════
+STEP 9: Test in Google Sheet
+═══════════════════════════════════════════════════════════════
+
+1. Open the Google Sheet connected to this script
+2. Refresh the page (Ctrl+R or Cmd+R)
+3. Wait for custom menu to load
+4. Test login/registration flow
+5. Check for any errors in Apps Script logs:
+   - Extensions → Apps Script → Executions
+
+
+═══════════════════════════════════════════════════════════════
+TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+Problem: "clasp: command not found"
+Solution: 
+  npm install -g @google/clasp
+
+Problem: "User has not enabled the Apps Script API"
+Solution:
+  1. Go to: https://script.google.com/home/usersettings
+  2. Turn ON "Google Apps Script API"
+  3. Try again: clasp login
+
+Problem: "Access not configured"
+Solution:
+  clasp login --creds
+
+Problem: "Already cloned to another location"
+Solution:
+  # Check which project is linked:
+  cat .clasp.json
+  
+  # If wrong Script ID, delete and re-clone:
+  rm .clasp.json
+  clasp clone 1gCyB7vsSSbpPhj-Lu6LCFmRGjsqqOorIchsOwvJWg3JjFQJP0xsg_edi
+
+Problem: "Push failed - undefined error"
+Solution:
+  # Make sure you're in the RIGHT repository!
+  pwd
+  # Should show: /path/to/mm-system
+  
+  # Make sure Welcome.gs is excluded:
+  grep "Welcome.gs" .claspignore
+  # Should show: Welcome.gs
+
+Problem: "Can't find repository"
+Solution:
+  # Find all mm-system folders:
+  find ~ -name "mm-system" -type d 2>/dev/null
+  
+  # CD to the correct one
+  cd /path/shown/above
+
+
+═══════════════════════════════════════════════════════════════
+COMPLETE COPY-PASTE SEQUENCE (if starting fresh)
+═══════════════════════════════════════════════════════════════
+
+# COPY EVERYTHING BELOW THIS LINE AND PASTE IN TERMINAL:
+
+# 1. Find mm-system repo
+find ~ -name "mm-system" -type d 2>/dev/null
+
+# 2. CD to it (REPLACE WITH YOUR ACTUAL PATH FROM STEP 1!)
+cd ~/Documents/GitHub/mm-system
+
+# 3. Pull latest changes
+git pull origin main
+
+# 4. Clone Apps Script project
+clasp clone 1gCyB7vsSSbpPhj-Lu6LCFmRGjsqqOorIchsOwvJWg3JjFQJP0xsg_edi
+
+# 5. Push everything
+clasp push --force
+
+# 6. Open in browser
+clasp open
+
+# DONE! Now test in your Google Sheet.
+
+
+═══════════════════════════════════════════════════════════════
+WHAT FILES GET PUSHED?
+═══════════════════════════════════════════════════════════════
+
+✅ THESE FILES WILL BE PUSHED:
+  - Welcome_Main.gs (453 lines) ← NEW! Replaces Welcome.gs
+  - Auth_Core.gs (236 lines) ← NEW!
+  - Plaid_Integration.gs (198 lines) ← NEW!
+  - Backend.gs (423 lines) ← NEW! Phase 2
+  - Config.gs
+  - Helpers.gs
+  - Code.gs
+  - Categories.gs
+  - Navigation.gs
+  - Menus.gs
+  - StartHere.gs
+  - Admin.gs
+  - All other .gs files
+  - All .html files (TutorialEmbed, PlaidPrompt, etc.)
+
+❌ THESE FILES WILL NOT BE PUSHED (excluded by .claspignore):
+  - Welcome.gs (4,344 lines - TOO LARGE, causes errors)
+  - All .md files (documentation)
+  - Git files
+  - node_modules
+
+
+═══════════════════════════════════════════════════════════════
+VERIFICATION CHECKLIST
+═══════════════════════════════════════════════════════════════
+
+After pushing, verify in Apps Script editor (clasp open):
+
+Files that SHOULD exist:
+□ Welcome_Main.gs
+□ Auth_Core.gs
+□ Plaid_Integration.gs
+□ Backend.gs
+□ Config.gs
+□ Helpers.gs
+□ TutorialEmbed.html
+□ PlaidPrompt.html
+□ PlaidLink.html
+□ PinEntry.html
+
+Files that should NOT exist:
+□ Welcome.gs (old 4,344 line file)
+
+If old Welcome.gs still exists:
+1. Delete it manually in Apps Script editor
+2. Run: clasp push --force
+
+
+═══════════════════════════════════════════════════════════════
+DAILY WORKFLOW (after initial setup)
+═══════════════════════════════════════════════════════════════
+
+# Update code:
+cd ~/path/to/mm-system
+git pull origin main
+clasp push
+clasp open
+
+# That's it!
+
+
+═══════════════════════════════════════════════════════════════
+QUICK REFERENCE
+═══════════════════════════════════════════════════════════════
+
+Your Script ID: 1gCyB7vsSSbpPhj-Lu6LCFmRGjsqqOorIchsOwvJWg3JjFQJP0xsg_edi
+Your User: Kayla
+Repository: mm-system (find location with: find ~ -name "mm-system" -type d)
+
+Commands you'll use most:
+  clasp push          # Push changes
+  clasp push --force  # Force overwrite everything
+  clasp open          # Open in browser
+  clasp logs          # View execution logs
+  clasp logs --watch  # Watch logs live
+
+
+═══════════════════════════════════════════════════════════════
+NEED HELP?
+═══════════════════════════════════════════════════════════════
+
+1. Check logs in Apps Script:
+   Extensions → Apps Script → Executions
+
+2. View clasp logs:
+   clasp logs
+
+3. Check which project you're connected to:
+   cat .clasp.json
+
+4. Full documentation:
+   See CLASP_DEPLOYMENT_GUIDE.md in repository
+
+
+═══════════════════════════════════════════════════════════════
+SUMMARY
+═══════════════════════════════════════════════════════════════
+
+What we're doing:
+- Replacing 1 huge file (Welcome.gs - 4,344 lines)
+- With 3 smaller files (Welcome_Main, Auth_Core, Plaid_Integration)
+- Total: 887 lines across 3 files instead of 4,344 in 1 file
+- This fixes the "undefined" errors in Apps Script
+
+Why clasp instead of web interface:
+- Web interface can't handle the file complexity
+- clasp CLI pushes everything correctly
+- Much faster and more reliable
+
+Result:
+- ✅ No more undefined errors
+- ✅ All Phase 2 features working
+- ✅ Clean, maintainable code structure

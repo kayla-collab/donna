@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==================== COLOR PALETTE ==================== */
+    :root {
+      --white: #FFFFFF;
+      --primary: #ab9478;
+      --primary-light: #c4b19e;
+      --primary-dark: #8a7760;
+      --neutral: #e4e0d8;
+      --neutral-light: #f5f3ef;
+      --accent: #567b84;
+      --accent-light: #6a8f99;
+      --black: #394144;
+      --black-light: #5a6366;
+      --income: #567b84;
+      --income-dark: #4a6b73;
+      --expense: #ab9478;
+      --expense-dark: #8a7760;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--neutral-light);
+      color: var(--black);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* ==================== LOADING SCREEN ==================== */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--neutral-light);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      transition: opacity 0.6s ease;
+    }
+
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 40px;
+      letter-spacing: -0.5px;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 5px solid var(--neutral);
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 30px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-message {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .loading-submessage {
+      font-size: 13px;
+      color: var(--black-light);
+      font-weight: 500;
+    }
+
+    .loading-progress {
+      width: 300px;
+      height: 4px;
+      background: var(--neutral);
+      border-radius: 2px;
+      margin-top: 24px;
+      overflow: hidden;
+    }
+
+    .loading-progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.8s ease;
+    }
+
+    /* ==================== MAIN LAYOUT ==================== */
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 280px 1fr 280px;
+      grid-template-rows: auto 1fr auto;
+      height: 100vh;
+      opacity: 0;
+      animation: fadeIn 0.6s ease forwards;
+      animation-delay: 0.2s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ==================== HEADER ==================== */
+    .dashboard-header {
+      grid-column: 1 / -1;
+      background: var(--white);
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      z-index: 100;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--black-light);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* ==================== SIDEBAR COMMON ==================== */
+    .sidebar {
+      background: var(--white);
+      padding: 20px 16px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: var(--neutral-light);
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--primary-light);
+      border-radius: 3px;
+    }
+
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-title .material-icons-outlined {
+      font-size: 18px;
+      color: var(--primary);
+    }
+
+    /* ==================== LEFT SIDEBAR ==================== */
+    .left-sidebar {
+      border-right: 1px solid var(--neutral);
+    }
+
+    /* Stripe Refresh Button */
+    .stripe-sync-section {
+      margin-bottom: 20px;
+    }
+
+    .stripe-sync-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .stripe-sync-btn:hover {
+      background: var(--accent-light);
+    }
+
+    .stripe-sync-btn .material-icons-outlined {
+      font-size: 18px;
+    }
+
+    /* Account List */
+    .account-section {
+      margin-bottom: 20px;
+    }
+
+    .account-item {
+      background: var(--neutral-light);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .account-item:hover {
+      border-color: var(--primary);
+      background: var(--white);
+    }
+
+    .account-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .account-name .material-icons-outlined {
+      font-size: 16px;
+      color: var(--primary);
+    }
+
+    .account-balance {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-left: 24px;
+    }
+
+    .account-balance.positive {
+      color: var(--income);
+    }
+
+    .account-balance.negative {
+      color: var(--expense);
+    }
+
+    .no-data {
+      text-align: center;
+      color: var(--black-light);
+      font-size: 12px;
+      padding: 16px;
+      font-style: italic;
+    }
+
+    /* ==================== CENTER PANEL ==================== */
+    .center-panel {
+      background: var(--neutral-light);
+      padding: 20px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .center-content {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .center-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .center-panel::-webkit-scrollbar-thumb {
+      background: var(--neutral);
+      border-radius: 3px;
+    }
+
+    .time-filters {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .filter-btn {
+      padding: 10px 20px;
+      background: var(--white);
+      color: var(--black);
+      border: 1px solid var(--neutral);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      transition: all 0.2s ease;
+      border-top: 3px solid var(--neutral);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .metric-card.income { border-top-color: var(--income); }
+    .metric-card.expense { border-top-color: var(--expense); }
+    .metric-card.profit { border-top-color: var(--primary); }
+    .metric-card.mistakes { border-top-color: var(--accent); }
+
+    .metric-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .metric-card.income .metric-icon { color: var(--income); }
+    .metric-card.expense .metric-icon { color: var(--expense); }
+    .metric-card.profit .metric-icon { color: var(--primary); }
+    .metric-card.mistakes .metric-icon { color: var(--accent); }
+
+    .metric-label {
+      font-size: 11px;
+      color: var(--black-light);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .metric-subtitle {
+      font-size: 10px;
+      color: var(--black-light);
+      margin-top: 4px;
+    }
+
+    .chart-section {
+      background: var(--white);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .material-icons-outlined {
+      color: var(--primary);
+    }
+
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--black-light);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.income { background: var(--income); }
+    .legend-dot.expense { background: var(--expense); }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 280px;
+      gap: 6px;
+      padding: 8px;
+    }
+
+    .bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      max-width: 80px;
+      min-width: 30px;
+    }
+
+    .bar-container {
+      width: 100%;
+      height: 240px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 3px;
+      position: relative;
+    }
+
+    .bar {
+      width: 45%;
+      border-radius: 3px 3px 0 0;
+      position: relative;
+      animation: growBar 1s ease forwards;
+      transform-origin: bottom;
+      transform: scaleY(0);
+      min-height: 4px;
+    }
+
+    .bar.income {
+      background: var(--income);
+    }
+
+    .bar.expense {
+      background: var(--expense);
+    }
+
+    @keyframes growBar {
+      0% { transform: scaleY(0); }
+      100% { transform: scaleY(1); }
+    }
+
+    .bar-label {
+      font-size: 10px;
+      color: var(--black-light);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .bar-value {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-2px);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--black);
+      white-space: nowrap;
+      background: var(--white);
+      padding: 2px 4px;
+      border-radius: 3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* ==================== RIGHT SIDEBAR ==================== */
+    .right-sidebar {
+      border-left: 1px solid var(--neutral);
+    }
+
+    /* Top Categories Section */
+    .category-section {
+      margin-bottom: 20px;
+    }
+
+    .category-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: var(--neutral-light);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .category-item:hover {
+      background: var(--white);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .category-name {
+      font-size: 12px;
+      color: var(--black);
+      font-weight: 500;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .category-amount {
+      font-size: 12px;
+      font-weight: 700;
+      margin-left: 8px;
+    }
+
+    .category-amount.income {
+      color: var(--income);
+    }
+
+    .category-amount.expense {
+      color: var(--expense);
+    }
+
+    /* Navigation Section */
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .nav-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Quick Actions */
+    .action-btn-small {
+      width: 100%;
+      padding: 10px;
+      background: var(--neutral-light);
+      color: var(--black);
+      border: 1px solid var(--neutral);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .action-btn-small:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--white);
+    }
+
+    .action-btn-small .material-icons-outlined {
+      font-size: 16px;
+    }
+
+    /* ==================== FOOTER ==================== */
+    .dashboard-footer {
+      grid-column: 1 / -1;
+      background: var(--white);
+      border-top: 1px solid var(--neutral);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-link {
+      font-size: 12px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .footer-link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .footer-copyright {
+      font-size: 11px;
+      color: var(--black-light);
+    }
+
+    /* Custom Date Preset Buttons */
+    .preset-btn:hover {
+      background: var(--primary) !important;
+      color: white !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(171, 148, 120, 0.3);
+    }
+
+    .preset-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(171, 148, 120, 0.2);
+      background: var(--primary-dark) !important;
+    }
+
+    /* Modal Cancel/Apply button hover states */
+    .modal-cancel-btn:hover {
+      background: var(--neutral-light) !important;
+      border-color: var(--primary-dark) !important;
+    }
+
+    .modal-apply-btn:hover {
+      background: var(--primary-dark) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(171, 148, 120, 0.3);
+    }
+
+    .modal-apply-btn:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loading-logo">Money Mastery</div>
+    <div class="loading-spinner"></div>
+    <div class="loading-message" id="loadingMessage">Initializing...</div>
+    <div class="loading-submessage" id="loadingSubmessage">Please wait...</div>
+    <div class="loading-progress">
+      <div class="loading-progress-bar" id="loadingProgressBar"></div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="dashboard-container" id="dashboardContainer" style="display: none;">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div class="logo-section">
+        <div class="brand-text">
+          <div class="brand-title">Money Mastery</div>
+          <div class="brand-subtitle" id="dateRange">Loading...</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="refresh-btn" onclick="refreshDashboard()">
+          <span class="material-icons-outlined" style="font-size: 18px;">refresh</span>
+          <span>Refresh</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Left Sidebar: Accounts -->
+    <div class="left-sidebar sidebar" id="leftSidebar">
+      <!-- Accounts List -->
+      <div class="account-section">
+        <div class="sidebar-title">
+          <span class="material-icons-outlined">account_balance</span>
+          Your Accounts
+        </div>
+        <div id="accountList">
+          <div class="no-data">Loading accounts...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel -->
+    <div class="center-panel">
+      <div class="center-content">
+        <!-- Time Filters -->
+        <div class="time-filters">
+          <button class="filter-btn active" data-period="30days" onclick="filterDashboard('30days')">Last 30 Days</button>
+          <button class="filter-btn" data-period="12months" onclick="filterDashboard('12months')">Last 12 Months</button>
+          <button class="filter-btn" data-period="alltime" onclick="filterDashboard('alltime')">All Time</button>
+          <button class="filter-btn" data-period="custom" onclick="showCustomDateFilter()">Custom Range</button>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="metric-card income">
+            <span class="material-icons-outlined metric-icon">trending_up</span>
+            <div class="metric-label">Income</div>
+            <div class="metric-value" id="incomeValue">$0.00</div>
+            <div class="metric-subtitle" id="incomeSubtitle">Last 30 days</div>
+          </div>
+
+          <div class="metric-card expense">
+            <span class="material-icons-outlined metric-icon">trending_down</span>
+            <div class="metric-label">Expenses</div>
+            <div class="metric-value" id="expenseValue">$0.00</div>
+            <div class="metric-subtitle" id="expenseSubtitle">Last 30 days</div>
+          </div>
+
+          <div class="metric-card profit">
+            <span class="material-icons-outlined metric-icon">show_chart</span>
+            <div class="metric-label">Net Profit</div>
+            <div class="metric-value" id="profitValue">$0.00</div>
+            <div class="metric-subtitle">Income - Expenses</div>
+          </div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="chart-section">
+          <div class="section-title">
+            <span class="material-icons-outlined">bar_chart</span>
+            Income vs Expenses
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-dot income"></div>
+              <span>Income</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot expense"></div>
+              <span>Expenses</span>
+            </div>
+          </div>
+          <div class="bar-chart" id="barChart">
+            <!-- Generated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar: Categories + Navigation + Quick Actions -->
+    <div class="right-sidebar sidebar" id="rightSidebar">
+      <!-- Top Income -->
+      <div class="category-section">
+        <div class="sidebar-title">
+          <span class="material-icons-outlined">attach_money</span>
+          Top Income
+        </div>
+        <div id="topIncomeList">
+          <div class="no-data">No data</div>
+        </div>
+      </div>
+
+      <!-- Top Expenses -->
+      <div class="category-section">
+        <div class="sidebar-title">
+          <span class="material-icons-outlined">money_off</span>
+          Top Expenses
+        </div>
+        <div id="topExpenseList">
+          <div class="no-data">No data</div>
+        </div>
+      </div>
+
+      <!-- Navigate -->
+      <div class="nav-section">
+        <div class="sidebar-title">
+          <span class="material-icons-outlined">folder_open</span>
+          Navigate
+        </div>
+        <button class="nav-btn" onclick="openNavigation()">
+          <span class="material-icons-outlined">menu</span>
+          <span>Open Navigation</span>
+        </button>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="nav-section">
+        <div class="sidebar-title">
+          <span class="material-icons-outlined">bolt</span>
+          Quick Actions
+        </div>
+        <button class="action-btn-small" onclick="openCategorizationModal()">
+          <span class="material-icons-outlined">label</span>
+          <span>Categorize Transactions</span>
+        </button>
+        <button class="action-btn-small" onclick="openClarityAndReports()">
+          <span class="material-icons-outlined">smart_toy</span>
+          <span>Clarity AI and Reports</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dashboard-footer">
+      <div class="footer-links">
+        <a href="#" class="footer-link" onclick="openLink('membership')">Membership Hub</a>
+        <a href="#" class="footer-link" onclick="openLink('collective')">Collective</a>
+        <a href="#" class="footer-link" onclick="openLink('tutorial')">Tutorial</a>
+        <a href="#" class="footer-link" onclick="openLink('support')">Support</a>
+      </div>
+      <div class="footer-copyright">
+        © 2026 Donna Roggio LLC. All Rights Reserved.
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentFilter = '30days';
+    let dashboardData = null;
+    let dataLoadedTimestamp = null;
+
+    const loadingStages = [
+      { message: 'Connecting to your data...', submessage: 'Establishing secure connection' },
+      { message: 'Reading transactions...', submessage: 'Processing your financial data' },
+      { message: 'Calculating totals...', submessage: 'Analyzing income and expenses' },
+      { message: 'Preparing dashboard...', submessage: 'Organizing your view' }
+    ];
+
+    let currentStage = 0;
+    let loadingInterval = null;
+
+    function initializeLoading() {
+      currentStage = 0;
+      updateLoadingStage();
+      
+      loadingInterval = setInterval(() => {
+        if (dataLoadedTimestamp) {
+          document.getElementById('loadingMessage').textContent = 'Ready!';
+          document.getElementById('loadingSubmessage').textContent = 'Loading dashboard...';
+          document.getElementById('loadingProgressBar').style.width = '100%';
+          clearInterval(loadingInterval);
+        } else if (currentStage < loadingStages.length - 1) {
+          currentStage++;
+          updateLoadingStage();
+        }
+      }, 1200);
+    }
+
+    function updateLoadingStage() {
+      const stage = loadingStages[currentStage];
+      document.getElementById('loadingMessage').textContent = stage.message;
+      document.getElementById('loadingSubmessage').textContent = stage.submessage;
+      const progress = ((currentStage + 1) / loadingStages.length) * 85;
+      document.getElementById('loadingProgressBar').style.width = progress + '%';
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      initializeLoading();
+      loadDashboard();
+      
+      // Timeout fallback - if still loading after 30 seconds, show error
+      setTimeout(function() {
+        if (!dataLoadedTimestamp) {
+          console.error('loadDashboard: Timeout after 30 seconds');
+          clearInterval(loadingInterval);
+          document.getElementById('loadingMessage').textContent = 'Taking too long...';
+          document.getElementById('loadingSubmessage').textContent = 'The server may be busy. Try refreshing.';
+        }
+      }, 30000);
+    });
+
+    function loadDashboard() {
+      console.log('loadDashboard: Starting...');
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          console.log('loadDashboard: Success', data);
+          
+          if (!data) {
+            console.error('loadDashboard: No data returned');
+            document.getElementById('loadingMessage').textContent = 'No data available';
+            document.getElementById('loadingSubmessage').textContent = 'Please check your sheet has transactions';
+            return;
+          }
+          
+          dataLoadedTimestamp = Date.now();
+          dashboardData = data;
+          
+          try {
+            renderDashboard(data);
+            
+            setTimeout(() => {
+              document.getElementById('loadingScreen').classList.add('hidden');
+              document.getElementById('dashboardContainer').style.display = 'grid';
+            }, 800);
+          } catch (renderError) {
+            console.error('loadDashboard: Render error', renderError);
+            document.getElementById('loadingMessage').textContent = 'Display error';
+            document.getElementById('loadingSubmessage').textContent = renderError.message || 'Error rendering dashboard';
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error('loadDashboard: Failed', error);
+          clearInterval(loadingInterval);
+          document.getElementById('loadingMessage').textContent = 'Error loading data';
+          document.getElementById('loadingSubmessage').textContent = error.message || 'Please try refreshing';
+        })
+        .MM_apiGetDashboardData(currentFilter);
+    }
+
+    function renderDashboard(data) {
+      document.getElementById('dateRange').textContent = data.dateRange || 'Loading...';
+
+      // Update period labels based on filter
+      const periodLabels = {
+        '30days': 'Last 30 days',
+        '12months': 'Last 12 months',
+        'alltime': 'All time'
+      };
+      const periodLabel = periodLabels[currentFilter] || 'Last 30 days';
+
+      document.getElementById('incomeValue').textContent = '$' + formatNumber(data.monthlyIncome || 0);
+      document.getElementById('expenseValue').textContent = '$' + formatNumber(data.monthlyExpenses || 0);
+      document.getElementById('incomeSubtitle').textContent = periodLabel;
+      document.getElementById('expenseSubtitle').textContent = periodLabel;
+      
+      const profit = data.monthlyProfit || 0;
+      document.getElementById('profitValue').textContent = (profit >= 0 ? '$' : '-$') + formatNumber(Math.abs(profit));
+
+      // Note: Mistakes card was removed from UI
+      // const totalIssues = (data.totalErrors || 0) + (data.unlabeledCount || 0);
+
+      renderBarChart(data);
+      renderTopCategories(data);
+      renderAccountList(data.accounts || [], data.accountBalances || {});
+    }
+
+    function renderBarChart(data) {
+      const barChart = document.getElementById('barChart');
+      
+      let chartData = data.chartData || {};
+      let labels = chartData.labels || [];
+      let incomeData = chartData.income || [];
+      let expenseData = chartData.expenses || [];
+
+      console.log('📊 renderBarChart - currentFilter:', currentFilter);
+      console.log('📊 renderBarChart - raw chartData:', chartData);
+
+      // Filter based on current period
+      if (currentFilter === '30days') {
+        // Show only current month or last 30 days summary
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        labels = [labels[currentMonth] || 'Current'];
+        incomeData = [incomeData[currentMonth] || data.monthlyIncome || 0];
+        expenseData = [expenseData[currentMonth] || data.monthlyExpenses || 0];
+      } else if (currentFilter === '12months') {
+        // Show all 12 months
+        // Already have full year data
+      } else if (currentFilter === 'alltime' || currentFilter === 'custom') {
+        // For alltime and custom: Show only months with data
+        const filteredLabels = [];
+        const filteredIncome = [];
+        const filteredExpense = [];
+        
+        for (let i = 0; i < labels.length; i++) {
+          if ((incomeData[i] && incomeData[i] > 0) || (expenseData[i] && expenseData[i] > 0)) {
+            filteredLabels.push(labels[i]);
+            filteredIncome.push(incomeData[i] || 0);
+            filteredExpense.push(expenseData[i] || 0);
+          }
+        }
+        
+        // For custom filter: If no monthly breakdown, show a single summary bar
+        if (filteredLabels.length === 0 && currentFilter === 'custom') {
+          const totalIncome = data.totalIncome || data.monthlyIncome || 0;
+          const totalExpenses = data.totalExpenses || data.monthlyExpenses || 0;
+          if (totalIncome > 0 || totalExpenses > 0) {
+            filteredLabels.push('Selected Period');
+            filteredIncome.push(totalIncome);
+            filteredExpense.push(totalExpenses);
+          }
+        }
+        
+        if (filteredLabels.length > 0) {
+          labels = filteredLabels;
+          incomeData = filteredIncome;
+          expenseData = filteredExpense;
+        }
+      }
+
+      // If no data, show placeholder
+      if (labels.length === 0) {
+        labels = ['No Data'];
+        incomeData = [0];
+        expenseData = [0];
+      }
+
+      const maxValue = Math.max(...incomeData, ...expenseData, 1);
+
+      barChart.innerHTML = labels.map((label, i) => {
+        const income = incomeData[i] || 0;
+        const expense = expenseData[i] || 0;
+        const incomeHeight = Math.max((income / maxValue) * 100, income > 0 ? 5 : 0);
+        const expenseHeight = Math.max((expense / maxValue) * 100, expense > 0 ? 5 : 0);
+        const delay = i * 0.1;
+
+        return `
+          <div class="bar-group">
+            <div class="bar-container">
+              ${income > 0 ? `
+              <div class="bar income" style="height: ${incomeHeight}%; animation-delay: ${delay}s;">
+                <div class="bar-value">$${formatCompact(income)}</div>
+              </div>
+              ` : '<div class="bar income" style="height: 0%;"></div>'}
+              ${expense > 0 ? `
+              <div class="bar expense" style="height: ${expenseHeight}%; animation-delay: ${delay + 0.05}s;">
+                <div class="bar-value">$${formatCompact(expense)}</div>
+              </div>
+              ` : '<div class="bar expense" style="height: 0%;"></div>'}
+            </div>
+            <div class="bar-label">${label}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTopCategories(data) {
+      // Filter out formula errors and check if category is valid
+      function isValidCategory(cat) {
+        if (!cat || !cat.category) return false;
+        const c = cat.category.trim();
+        if (c === '' || c.startsWith('#')) return false;
+        return true;
+      }
+      
+      // Check if category is "Uncategorized" (case-insensitive)
+      function isUncategorized(cat) {
+        if (!cat || !cat.category) return false;
+        const c = cat.category.trim().toLowerCase();
+        return c === 'uncategorized' || c === 'un-categorized' || c === 'not categorized';
+      }
+      
+      // Get top categories, prioritizing CATEGORIZED items over Uncategorized
+      // Also handle ties by showing both if amounts are equal
+      function getTopCategorized(categories) {
+        const valid = (categories || []).filter(isValidCategory);
+        if (valid.length === 0) return [];
+        
+        // Separate categorized and uncategorized
+        const categorized = valid.filter(cat => !isUncategorized(cat));
+        const uncategorized = valid.filter(cat => isUncategorized(cat));
+        
+        // If there are categorized items, use those; otherwise fall back to uncategorized
+        const source = categorized.length > 0 ? categorized : uncategorized;
+        
+        if (source.length === 0) return [];
+        
+        // Sort by amount (highest first)
+        source.sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
+        
+        // Get the highest amount
+        const topAmount = Math.abs(source[0].amount);
+        
+        // Get all items that tie for the top amount
+        const tied = source.filter(cat => Math.abs(cat.amount) === topAmount);
+        
+        return tied;
+      }
+
+      const incomeList = document.getElementById('topIncomeList');
+      const topIncomeCategories = getTopCategorized(data.topIncome);
+      
+      if (topIncomeCategories.length === 0) {
+        incomeList.innerHTML = '<div class="no-data">No income data</div>';
+      } else {
+        incomeList.innerHTML = topIncomeCategories.map(cat => `
+          <div class="category-item">
+            <span class="category-name">${escapeHtml(cat.category)}</span>
+            <span class="category-amount income">$${formatNumber(Math.abs(cat.amount))}</span>
+          </div>
+        `).join('');
+      }
+
+      const expenseList = document.getElementById('topExpenseList');
+      const topExpenseCategories = getTopCategorized(data.topExpenses);
+      
+      if (topExpenseCategories.length === 0) {
+        expenseList.innerHTML = '<div class="no-data">No expense data</div>';
+      } else {
+        expenseList.innerHTML = topExpenseCategories.map(cat => `
+          <div class="category-item">
+            <span class="category-name">${escapeHtml(cat.category)}</span>
+            <span class="category-amount expense">$${formatNumber(Math.abs(cat.amount))}</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderAccountList(accounts, balances) {
+      const accountList = document.getElementById('accountList');
+      
+      // Always show 10 account slots
+      const accountSlots = [];
+      
+      // Fill with actual accounts
+      for (let i = 0; i < 10; i++) {
+        if (i < accounts.length) {
+          const account = accounts[i];
+          const accountName = account.name || account || `Account ${i + 1}`;
+          accountSlots.push(accountName);
+        } else {
+          // Fill remaining slots with placeholders
+          accountSlots.push(`Account ${i + 1}`);
+        }
+      }
+
+      accountList.innerHTML = accountSlots.map((accountName, index) => {
+        const balance = balances[accountName] || 0;
+        const hasData = accounts.length > index && accounts[index];
+        const balanceClass = balance >= 0 ? 'positive' : 'negative';
+        
+        // Only show balance if account has data AND balance is not zero
+        let balanceDisplay = '';
+        if (hasData && balance !== 0) {
+          balanceDisplay = `<div class="account-balance ${balanceClass}">${balance >= 0 ? '+' : ''}$${formatNumber(Math.abs(balance))}</div>`;
+        }
+        
+        return `
+          <div class="account-item" ${hasData ? `onclick="openAccountCategorization('${escapeJs(accountName)}')" title="Click to categorize transactions"` : ''}>
+            <div class="account-name">
+              <span class="material-icons-outlined">credit_card</span>
+              <span style="${!hasData ? 'opacity: 0.4;' : ''}">${escapeHtml(accountName)}</span>
+            </div>
+            ${balanceDisplay}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterDashboard(period) {
+      currentFilter = period;
+      
+      // Update button styles
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.period === period) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Period labels
+      const periodLabels = {
+        '30days': 'Last 30 days',
+        '12months': 'Last 12 months',
+        'alltime': 'All time'
+      };
+      
+      // Show loading state with animation
+      const metricCards = document.querySelectorAll('.metric-card');
+      metricCards.forEach(card => card.style.opacity = '0.6');
+      
+      document.getElementById('incomeValue').innerHTML = '<span style="opacity:0.5">Loading...</span>';
+      document.getElementById('expenseValue').innerHTML = '<span style="opacity:0.5">Loading...</span>';
+      document.getElementById('profitValue').innerHTML = '<span style="opacity:0.5">Loading...</span>';
+      document.getElementById('incomeSubtitle').textContent = periodLabels[period];
+      document.getElementById('expenseSubtitle').textContent = periodLabels[period];
+      
+      // Fade chart
+      const chartContainer = document.getElementById('chartContainer');
+      if (chartContainer) chartContainer.style.opacity = '0.5';
+      
+      // Fetch new data from server with the filter
+      google.script.run
+        .withSuccessHandler(function(data) {
+          // Restore opacity
+          metricCards.forEach(card => card.style.opacity = '1');
+          if (chartContainer) chartContainer.style.opacity = '1';
+          
+          if (data) {
+            dashboardData = data;
+            renderDashboard(data);
+          } else {
+            document.getElementById('incomeValue').textContent = '$0.00';
+            document.getElementById('expenseValue').textContent = '$0.00';
+            document.getElementById('profitValue').textContent = '$0.00';
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error('Filter error:', error);
+          // Restore opacity and show error state
+          metricCards.forEach(card => card.style.opacity = '1');
+          if (chartContainer) chartContainer.style.opacity = '1';
+          document.getElementById('incomeValue').textContent = 'Error';
+          document.getElementById('expenseValue').textContent = 'Error';
+          document.getElementById('profitValue').textContent = 'Error';
+        })
+        .MM_apiGetDashboardData(currentFilter);
+    }
+
+    function refreshDashboard() {
+      document.getElementById('loadingScreen').classList.remove('hidden');
+      document.getElementById('dashboardContainer').style.display = 'none';
+      dataLoadedTimestamp = null;
+      initializeLoading();
+      loadDashboard();
+    }
+
+    function formatNumber(num) {
+      if (typeof num !== 'number') num = parseFloat(num) || 0;
+      return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    function formatCompact(num) {
+      if (typeof num !== 'number') num = parseFloat(num) || 0;
+      if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+      return num.toFixed(0);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m];
+      });
+    }
+
+    function escapeJs(str) {
+      if (!str) return '';
+      return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    // Actions
+    function openReports() {
+      showActionLoading('Opening Reports...');
+      google.script.run.showReportsDialog();
+      // No close() - modal replaces modal
+    }
+
+    function openCategorizationModal() {
+      showActionLoading('Opening Categorization...');
+      google.script.run.showCategorizationModal();
+      // No close() - modal replaces modal
+    }
+
+    function openClarityAndReports() {
+      showActionLoading('Opening Clarity AI and Reports...');
+      google.script.run.showReportsDialog();
+      // No close() - modal replaces modal
+    }
+
+    function runScanner() {
+      showActionLoading('Running Mistake Scanner...');
+      google.script.run.runMistakeScanner();
+      // No close() - modal replaces modal
+    }
+
+    function openNavigation() {
+      showActionLoading('Opening Navigation...');
+      google.script.run
+        .withSuccessHandler(function() {
+          google.script.host.close();
+        })
+        .showNavigationMenu();
+    }
+
+    function openClarity() {
+      showActionLoading('Opening Clarity AI Assistant...');
+      google.script.run.showAIAssistant();
+      // No close() - modal replaces modal
+    }
+
+    function navigateToAccount(sheetName) {
+      showActionLoading('Navigating to ' + sheetName + '...');
+      google.script.run
+        .withSuccessHandler(function() {
+          google.script.host.close();
+        })
+        .navigateToSheet(sheetName);
+    }
+
+    function openAccountCategorization(accountName) {
+      showActionLoading('Opening ' + accountName + '...');
+      google.script.run.showAccountCategorizationModal(accountName);
+      // No close() - modal replaces modal
+    }
+
+    function openLink(type) {
+      google.script.run.openPlaceholderLink(type);
+      // No close() - link opener handles its own UI or we keep dashboard open
+    }
+
+    // Action loading overlay
+    function showActionLoading(message) {
+      const overlay = document.createElement('div');
+      overlay.id = 'actionLoadingOverlay';
+      overlay.innerHTML = `
+        <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(248,246,243,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;">
+          <div style="width:50px;height:50px;border:4px solid var(--neutral);border-top:4px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;"></div>
+          <div style="font-family:'Montserrat',sans-serif;font-size:16px;font-weight:600;color:var(--primary);">${message}</div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
+
+    // ==================== ALERTS MODAL ====================
+    let cachedAlerts = null;
+
+    function showAlertsModal() {
+      showActionLoading('Loading alerts...');
+      
+      google.script.run
+        .withSuccessHandler(function(alerts) {
+          hideActionLoading();
+          cachedAlerts = alerts;
+          renderAlertsModal(alerts);
+        })
+        .withFailureHandler(function(error) {
+          hideActionLoading();
+          alert('Error loading alerts: ' + (error.message || 'Unknown error'));
+        })
+        .MM_getTransactionAlerts();
+    }
+
+    function hideActionLoading() {
+      const overlay = document.getElementById('actionLoadingOverlay');
+      if (overlay) overlay.remove();
+    }
+
+    function renderAlertsModal(alerts) {
+      const modal = document.createElement('div');
+      modal.id = 'alertsModal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:100000;';
+      
+      const totalIssues = alerts.incompleteTransactions.length;
+      
+      modal.innerHTML = `
+        <div style="background:white;border-radius:12px;width:90%;max-width:900px;max-height:85vh;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.2);display:flex;flex-direction:column;">
+          <div style="padding:24px;border-bottom:2px solid var(--neutral);display:flex;justify-content:space-between;align-items:center;background:var(--neutral-light);">
+            <div>
+              <h2 style="font-family:'Playfair Display',serif;font-size:24px;color:var(--primary);margin:0 0 8px 0;">Transaction Alerts</h2>
+              <p style="margin:0;color:var(--black-light);font-size:14px;">Found ${totalIssues} transaction(s) that need attention</p>
+            </div>
+            <button onclick="closeAlertsModal()" style="background:none;border:none;cursor:pointer;padding:8px;border-radius:6px;transition:background 0.2s;">
+              <span class="material-icons-outlined" style="color:var(--black);font-size:28px;">close</span>
+            </button>
+          </div>
+          
+          <div style="padding:24px;overflow-y:auto;flex:1;">
+            ${totalIssues === 0 ? `
+              <div style="text-align:center;padding:60px 20px;">
+                <span class="material-icons-outlined" style="font-size:64px;color:var(--accent);margin-bottom:16px;">check_circle</span>
+                <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--primary);margin:0 0 8px 0;">All Clear!</h3>
+                <p style="color:var(--black-light);margin:0;">No incomplete transactions found</p>
+              </div>
+            ` : `
+              <div style="margin-bottom:20px;">
+                <h3 style="font-family:'Montserrat',sans-serif;font-size:16px;font-weight:600;color:var(--accent);margin:0 0 12px 0;">
+                  <span class="material-icons-outlined" style="vertical-align:middle;margin-right:8px;">warning_amber</span>
+                  Incomplete Transactions (${alerts.incompleteTransactions.length})
+                </h3>
+                <p style="color:var(--black-light);font-size:13px;margin:0 0 16px 0;">These transactions are missing required information</p>
+                
+                <div style="display:grid;gap:12px;">
+                  ${alerts.incompleteTransactions.map((alert, idx) => `
+                    <div style="background:var(--neutral-light);border-left:4px solid var(--accent);padding:16px;border-radius:6px;">
+                      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+                        <div style="flex:1;">
+                          <div style="font-weight:600;color:var(--black);margin-bottom:4px;">
+                            ${alert.sheetName} - Row ${alert.rowIndex}
+                          </div>
+                          <div style="color:var(--black-light);font-size:13px;">
+                            ${alert.description || '(No description)'}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+                        ${alert.missingFields.map(field => `
+                          <span style="background:white;padding:4px 10px;border-radius:4px;font-size:12px;color:var(--accent);border:1px solid var(--accent);">
+                            Missing: ${field}
+                          </span>
+                        `).join('')}
+                      </div>
+                      
+                      <div style="margin-top:12px;display:flex;gap:8px;">
+                        <button onclick="goToTransaction('${alert.sheetName}', ${alert.rowIndex})" style="background:var(--primary);color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:background 0.2s;">
+                          Go to Transaction
+                        </button>
+                        <button onclick="showAlertDetails(${idx})" style="background:white;color:var(--primary);border:1px solid var(--primary);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;">
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `}
+          </div>
+          
+          <div style="padding:16px 24px;border-top:2px solid var(--neutral);background:var(--neutral-light);display:flex;justify-content:flex-end;gap:12px;">
+            <button onclick="closeAlertsModal()" style="background:var(--primary);color:white;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-weight:600;transition:background 0.2s;">
+              Close
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    function closeAlertsModal() {
+      const modal = document.getElementById('alertsModal');
+      if (modal) modal.remove();
+    }
+
+    function goToTransaction(sheetName, rowIndex) {
+      closeAlertsModal();
+      showActionLoading('Opening transaction...');
+      google.script.run
+        .withSuccessHandler(function() {
+          hideActionLoading();
+          google.script.host.close();
+        })
+        .withFailureHandler(function(error) {
+          hideActionLoading();
+          alert('Error: ' + (error.message || 'Could not navigate to transaction'));
+        })
+        .MM_navigateToTransaction(sheetName, rowIndex);
+    }
+
+    function showAlertDetails(index) {
+      if (!cachedAlerts || !cachedAlerts.incompleteTransactions[index]) return;
+      
+      const alert = cachedAlerts.incompleteTransactions[index];
+      const detailModal = document.createElement('div');
+      detailModal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:100001;';
+      
+      detailModal.innerHTML = `
+        <div style="background:white;border-radius:12px;width:90%;max-width:600px;max-height:80vh;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.3);">
+          <div style="padding:24px;border-bottom:2px solid var(--neutral);background:var(--neutral-light);">
+            <h3 style="font-family:'Playfair Display',serif;font-size:20px;color:var(--primary);margin:0;">Transaction Details</h3>
+          </div>
+          
+          <div style="padding:24px;overflow-y:auto;">
+            <div style="display:grid;gap:16px;">
+              <div>
+                <div style="font-size:12px;color:var(--black-light);margin-bottom:4px;">Sheet</div>
+                <div style="font-weight:600;color:var(--black);">${alert.sheetName}</div>
+              </div>
+              
+              <div>
+                <div style="font-size:12px;color:var(--black-light);margin-bottom:4px;">Row Number</div>
+                <div style="font-weight:600;color:var(--black);">${alert.rowIndex}</div>
+              </div>
+              
+              ${alert.date ? `
+                <div>
+                  <div style="font-size:12px;color:var(--black-light);margin-bottom:4px;">Date</div>
+                  <div style="font-weight:600;color:var(--black);">${alert.date}</div>
+                </div>
+              ` : ''}
+              
+              ${alert.description ? `
+                <div>
+                  <div style="font-size:12px;color:var(--black-light);margin-bottom:4px;">Description</div>
+                  <div style="font-weight:600;color:var(--black);">${alert.description}</div>
+                </div>
+              ` : ''}
+              
+              ${alert.amount ? `
+                <div>
+                  <div style="font-size:12px;color:var(--black-light);margin-bottom:4px;">Amount</div>
+                  <div style="font-weight:600;color:var(--black);">$${alert.amount}</div>
+                </div>
+              ` : ''}
+              
+              <div>
+                <div style="font-size:12px;color:var(--black-light);margin-bottom:4px;">Missing Fields</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+                  ${alert.missingFields.map(field => `
+                    <span style="background:var(--accent);color:white;padding:6px 12px;border-radius:4px;font-size:13px;">
+                      ${field}
+                    </span>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div style="padding:16px 24px;border-top:2px solid var(--neutral);background:var(--neutral-light);display:flex;justify-content:flex-end;">
+            <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background:var(--primary);color:white;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-weight:600;">
+              Close
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(detailModal);
+    }
+
+    // ==================== CUSTOM DATE FILTER ====================
+    function showCustomDateFilter() {
+      const modal = document.createElement('div');
+      modal.id = 'customDateModal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:100000;';
+      
+      modal.innerHTML = `
+        <div style="background:white;border-radius:12px;width:90%;max-width:500px;box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+          <div style="padding:24px;border-bottom:2px solid var(--neutral);background:var(--neutral-light);">
+            <h2 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--primary);margin:0;">Custom Date Range</h2>
+          </div>
+          
+          <div style="padding:24px;">
+            <div style="margin-bottom:20px;">
+              <label style="display:block;font-size:14px;font-weight:600;color:var(--black);margin-bottom:8px;">Start Date</label>
+              <input type="date" id="customStartDate" style="width:100%;padding:12px;border:2px solid var(--neutral);border-radius:6px;font-family:'Montserrat',sans-serif;font-size:14px;">
+            </div>
+            
+            <div style="margin-bottom:20px;">
+              <label style="display:block;font-size:14px;font-weight:600;color:var(--black);margin-bottom:8px;">End Date</label>
+              <input type="date" id="customEndDate" style="width:100%;padding:12px;border:2px solid var(--neutral);border-radius:6px;font-family:'Montserrat',sans-serif;font-size:14px;">
+            </div>
+            
+            <div style="background:var(--neutral-light);padding:12px;border-radius:6px;margin-bottom:20px;">
+              <div style="font-size:13px;color:var(--black-light);">
+                <strong>Quick Presets:</strong>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+                <button onclick="setDatePreset(7)" class="preset-btn" style="background:white;border:2px solid var(--primary);color:var(--primary);padding:10px 8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s ease;">Last 7 Days</button>
+                <button onclick="setDatePreset(30)" class="preset-btn" style="background:white;border:2px solid var(--primary);color:var(--primary);padding:10px 8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s ease;">Last 30 Days</button>
+                <button onclick="setDatePreset(60)" class="preset-btn" style="background:white;border:2px solid var(--primary);color:var(--primary);padding:10px 8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s ease;">Last 60 Days</button>
+                <button onclick="setDatePreset(90)" class="preset-btn" style="background:white;border:2px solid var(--primary);color:var(--primary);padding:10px 8px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.2s ease;">Last 90 Days</button>
+              </div>
+            </div>
+          </div>
+          
+          <div style="padding:16px 24px;border-top:2px solid var(--neutral);background:var(--neutral-light);display:flex;justify-content:flex-end;gap:12px;">
+            <button onclick="closeCustomDateModal()" class="modal-cancel-btn" style="background:white;color:var(--primary);border:2px solid var(--primary);padding:10px 24px;border-radius:6px;cursor:pointer;font-weight:600;transition:all 0.2s ease;">
+              Cancel
+            </button>
+            <button onclick="applyCustomDateFilter()" class="modal-apply-btn" style="background:var(--primary);color:white;border:none;padding:10px 24px;border-radius:6px;cursor:pointer;font-weight:600;transition:all 0.2s ease;">
+              Apply Filter
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Set default dates
+      const today = new Date();
+      const thirtyDaysAgo = new Date(today);
+      thirtyDaysAgo.setDate(today.getDate() - 30);
+      
+      document.getElementById('customEndDate').value = formatDateForInput(today);
+      document.getElementById('customStartDate').value = formatDateForInput(thirtyDaysAgo);
+    }
+
+    function setDatePreset(days) {
+      const today = new Date();
+      const startDate = new Date(today);
+      startDate.setDate(today.getDate() - days);
+      
+      document.getElementById('customStartDate').value = formatDateForInput(startDate);
+      document.getElementById('customEndDate').value = formatDateForInput(today);
+    }
+
+    function formatDateForInput(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function closeCustomDateModal() {
+      const modal = document.getElementById('customDateModal');
+      if (modal) modal.remove();
+    }
+
+    function applyCustomDateFilter() {
+      const startDate = document.getElementById('customStartDate').value;
+      const endDate = document.getElementById('customEndDate').value;
+      
+      if (!startDate || !endDate) {
+        alert('Please select both start and end dates');
+        return;
+      }
+      
+      if (new Date(startDate) > new Date(endDate)) {
+        alert('Start date must be before end date');
+        return;
+      }
+      
+      closeCustomDateModal();
+      filterDashboardByDateRange(startDate, endDate);
+    }
+
+    function filterDashboardByDateRange(startDate, endDate) {
+      showActionLoading('Filtering data...');
+      
+      google.script.run
+        .withSuccessHandler(function(data) {
+          hideActionLoading();
+          currentFilter = 'custom';
+          renderDashboard(data);
+          
+          // Update filter buttons
+          document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.period === 'custom') {
+              btn.classList.add('active');
+            }
+          });
+          
+          // Update date range display
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          const options = { month: 'short', day: 'numeric', year: 'numeric' };
+          document.getElementById('dateRange').textContent = 
+            `${start.toLocaleDateString('en-US', options)} - ${end.toLocaleDateString('en-US', options)}`;
+        })
+        .withFailureHandler(function(error) {
+          hideActionLoading();
+          alert('Error filtering data: ' + (error.message || 'Unknown error'));
+        })
+        .MM_apiGetDashboardDataByDateRange(startDate, endDate);
+    }
+  </script>
+</body>
+</html>

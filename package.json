@@ -1,15 +1,5 @@
 {
-  "name": "clarity-webapp",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "install:worker": "wrangler deploy",
-    "dev:worker": "wrangler dev",
-    "deploy:pages": "wrangler pages deploy .",
-    "deploy": "wrangler deploy"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251229.0",
-    "wrangler": "^3.78.0"
+  "dependencies": {
+    "acorn": "^8.15.0"
   }
 }

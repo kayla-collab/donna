@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #ab9478;
+      --color-lightest: #d4c9bb;
+      --color-light: #c2b199;
+      --color-dark: #8a7760;
+      --color-darkest: #6d5f4c;
+      --color-income: #51cf66;
+      --color-expense: #ff6b6b;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8f6f3;
+      color: #333;
+    }
+    
+    h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; }
+    
+    .header {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .header { position: relative; }
+    .header h1 { font-size: 18px; margin-bottom: 4px; }
+    .header p { font-size: 12px; opacity: 0.9; }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .close-btn:hover { background: rgba(255,255,255,0.3); }
+    
+    .content { padding: 16px; }
+    
+    .transaction-info {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--color-primary);
+    }
+    
+    .tx-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .tx-label { font-size: 11px; color: #999; text-transform: uppercase; }
+    .tx-value { font-size: 14px; font-weight: 600; color: #333; }
+    .tx-amount { font-size: 20px; font-weight: 700; color: var(--color-expense); }
+    
+    .splits-container { margin-bottom: 16px; }
+    
+    .split-entry {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #e8e4df;
+    }
+    
+    .split-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .split-title { font-weight: 600; font-size: 14px; color: var(--color-darkest); }
+    
+    .remove-btn {
+      background: none;
+      border: none;
+      color: var(--color-expense);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    
+    .type-toggle {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    
+    .type-btn {
+      flex: 1;
+      padding: 8px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .type-btn.active {
+      border-color: var(--color-primary);
+      background: var(--color-lightest);
+    }
+    
+    .field-group { margin-bottom: 12px; }
+    .field-label { font-size: 11px; color: #666; margin-bottom: 4px; display: block; }
+    
+    .field-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    
+    .field-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(171, 148, 120, 0.15);
+    }
+    
+    .add-split-btn {
+      width: 100%;
+      padding: 14px;
+      border: 2px dashed #ddd;
+      background: white;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #666;
+      transition: all 0.2s;
+      margin-bottom: 16px;
+    }
+    
+    .add-split-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 16px;
+      background: var(--color-lightest);
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+    
+    .total-label { font-weight: 600; color: #333; }
+    .total-value { font-weight: 700; }
+    .total-value.valid { color: var(--color-income); }
+    .total-value.invalid { color: var(--color-expense); }
+    
+    .apply-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .apply-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .apply-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    
+    .loading { text-align: center; padding: 40px; color: #999; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Split Transaction</h1>
+    <p>Divide this transaction into multiple categories</p>
+    <button class="close-btn" onclick="google.script.host.close()" title="Close">&#x2715;</button>
+  </div>
+  
+  <div class="content">
+    <div class="transaction-info" id="txInfo">
+      <div class="loading">Loading transaction...</div>
+    </div>
+    
+    <div class="splits-container" id="splitsContainer">
+      <!-- Split entries will be added here -->
+    </div>
+    
+    <button class="add-split-btn" onclick="addSplit()">+ Add Another Split</button>
+    
+    <div class="total-row">
+      <span class="total-label">Total: <span id="originalAmount">$0.00</span></span>
+      <span class="total-value" id="currentTotal">$0.00</span>
+    </div>
+    
+    <button class="apply-btn" id="applyBtn" onclick="applySplit()" disabled>Apply Split</button>
+  </div>
+
+  <script>
+    let state = { originalAmount: 0, splits: [], categories: { personal: [], business: [] } };
+    let splitCount = 0;
+
+    document.addEventListener('DOMContentLoaded', loadData);
+
+    function loadData() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          state.originalAmount = Math.abs(data.amount || 0);
+          document.getElementById('originalAmount').textContent = '$' + state.originalAmount.toFixed(2);
+          document.getElementById('txInfo').innerHTML = `
+            <div class="tx-row">
+              <div><div class="tx-label">Amount</div></div>
+              <div class="tx-amount">$${state.originalAmount.toFixed(2)}</div>
+            </div>
+          `;
+          loadCategories();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('txInfo').innerHTML = '<div class="loading">Error: ' + error.message + '</div>';
+        })
+        .getTransactionType();
+      
+      // Add initial splits
+      addSplit();
+      addSplit();
+    }
+
+    function loadCategories() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          state.categories.personal = data.expenseCategories || [];
+          state.categories.business = data.businessCategories || [];
+          updateSplitSelects();
+        })
+        .getRefundCategories();
+    }
+
+    function addSplit() {
+      splitCount++;
+      const id = splitCount;
+      
+      const entry = document.createElement('div');
+      entry.className = 'split-entry';
+      entry.id = 'split_' + id;
+      entry.innerHTML = `
+        <div class="split-header">
+          <span class="split-title">Split ${id}</span>
+          ${splitCount > 1 ? '<button class="remove-btn" onclick="removeSplit(' + id + ')">&#x2715;</button>' : ''}
+        </div>
+        <div class="type-toggle">
+          <button class="type-btn active" onclick="setSplitType(${id}, 'personal', this)">Personal</button>
+          <button class="type-btn" onclick="setSplitType(${id}, 'business', this)">Business</button>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Category</label>
+          <select class="field-input split-category" data-id="${id}" onchange="updateTotal()">
+            <option value="">Select category...</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Amount</label>
+          <input type="number" class="field-input split-amount" data-id="${id}" step="0.01" placeholder="0.00" oninput="updateTotal()">
+        </div>
+      `;
+      
+      document.getElementById('splitsContainer').appendChild(entry);
+      updateSplitSelect(id, 'personal');
+    }
+
+    function removeSplit(id) {
+      const entry = document.getElementById('split_' + id);
+      if (entry) entry.remove();
+      updateTotal();
+    }
+
+    function setSplitType(id, type, btn) {
+      const entry = document.getElementById('split_' + id);
+      entry.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateSplitSelect(id, type);
+    }
+
+    function updateSplitSelect(id, type) {
+      const select = document.querySelector(`.split-category[data-id="${id}"]`);
+      const categories = type === 'business' ? state.categories.business : state.categories.personal;
+      
+      select.innerHTML = '<option value="">Select category...</option>' +
+        categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+
+    function updateSplitSelects() {
+      document.querySelectorAll('.split-entry').forEach(entry => {
+        const id = entry.id.replace('split_', '');
+        const isBusinessActive = entry.querySelector('.type-btn:last-child').classList.contains('active');
+        updateSplitSelect(id, isBusinessActive ? 'business' : 'personal');
+      });
+    }
+
+    function updateTotal() {
+      let total = 0;
+      document.querySelectorAll('.split-amount').forEach(input => {
+        total += parseFloat(input.value) || 0;
+      });
+      
+      const totalEl = document.getElementById('currentTotal');
+      totalEl.textContent = '$' + total.toFixed(2);
+      totalEl.className = 'total-value ' + (Math.abs(total - state.originalAmount) < 0.01 ? 'valid' : 'invalid');
+      
+      document.getElementById('applyBtn').disabled = Math.abs(total - state.originalAmount) >= 0.01;
+    }
+
+    function applySplit() {
+      const splits = [];
+      
+      document.querySelectorAll('.split-entry').forEach(entry => {
+        const id = entry.id.replace('split_', '');
+        const isBusiness = entry.querySelector('.type-btn:last-child').classList.contains('active');
+        const category = entry.querySelector('.split-category').value;
+        const amount = parseFloat(entry.querySelector('.split-amount').value) || 0;
+        
+        if (category && amount > 0) {
+          splits.push({ category, amount, isBusiness });
+        }
+      });
+      
+      if (splits.length < 2) {
+        alert('Please add at least 2 valid splits');
+        return;
+      }
+      
+      google.script.run
+        .withSuccessHandler(function() { google.script.host.close(); })
+        .withFailureHandler(function(error) { alert('Error: ' + error.message); })
+        .processSplits(splits);
+    }
+
+    function escapeHtml(str) { return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+  </script>
+</body>
+</html>

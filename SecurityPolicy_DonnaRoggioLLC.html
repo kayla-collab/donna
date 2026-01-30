@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Policy - Donna Roggio LLC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            line-height: 1.7;
+            color: #333;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 40px;
+            background: #fff;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #ab9478;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ab9478;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+        
+        .document-title {
+            font-size: 36px;
+            color: #394144;
+            margin: 20px 0;
+            font-weight: normal;
+        }
+        
+        .document-subtitle {
+            font-size: 16px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .effective-date {
+            background: #f5f3ef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            color: #394144;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e4e0d8;
+        }
+        
+        h2 {
+            font-size: 20px;
+            color: #567b84;
+            margin: 30px 0 15px 0;
+        }
+        
+        h3 {
+            font-size: 16px;
+            color: #394144;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .highlight-box {
+            background: #f5f3ef;
+            border-left: 4px solid #ab9478;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .warning-box {
+            background: #fff5f5;
+            border-left: 4px solid #c17b5f;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .success-box {
+            background: #f0f9f7;
+            border-left: 4px solid #5eb3a6;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #e4e0d8;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: #f5f3ef;
+            color: #394144;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+        
+        .contact-section {
+            background: #394144;
+            color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            margin: 40px 0;
+        }
+        
+        .contact-section h2 {
+            color: #ab9478;
+            margin-top: 0;
+        }
+        
+        .contact-section a {
+            color: #c4b19e;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #e4e0d8;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .version-info {
+            background: #f5f3ef;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 13px;
+            margin-top: 30px;
+        }
+        
+        .toc {
+            background: #f5f3ef;
+            padding: 25px;
+            border-radius: 5px;
+            margin: 30px 0;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            color: #394144;
+        }
+        
+        .toc ol {
+            margin-left: 20px;
+        }
+        
+        .toc a {
+            color: #567b84;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+            }
+            .header {
+                page-break-after: avoid;
+            }
+            h1 {
+                page-break-after: avoid;
+            }
+            .highlight-box, .warning-box, .success-box {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo-text">DONNA ROGGIO LLC</div>
+    <h1 class="document-title">Security Policy</h1>
+    <p class="document-subtitle">Personal Money Mastery System</p>
+</div>
+
+<div class="effective-date">
+    <strong>Effective Date:</strong> January 1, 2025 &nbsp;|&nbsp; 
+    <strong>Last Updated:</strong> December 30, 2024 &nbsp;|&nbsp;
+    <strong>Version:</strong> 1.0
+</div>
+
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+        <li><a href="#introduction">Introduction & Purpose</a></li>
+        <li><a href="#scope">Scope of This Policy</a></li>
+        <li><a href="#data-collection">Data Collection & Types</a></li>
+        <li><a href="#data-storage">Data Storage & Protection</a></li>
+        <li><a href="#access-control">Access Control</a></li>
+        <li><a href="#third-party">Third-Party Services</a></li>
+        <li><a href="#bank-connection">Bank Connection Security</a></li>
+        <li><a href="#encryption">Encryption Standards</a></li>
+        <li><a href="#incident-response">Incident Response</a></li>
+        <li><a href="#user-responsibilities">User Responsibilities</a></li>
+        <li><a href="#data-retention">Data Retention & Deletion</a></li>
+        <li><a href="#compliance">Regulatory Compliance</a></li>
+        <li><a href="#updates">Policy Updates</a></li>
+        <li><a href="#contact">Contact Information</a></li>
+    </ol>
+</div>
+
+<h1 id="introduction">1. Introduction & Purpose</h1>
+
+<p>Donna Roggio LLC ("Company," "we," "us," or "our") is committed to protecting the security, confidentiality, and integrity of all data processed through the Personal Money Mastery System ("the System," "the Application," or "the Service").</p>
+
+<p>This Security Policy outlines the technical, administrative, and physical safeguards we implement to protect user data, including sensitive financial information accessed through third-party bank connection services.</p>
+
+<div class="highlight-box">
+    <strong>Our Security Commitment:</strong><br>
+    We treat your financial data with the same level of care and protection that we would want for our own. Security is not an afterthought—it is foundational to everything we build.
+</div>
+
+<h2>1.1 Document Purpose</h2>
+<p>This document serves to:</p>
+<ul>
+    <li>Define our security standards and practices</li>
+    <li>Communicate our data protection measures to users</li>
+    <li>Satisfy compliance requirements for financial data handling</li>
+    <li>Establish guidelines for incident response and breach notification</li>
+    <li>Meet requirements for third-party integrations (e.g., Plaid)</li>
+</ul>
+
+<h1 id="scope">2. Scope of This Policy</h1>
+
+<h2>2.1 What This Policy Covers</h2>
+<p>This Security Policy applies to:</p>
+<ul>
+    <li>The Personal Money Mastery System Google Sheets application</li>
+    <li>All associated Google Apps Script code and HTML interfaces</li>
+    <li>Data stored in users' Google Sheets documents</li>
+    <li>Data stored in Google Apps Script Properties</li>
+    <li>Third-party integrations (Plaid, bank connections)</li>
+    <li>All users, administrators, and personnel with access to the System</li>
+</ul>
+
+<h2>2.2 What This Policy Does Not Cover</h2>
+<ul>
+    <li>Security of users' Google accounts (governed by Google's policies)</li>
+    <li>Security of users' bank accounts (governed by respective financial institutions)</li>
+    <li>Third-party services' internal security (governed by their own policies)</li>
+</ul>
+
+<h1 id="data-collection">3. Data Collection & Types</h1>
+
+<h2>3.1 Categories of Data Collected</h2>
+
+<table>
+    <tr>
+        <th>Data Category</th>
+        <th>Examples</th>
+        <th>Sensitivity Level</th>
+        <th>Storage Location</th>
+    </tr>
+    <tr>
+        <td>User Identity</td>
+        <td>Email address, name</td>
+        <td>Medium</td>
+        <td>Google Account / Script Properties</td>
+    </tr>
+    <tr>
+        <td>Financial Transactions</td>
+        <td>Date, merchant, amount, category</td>
+        <td>High</td>
+        <td>User's Google Sheets</td>
+    </tr>
+    <tr>
+        <td>Account Information</td>
+        <td>Account name, type, last 4 digits</td>
+        <td>High</td>
+        <td>Script Properties (encrypted)</td>
+    </tr>
+    <tr>
+        <td>Account Balances</td>
+        <td>Current balance, available balance</td>
+        <td>High</td>
+        <td>User's Google Sheets</td>
+    </tr>
+    <tr>
+        <td>Access Tokens</td>
+        <td>Plaid access tokens</td>
+        <td>Critical</td>
+        <td>Script Properties (encrypted)</td>
+    </tr>
+    <tr>
+        <td>User Preferences</td>
+        <td>Category mappings, settings</td>
+        <td>Low</td>
+        <td>Script Properties</td>
+    </tr>
+</table>
+
+<h2>3.2 Data We Do NOT Collect</h2>
+
+<div class="success-box">
+    <strong>We Never Collect or Store:</strong>
+    <ul>
+        <li>Full bank account numbers</li>
+        <li>Routing numbers</li>
+        <li>Bank login credentials (usernames/passwords)</li>
+        <li>Social Security numbers</li>
+        <li>Credit card CVV codes</li>
+        <li>Driver's license or government ID numbers</li>
+    </ul>
+</div>
+
+<h1 id="data-storage">4. Data Storage & Protection</h1>
+
+<h2>4.1 Primary Storage Infrastructure</h2>
+
+<p>All data is stored within Google's infrastructure, which provides:</p>
+
+<ul>
+    <li><strong>SOC 1, SOC 2, and SOC 3 certification</strong></li>
+    <li><strong>ISO 27001 certification</strong></li>
+    <li><strong>FISMA compliance</strong></li>
+    <li><strong>FedRAMP authorization</strong></li>
+</ul>
+
+<h2>4.2 Storage Locations</h2>
+
+<table>
+    <tr>
+        <th>Data Type</th>
+        <th>Storage Method</th>
+        <th>Encryption</th>
+    </tr>
+    <tr>
+        <td>Transaction Data</td>
+        <td>Google Sheets cells</td>
+        <td>Google's encryption at rest (AES-256)</td>
+    </tr>
+    <tr>
+        <td>Access Tokens</td>
+        <td>Script Properties</td>
+        <td>Google's encryption at rest (AES-256)</td>
+    </tr>
+    <tr>
+        <td>User Settings</td>
+        <td>Script Properties / Document Properties</td>
+        <td>Google's encryption at rest (AES-256)</td>
+    </tr>
+    <tr>
+        <td>Temporary Cache</td>
+        <td>Cache Service</td>
+        <td>Google's encryption, auto-expires</td>
+    </tr>
+</table>
+
+<h2>4.3 Data Isolation</h2>
+
+<p>Each user's data is completely isolated:</p>
+<ul>
+    <li>Each user has their own Google Sheets file in their own Google Drive</li>
+    <li>Script Properties are bound to the individual document</li>
+    <li>No shared database or central data repository</li>
+    <li>Users cannot access other users' data under any circumstances</li>
+</ul>
+
+<h1 id="access-control">5. Access Control</h1>
+
+<h2>5.1 User Authentication</h2>
+
+<p>Access to the System requires:</p>
+<ol>
+    <li><strong>Google Account Authentication:</strong> Users must be signed into a valid Google account</li>
+    <li><strong>Document Access:</strong> Users must have edit access to their specific spreadsheet</li>
+    <li><strong>Script Authorization:</strong> Users must authorize the Google Apps Script to run</li>
+    <li><strong>Application PIN (Optional):</strong> Secondary PIN protection for sensitive operations</li>
+</ol>
+
+<h2>5.2 Authorization Levels</h2>
+
+<table>
+    <tr>
+        <th>Role</th>
+        <th>Access Level</th>
+        <th>Capabilities</th>
+    </tr>
+    <tr>
+        <td>Primary User</td>
+        <td>Full Access</td>
+        <td>All features, bank connections, settings</td>
+    </tr>
+    <tr>
+        <td>Guest User</td>
+        <td>Limited Access</td>
+        <td>View and categorize transactions only</td>
+    </tr>
+    <tr>
+        <td>Master Admin</td>
+        <td>Support Access</td>
+        <td>Technical support (only with user permission)</td>
+    </tr>
+</table>
+
+<h2>5.3 Session Management</h2>
+
+<ul>
+    <li>Sessions are managed by Google's authentication system</li>
+    <li>No persistent sessions stored by the Application</li>
+    <li>Automatic logout follows Google's session timeout policies</li>
+</ul>
+
+<h1 id="third-party">6. Third-Party Services</h1>
+
+<h2>6.1 Services We Use</h2>
+
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Purpose</th>
+        <th>Data Shared</th>
+        <th>Security Certification</th>
+    </tr>
+    <tr>
+        <td>Google Workspace</td>
+        <td>Application platform</td>
+        <td>All application data</td>
+        <td>SOC 2, ISO 27001, HIPAA</td>
+    </tr>
+    <tr>
+        <td>Plaid</td>
+        <td>Bank connections</td>
+        <td>Access tokens only</td>
+        <td>SOC 2 Type II, ISO 27001</td>
+    </tr>
+</table>
+
+<h2>6.2 Plaid Security</h2>
+
+<p>Plaid provides institutional-grade security including:</p>
+<ul>
+    <li>Bank-level 256-bit encryption</li>
+    <li>SOC 2 Type II certification</li>
+    <li>Regular third-party security audits</li>
+    <li>No storage of bank credentials (handled by banks directly)</li>
+    <li>Tokenized access (credentials never touch our system)</li>
+</ul>
+
+<h2>6.3 Data Sharing Policy</h2>
+
+<div class="warning-box">
+    <strong>We Never:</strong>
+    <ul>
+        <li>Sell user data to any third party</li>
+        <li>Share data with advertisers</li>
+        <li>Provide data to data brokers</li>
+        <li>Use data for any purpose other than providing the Service</li>
+    </ul>
+</div>
+
+<h1 id="bank-connection">7. Bank Connection Security</h1>
+
+<h2>7.1 How Bank Connections Work</h2>
+
+<ol>
+    <li><strong>User Initiates:</strong> User clicks "Link Bank Account" in the Application</li>
+    <li><strong>Plaid Link Opens:</strong> Secure Plaid interface loads (not our code)</li>
+    <li><strong>User Authenticates:</strong> User enters bank credentials directly with Plaid</li>
+    <li><strong>Token Generated:</strong> Plaid creates a secure access token</li>
+    <li><strong>Token Stored:</strong> We store only the token (never credentials)</li>
+    <li><strong>Data Retrieved:</strong> Token used to fetch transactions via Plaid API</li>
+</ol>
+
+<h2>7.2 What We Never See</h2>
+
+<div class="success-box">
+    <strong>Bank credentials (username/password) are NEVER:</strong>
+    <ul>
+        <li>Entered into our application</li>
+        <li>Transmitted to our servers</li>
+        <li>Stored anywhere in our system</li>
+        <li>Visible to our code or personnel</li>
+    </ul>
+    <p style="margin-top: 10px; margin-bottom: 0;">All authentication happens directly between the user and Plaid's secure infrastructure.</p>
+</div>
+
+<h2>7.3 Token Security</h2>
+
+<ul>
+    <li>Access tokens are stored in Google Apps Script Properties</li>
+    <li>Tokens are encrypted at rest by Google</li>
+    <li>Tokens cannot be used without our Plaid client credentials</li>
+    <li>Tokens can be revoked by users at any time</li>
+    <li>Tokens do not grant ability to move money or make payments</li>
+</ul>
+
+<h1 id="encryption">8. Encryption Standards</h1>
+
+<h2>8.1 Data in Transit</h2>
+
+<table>
+    <tr>
+        <th>Connection</th>
+        <th>Encryption</th>
+        <th>Protocol</th>
+    </tr>
+    <tr>
+        <td>User ↔ Google Sheets</td>
+        <td>TLS 1.3</td>
+        <td>HTTPS</td>
+    </tr>
+    <tr>
+        <td>Google Apps Script ↔ Plaid</td>
+        <td>TLS 1.2+</td>
+        <td>HTTPS</td>
+    </tr>
+    <tr>
+        <td>Plaid ↔ Banks</td>
+        <td>TLS 1.2+ / mTLS</td>
+        <td>HTTPS</td>
+    </tr>
+</table>
+
+<h2>8.2 Data at Rest</h2>
+
+<ul>
+    <li><strong>Google Infrastructure:</strong> AES-256 encryption</li>
+    <li><strong>Automatic Key Management:</strong> Google manages encryption keys</li>
+    <li><strong>No Unencrypted Storage:</strong> All data encrypted by default</li>
+</ul>
+
+<h1 id="incident-response">9. Incident Response</h1>
+
+<h2>9.1 Incident Classification</h2>
+
+<table>
+    <tr>
+        <th>Severity</th>
+        <th>Description</th>
+        <th>Response Time</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td>Critical</td>
+        <td>Active data breach or compromise</td>
+        <td>Immediate (< 1 hour)</td>
+        <td>Unauthorized access to tokens</td>
+    </tr>
+    <tr>
+        <td>High</td>
+        <td>Potential security vulnerability</td>
+        <td>< 24 hours</td>
+        <td>Reported security bug</td>
+    </tr>
+    <tr>
+        <td>Medium</td>
+        <td>Security concern, no active threat</td>
+        <td>< 72 hours</td>
+        <td>Suspicious activity report</td>
+    </tr>
+    <tr>
+        <td>Low</td>
+        <td>Security improvement opportunity</td>
+        <td>< 1 week</td>
+        <td>Security enhancement request</td>
+    </tr>
+</table>
+
+<h2>9.2 Incident Response Procedure</h2>
+
+<ol>
+    <li><strong>Detection:</strong> Identify and confirm the incident</li>
+    <li><strong>Containment:</strong> Isolate affected systems/accounts</li>
+    <li><strong>Assessment:</strong> Determine scope and impact</li>
+    <li><strong>Notification:</strong> Notify affected users within 72 hours</li>
+    <li><strong>Remediation:</strong> Fix the vulnerability</li>
+    <li><strong>Recovery:</strong> Restore normal operations</li>
+    <li><strong>Post-Incident Review:</strong> Document lessons learned</li>
+</ol>
+
+<h2>9.3 Breach Notification</h2>
+
+<p>In the event of a data breach affecting user financial data, we will:</p>
+<ul>
+    <li>Notify affected users via email within 72 hours</li>
+    <li>Provide details of what data was affected</li>
+    <li>Explain steps being taken to address the breach</li>
+    <li>Offer guidance on protective measures users can take</li>
+    <li>Report to relevant regulatory authorities as required</li>
+</ul>
+
+<h1 id="user-responsibilities">10. User Responsibilities</h1>
+
+<h2>10.1 Account Security</h2>
+
+<p>Users are responsible for:</p>
+<ul>
+    <li>Maintaining the security of their Google account</li>
+    <li>Using strong, unique passwords</li>
+    <li>Enabling two-factor authentication (strongly recommended)</li>
+    <li>Not sharing their spreadsheet with unauthorized individuals</li>
+    <li>Logging out of shared or public computers</li>
+</ul>
+
+<h2>10.2 Reporting Security Concerns</h2>
+
+<p>Users should immediately report:</p>
+<ul>
+    <li>Unauthorized access to their account</li>
+    <li>Suspicious transactions or activity</li>
+    <li>Potential security vulnerabilities</li>
+    <li>Phishing attempts related to our Service</li>
+</ul>
+
+<div class="highlight-box">
+    <strong>Report Security Issues To:</strong><br>
+    Email: <a href="mailto:security@risingandthriving.com">security@risingandthriving.com</a><br>
+    Response Time: Within 24 hours for all security reports
+</div>
+
+<h1 id="data-retention">11. Data Retention & Deletion</h1>
+
+<h2>11.1 Retention Periods</h2>
+
+<table>
+    <tr>
+        <th>Data Type</th>
+        <th>Retention Period</th>
+        <th>Deletion Method</th>
+    </tr>
+    <tr>
+        <td>Transaction Data</td>
+        <td>User-controlled (indefinite)</td>
+        <td>User deletes from spreadsheet</td>
+    </tr>
+    <tr>
+        <td>Access Tokens</td>
+        <td>Until user disconnects bank</td>
+        <td>Automatic upon disconnection</td>
+    </tr>
+    <tr>
+        <td>Account Mappings</td>
+        <td>Until user removes</td>
+        <td>User-initiated deletion</td>
+    </tr>
+    <tr>
+        <td>Usage Logs</td>
+        <td>30 days</td>
+        <td>Automatic purge</td>
+    </tr>
+</table>
+
+<h2>11.2 User Data Deletion Rights</h2>
+
+<p>Users can delete their data at any time by:</p>
+<ol>
+    <li><strong>Disconnect Bank Accounts:</strong> Removes all access tokens</li>
+    <li><strong>Clear Transaction Data:</strong> Delete rows from spreadsheet</li>
+    <li><strong>Delete Entire File:</strong> Remove the spreadsheet from Google Drive</li>
+    <li><strong>Request Full Deletion:</strong> Contact us to ensure complete removal</li>
+</ol>
+
+<h2>11.3 Data Portability</h2>
+
+<p>Users can export their data at any time:</p>
+<ul>
+    <li>Download spreadsheet as Excel (.xlsx)</li>
+    <li>Download as CSV</li>
+    <li>Download as PDF</li>
+    <li>Copy to another Google Sheets file</li>
+</ul>
+
+<h1 id="compliance">12. Regulatory Compliance</h1>
+
+<h2>12.1 Compliance Framework</h2>
+
+<table>
+    <tr>
+        <th>Regulation</th>
+        <th>Applicability</th>
+        <th>Our Compliance Status</th>
+    </tr>
+    <tr>
+        <td>CCPA (California)</td>
+        <td>California residents</td>
+        <td>✓ Compliant</td>
+    </tr>
+    <tr>
+        <td>GDPR (EU)</td>
+        <td>EU residents</td>
+        <td>✓ Compliant (if applicable)</td>
+    </tr>
+    <tr>
+        <td>GLBA</td>
+        <td>Financial data</td>
+        <td>✓ Following best practices</td>
+    </tr>
+    <tr>
+        <td>SOX</td>
+        <td>Not applicable</td>
+        <td>N/A (not a public company)</td>
+    </tr>
+</table>
+
+<h2>12.2 User Rights</h2>
+
+<p>Under applicable privacy laws, users have the right to:</p>
+<ul>
+    <li><strong>Access:</strong> Request a copy of their data</li>
+    <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+    <li><strong>Deletion:</strong> Request deletion of their data</li>
+    <li><strong>Portability:</strong> Receive data in a portable format</li>
+    <li><strong>Opt-Out:</strong> Opt out of certain data uses</li>
+</ul>
+
+<h1 id="updates">13. Policy Updates</h1>
+
+<h2>13.1 Update Process</h2>
+
+<p>This Security Policy may be updated periodically to reflect:</p>
+<ul>
+    <li>Changes in our security practices</li>
+    <li>New features or services</li>
+    <li>Regulatory requirements</li>
+    <li>Industry best practices</li>
+</ul>
+
+<h2>13.2 Notification of Changes</h2>
+
+<p>Users will be notified of material changes via:</p>
+<ul>
+    <li>Email notification to registered users</li>
+    <li>In-app notification upon next login</li>
+    <li>Updated "Last Modified" date on this document</li>
+</ul>
+
+<h2>13.3 Version History</h2>
+
+<table>
+    <tr>
+        <th>Version</th>
+        <th>Date</th>
+        <th>Changes</th>
+    </tr>
+    <tr>
+        <td>1.0</td>
+        <td>December 30, 2024</td>
+        <td>Initial security policy</td>
+    </tr>
+</table>
+
+<div class="contact-section" id="contact">
+    <h2>14. Contact Information</h2>
+    
+    <h3>General Inquiries</h3>
+    <p>
+        <strong>Donna Roggio LLC</strong><br>
+        Email: <a href="mailto:support@risingandthriving.com">support@risingandthriving.com</a><br>
+        Website: <a href="https://risingandthriving.com">risingandthriving.com</a>
+    </p>
+    
+    <h3>Security Concerns</h3>
+    <p>
+        Email: <a href="mailto:security@risingandthriving.com">security@risingandthriving.com</a><br>
+        Response Time: Within 24 hours
+    </p>
+    
+    <h3>Privacy Inquiries</h3>
+    <p>
+        Email: <a href="mailto:privacy@risingandthriving.com">privacy@risingandthriving.com</a><br>
+        For data access, correction, or deletion requests
+    </p>
+    
+    <h3>Data Protection Officer</h3>
+    <p>
+        Donna Roggio<br>
+        Email: <a href="mailto:donna@risingandthriving.com">donna@risingandthriving.com</a>
+    </p>
+</div>
+
+<div class="footer">
+    <p><strong>Donna Roggio LLC</strong></p>
+    <p>Personal Money Mastery System - Security Policy</p>
+    <p>Version 1.0 | Effective January 1, 2025</p>
+    <p style="margin-top: 20px; font-size: 12px;">
+        © 2026 Donna Roggio LLC. All Rights Reserved.<br>
+        This document is confidential and intended for authorized use only.
+    </p>
+</div>
+
+<div class="version-info">
+    <strong>Document Information</strong><br>
+    Document ID: SEC-POL-2025-001<br>
+    Classification: Public<br>
+    Owner: Donna Roggio, CEO<br>
+    Review Cycle: Annual<br>
+    Next Review Date: December 2025
+</div>
+
+</body>
+</html>
