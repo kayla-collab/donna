@@ -355,32 +355,42 @@ function unprotectSheetForWrite(sheet) {
 }
 
 /**
- * Remove all protections from ACCOUNT sheets on open
- * Called from onOpen to ensure write access
+ * Remove all protections from ACCOUNT sheets on open.
+ * Uses AccountNameManager to include renamed tabs.
+ * Called from onOpen to ensure write access.
  */
 function removeAccountProtectionsOnOpen() {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var totalRemoved = 0;
-    
-    for (var i = 1; i <= 10; i++) {
-      var sheetName = 'ACCOUNT ' + i;
-      var sheet = ss.getSheetByName(sheetName);
-      
-      if (sheet) {
-        var result = unprotectSheetForWrite(sheet);
-        if (result.success) {
-          totalRemoved += result.removedProtections;
-        }
+
+    // Use AccountNameManager when available (handles renamed tabs)
+    var sheets = [];
+    if (typeof getAccountTabObjects === 'function') {
+      try {
+        sheets = getAccountTabObjects(ss).map(function(a) { return a.sheet; });
+      } catch(e) { sheets = []; }
+    }
+
+    // Fallback: iterate default names
+    if (sheets.length === 0) {
+      for (var i = 1; i <= 10; i++) {
+        var s = ss.getSheetByName('ACCOUNT ' + i);
+        if (s) sheets.push(s);
       }
     }
-    
+
+    sheets.forEach(function(sheet) {
+      var result = unprotectSheetForWrite(sheet);
+      if (result && result.success) totalRemoved += result.removedProtections || 0;
+    });
+
     if (totalRemoved > 0) {
       Logger.log('🔓 [STARTUP] Removed ' + totalRemoved + ' protections from ACCOUNT sheets');
     }
-    
+
     return { success: true, removed: totalRemoved };
-    
+
   } catch (e) {
     Logger.log('⚠️ [STARTUP] Protection removal failed: ' + e.message);
     return { success: false, error: e.message };

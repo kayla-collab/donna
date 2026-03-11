@@ -66,12 +66,28 @@ function getCategorizationModalDataV2() {
     var sheets = ss.getSheets();
     Logger.log('📊 Total sheets in spreadsheet: ' + sheets.length);
     
-    // Get account sheets (ACCOUNT 1, ACCOUNT 2, etc.)
-    for (var i = 0; i < sheets.length; i++) {
-      var name = sheets[i].getName();
-      if (/^ACCOUNT\s*\d+$/i.test(name)) {
-        accounts.push(name);
-        Logger.log('📋 Found account sheet: ' + name);
+    // Get account sheets — use AccountNameManager to include renamed tabs
+    if (typeof getAccountTabObjects === 'function') {
+      try {
+        var accountTabs = getAccountTabObjects(ss);
+        accounts = accountTabs.map(function(a) { return a.sheetName; });
+        accountTabs.forEach(function(a) {
+          Logger.log('📋 Found account sheet: ' + a.sheetName + ' (display: ' + a.displayName + ')');
+        });
+      } catch(anmErr) {
+        Logger.log('⚠️ AccountNameManager failed, falling back: ' + anmErr.message);
+        accounts = [];
+      }
+    }
+    
+    // Fallback: original regex scan
+    if (accounts.length === 0) {
+      for (var i = 0; i < sheets.length; i++) {
+        var name = sheets[i].getName();
+        if (/^ACCOUNT\s*\d+$/i.test(name)) {
+          accounts.push(name);
+          Logger.log('📋 Found account sheet: ' + name);
+        }
       }
     }
     
@@ -2766,14 +2782,22 @@ function bootstrapMLFromExistingTransactions() {
     var sheets = ss.getSheets();
     var learned = 0;
     var skipped = 0;
-    
-    for (var i = 0; i < sheets.length; i++) {
-      var sheet = sheets[i];
+
+    // Use AccountNameManager when available to include renamed tabs
+    var accountSheetsToScan = [];
+    if (typeof getAccountTabObjects === 'function') {
+      try { accountSheetsToScan = getAccountTabObjects(ss).map(function(a) { return a.sheet; }); } catch(e) {}
+    }
+    if (accountSheetsToScan.length === 0) {
+      for (var i = 0; i < sheets.length; i++) {
+        if (sheets[i].getName().indexOf('ACCOUNT') === 0) accountSheetsToScan.push(sheets[i]);
+      }
+    }
+
+    for (var i = 0; i < accountSheetsToScan.length; i++) {
+      var sheet = accountSheetsToScan[i];
       var name = sheet.getName();
-      
-      // Only process ACCOUNT sheets
-      if (name.indexOf('ACCOUNT') !== 0) continue;
-      
+
       Logger.log('Scanning sheet: ' + name);
       
       var lastRow = sheet.getLastRow();
@@ -2971,8 +2995,10 @@ function showCategorizationModal() {
     var activeSheet = SpreadsheetApp.getActiveSheet();
     var sheetName = activeSheet.getName();
     
-    // Validate it's an Account sheet
-    if (!/^ACCOUNT\s*\d+$/i.test(sheetName)) {
+    // Validate it's an Account sheet (supports renamed tabs via AccountNameManager)
+    var isAcctSheet = /^ACCOUNT\s*\d+$/i.test(sheetName) ||
+      (typeof isAccountTab === 'function' && isAccountTab(sheetName));
+    if (!isAcctSheet) {
       SpreadsheetApp.getUi().alert(
         'Invalid Sheet',
         'Please select an Account sheet first (e.g., ACCOUNT 1, ACCOUNT 2).\n\n' +
@@ -3054,33 +3080,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f8f6f3;
 function showAccountCategorizationModal(accountName) {
   try {
     Logger.log('✅ showAccountCategorizationModal called for: ' + accountName);
-    
-    // Find the actual sheet name - account might be displayed by custom name from C7
+
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheets = ss.getSheets();
-    var sheetName = null;
-    
-    for (var i = 0; i < sheets.length; i++) {
-      var sheet = sheets[i];
-      var name = sheet.getName();
-      
-      // Direct match with sheet name
-      if (name === accountName || name.toUpperCase() === accountName.toUpperCase()) {
-        sheetName = name;
-        break;
-      }
-      
-      // Check if it's an Account sheet and compare custom name from C7
-      if (/^ACCOUNT\s*\d+$/i.test(name)) {
-        var customName = sheet.getRange('C7').getValue();
-        if (customName && String(customName).trim() === accountName) {
-          sheetName = name;
-          break;
+    var foundSheet = null;
+
+    // Use AccountNameManager when available — resolves renamed tabs
+    if (typeof findAccountSheet === 'function') {
+      try { foundSheet = findAccountSheet(accountName, ss); } catch(anmErr) { Logger.log('[WARN] findAccountSheet error: ' + anmErr.message); }
+    }
+
+    // Fallback: direct name match then C7 scan
+    if (!foundSheet) {
+      var sheets = ss.getSheets();
+      for (var i = 0; i < sheets.length; i++) {
+        var s = sheets[i];
+        var sName = s.getName();
+        if (sName === accountName || sName.toUpperCase() === accountName.toUpperCase()) {
+          foundSheet = s; break;
+        }
+        if (/^ACCOUNT\s*\d+$/i.test(sName)) {
+          try {
+            var c7v = String(s.getRange('C7').getValue() || '').trim();
+            if (c7v && c7v.toLowerCase() === accountName.toLowerCase()) { foundSheet = s; break; }
+          } catch(e) {}
         }
       }
     }
-    
-    if (!sheetName) {
+
+    if (!foundSheet) {
       SpreadsheetApp.getUi().alert(
         'Account Not Found',
         'Could not find account: ' + accountName + '\n\nPlease try refreshing the dashboard.',
@@ -3088,8 +3115,10 @@ function showAccountCategorizationModal(accountName) {
       );
       return;
     }
-    
-    // Create template and pass sheet name
+
+    var sheetName = foundSheet.getName();
+
+    // Create template and pass actual tab name
     var template = HtmlService.createTemplateFromFile('CategorizationModal');
     template.initialAccountName = sheetName;
     
