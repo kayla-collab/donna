@@ -880,6 +880,118 @@ function getAccountTransactionsV2(accountName) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// PROGRESSIVE LOADING - FAST FIRST BATCH
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Fast first-batch loader — returns ONLY uncategorized transactions with NO ML/AI processing.
+ * Called first so the modal can render in ~2-3 s, then categorized rows are loaded in the
+ * background via getAccountTransactionsV2.
+ *
+ * @param {string} accountName
+ * @param {number} [batchSize=150]  Max rows to return (keeps payload small)
+ * @returns {{ transactions: Array, totalRows: number, hasMore: boolean }}
+ */
+function getUncategorizedTransactionsV2(accountName, batchSize) {
+  try {
+    batchSize = batchSize || 150;
+    Logger.log('⚡ getUncategorizedTransactionsV2 START: ' + accountName);
+
+    if (!accountName || typeof accountName !== 'string') {
+      return { transactions: [], totalRows: 0, hasMore: false, error: 'Invalid account name' };
+    }
+
+    var dataStartRow = 11;
+    if (typeof CAT_CONFIG !== 'undefined' && CAT_CONFIG.DATA_START_ROW) {
+      dataStartRow = CAT_CONFIG.DATA_START_ROW;
+    }
+
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    if (!ss) return { transactions: [], totalRows: 0, hasMore: false, error: 'No active spreadsheet' };
+
+    var sheet = ss.getSheetByName(accountName) || ss.getSheetByName(accountName.trim());
+    if (!sheet) return { transactions: [], totalRows: 0, hasMore: false, error: 'Sheet not found: ' + accountName };
+
+    var lastRow = sheet.getLastRow();
+    if (lastRow < dataStartRow) return { transactions: [], totalRows: 0, hasMore: false };
+
+    var numRows = lastRow - dataStartRow + 1;
+    // Read only C-K (9 columns) — skip column M (AI) for speed
+    var data = sheet.getRange(dataStartRow, 3, numRows, 9).getValues();
+
+    var specialLabels = ['Credit Card Payment Received','Debt Payment Sent to Credit Card',
+      'Transfer Deposit Personal to Personal','Transfer Withdrawal Personal to Personal',
+      'Ignored','Transaction Split','Refund','Return','Reimbursement',
+      'Ignore','Transfer','CC Payment','Debt Payment Out'];
+    if (typeof CAT_CONFIG !== 'undefined' && CAT_CONFIG.SPECIAL_LABELS) {
+      for (var sl = 0; sl < CAT_CONFIG.SPECIAL_LABELS.length; sl++) {
+        if (specialLabels.indexOf(CAT_CONFIG.SPECIAL_LABELS[sl]) === -1) {
+          specialLabels.push(CAT_CONFIG.SPECIAL_LABELS[sl]);
+        }
+      }
+    }
+
+    var allTransactions = [];
+    var uncategorized = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var row = data[i];
+      var date = row[0];
+      var description = String(row[1] || '').trim();
+      var amount = parseFloat(row[2]) || 0;
+      var category = String(row[3] || '').trim();
+      var businessCat = String(row[4] || '').trim();
+      var memo = String(row[5] || '').trim();
+      var needDesire = String(row[6] || '').trim();
+      var mainCat = String(row[7] || '').trim();
+      var receipt = String(row[8] || '').trim();
+      var rowNum = dataStartRow + i;
+
+      if (!date && !description && amount === 0) continue;
+
+      var specialLabel = specialLabels.indexOf(businessCat) !== -1 ? businessCat : '';
+      var isSplit = mainCat && mainCat.indexOf('SPLIT:') === 0;
+      var dateStr = '';
+      if (date) {
+        if (date instanceof Date) {
+          dateStr = Utilities.formatDate(date, Session.getScriptTimeZone(), 'MM/dd/yyyy');
+        } else {
+          dateStr = String(date);
+        }
+      }
+
+      var tx = {
+        row: rowNum, date: dateStr, description: description, amount: amount,
+        category: category, businessCategory: businessCat, specialLabel: specialLabel,
+        memo: memo, needDesire: needDesire, mainCategory: mainCat, isSplit: isSplit, receipt: receipt
+      };
+
+      allTransactions.push(tx);
+      if (!category && !businessCat) uncategorized.push(tx);
+    }
+
+    // Return uncategorized first (up to batchSize), rest included as categorized
+    var firstBatch = uncategorized.slice(0, batchSize);
+    var remaining = uncategorized.slice(batchSize);
+    // Append categorized transactions after uncategorized
+    var categorized = allTransactions.filter(function(t) { return t.category || t.businessCategory; });
+
+    Logger.log('⚡ Fast load: ' + allTransactions.length + ' total, ' + uncategorized.length + ' uncategorized, returning ' + firstBatch.length + ' first');
+
+    return {
+      transactions: firstBatch.concat(categorized),
+      uncategorizedRemaining: remaining,
+      totalRows: allTransactions.length,
+      uncategorizedCount: uncategorized.length,
+      hasMore: remaining.length > 0
+    };
+  } catch (e) {
+    Logger.log('❌ getUncategorizedTransactionsV2 error: ' + e.message);
+    return { transactions: [], totalRows: 0, hasMore: false, error: e.message };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // SAVE CATEGORIZATION - V2
 // ═══════════════════════════════════════════════════════════════════
 
@@ -951,11 +1063,20 @@ function saveCategorizationChangesV2(accountName, changes) {
         var isIncome = amount > 0;
         
         // PERSONAL CATEGORY or SPECIAL LABEL → Column F (index 3)
-        if (change.category !== undefined && change.category !== '') {
-          existingData[idx][3] = change.category; // Column F
-          existingData[idx][4] = ''; // Clear Column G
-          if (description) {
-            mlEntries.push({ desc: description, cat: change.category, type: isIncome ? 'income' : 'expense', catType: 'personal' });
+        // NOTE: change.category === '' is an EXPLICIT CLEAR — write blank to sheet
+        if (change.category !== undefined) {
+          var newCat = change.category || '';
+          existingData[idx][3] = newCat; // Column F — blank string clears the cell
+          if (!newCat) {
+            // Explicit clear: also wipe business column unless a business value is also being set
+            if (!change.businessCategory && !change.specialLabel) {
+              existingData[idx][4] = ''; // Also clear Column G
+            }
+          } else {
+            existingData[idx][4] = ''; // Non-empty personal clears business
+            if (description) {
+              mlEntries.push({ desc: description, cat: newCat, type: isIncome ? 'income' : 'expense', catType: 'personal' });
+            }
           }
         }
         
@@ -964,19 +1085,29 @@ function saveCategorizationChangesV2(accountName, changes) {
           existingData[idx][3] = change.specialLabel; // Column F
           existingData[idx][4] = ''; // Clear Column G
         }
+        // Explicit clear of special label
+        if (change.specialLabel === '' && change.category === '' && change.businessCategory === '') {
+          existingData[idx][3] = ''; // Column F
+          existingData[idx][4] = ''; // Column G
+        }
         
         // BUSINESS CATEGORY → Column G (index 4)
-        if (change.businessCategory !== undefined && change.businessCategory !== '') {
-          existingData[idx][4] = change.businessCategory; // Column G
-          existingData[idx][3] = ''; // Clear Column F
-          if (description) {
-            mlEntries.push({ desc: description, cat: change.businessCategory, type: isIncome ? 'income' : 'expense', catType: 'business' });
+        // NOTE: change.businessCategory === '' is an EXPLICIT CLEAR
+        if (change.businessCategory !== undefined) {
+          var newBizCat = change.businessCategory || '';
+          existingData[idx][4] = newBizCat; // Column G
+          if (newBizCat) {
+            existingData[idx][3] = ''; // Clear Column F when setting business
+            if (description) {
+              mlEntries.push({ desc: description, cat: newBizCat, type: isIncome ? 'income' : 'expense', catType: 'business' });
+            }
           }
         }
         
         // NEED/DESIRE → Column I (index 6)
-        if (change.needDesire !== undefined && !isIncome && !change.businessCategory) {
-          existingData[idx][6] = change.needDesire;
+        // Allow explicit clear (empty string)
+        if (change.needDesire !== undefined && !isIncome) {
+          existingData[idx][6] = change.needDesire || '';
         }
         
         // MEMO → Column H (index 5)
@@ -1945,11 +2076,19 @@ function setupAISuggestionsForAccount(accountName) {
       var categoryList = isIncome ? incomeCatList : expenseCatList;
       var transactionType = isIncome ? 'income' : 'expense';
       
-      // Build the AI formula - MUST be standalone, cannot wrap in IFERROR
-      // Clean description for the prompt (remove quotes that could break formula)
-      // Business categories are marked with [BIZ] prefix so we can identify them
-      var cleanDesc = String(description).replace(/"/g, "'").substring(0, 60);
-      var prompt = 'Pick the single best category for this ' + transactionType + ': "' + cleanDesc + '" ($' + Math.abs(amount).toFixed(2) + '). Categories (use [BIZ] prefix if business): ' + categoryList + '. Reply with ONLY the category name (include [BIZ] prefix if applicable).';
+      // Build the AI formula — constrain output to ONLY existing categories
+      // Normalize description: strip trailing digits/IDs/dates, keep merchant name only
+      var cleanDesc = String(description)
+        .replace(/"/g, "'")
+        .replace(/\b\d{4,}\b/g, '')        // strip 4+ digit reference numbers
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 50);
+      // Sort categories by frequency (most-used first) for better default matching
+      // We can't sort by frequency here without extra reads, so use the list as-is
+      var prompt = 'Categorize this ' + transactionType + ' transaction: "' + cleanDesc + '". ' +
+        'Choose EXACTLY one category from this list: ' + categoryList + '. ' +
+        'Return ONLY the category name from the list, nothing else.';
       
       var formula = '=AI("' + prompt.replace(/"/g, '""') + '")';
       
