@@ -417,7 +417,11 @@
     function loadAccounts() {
       google.script.run
         .withSuccessHandler(function(accounts) {
-          navState.accounts = accounts || [];
+          // accounts is [{tabName, displayName}] or a plain string array (legacy)
+          navState.accounts = (accounts || []).map(function(a) {
+            if (typeof a === 'string') return { tabName: a, displayName: a };
+            return a;
+          });
           renderNavigation();
         })
         .withFailureHandler(function(error) {
@@ -425,7 +429,7 @@
           navState.accounts = [];
           renderNavigation();
         })
-        .getNavigableSheets();
+        .getAccountNamesForNav();
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -441,13 +445,18 @@
       
       // MY ACCOUNTS
       html += buildSection('accounts', '📊', 'My Accounts', `
-        ${navState.accounts.length > 0 ? navState.accounts.map(acc => `
+        ${navState.accounts.length > 0 ? navState.accounts.map(acc => {
+          const tabName = (acc.tabName || acc).replace(/'/g, "\\'");
+          const displayName = (acc.displayName || acc.tabName || acc);
+          return `
           <div class="nav-account-item">
-            <span class="nav-account-name" onclick="navigateToSheet('${acc}')">${acc}</span>
-            <button class="nav-account-btn" onclick="openCategorization('${acc}', this)">Categorize</button>
+            <span class="nav-account-name" onclick="navigateToSheet('${tabName}')" title="${displayName}">${displayName}</span>
+            <button class="nav-account-btn" onclick="openCategorization('${tabName}', this)">Categorize</button>
           </div>
-        `).join('') : '<div class="nav-item placeholder">No accounts found</div>'}
+          `;
+        }).join('') : '<div class="nav-item placeholder">No accounts found</div>'}
       `);
+      // eslint-disable-next-line no-unused-expressions
       
       // CLARITY & REPORTS
       html += buildSection('clarity', '📈', 'Clarity & Reports', `

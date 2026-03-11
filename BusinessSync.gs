@@ -619,13 +619,20 @@ function syncMovedToPersonal_(account, backendSheet, conversionRate) {
     // STRATEGY 3: Look in ACCOUNT sheets for "Moved to Personal" labels
     // ═══════════════════════════════════════════════════════════════════
     if (rawData.length === 0) {
-      var sheets = businessSS.getSheets();
-      for (var s = 0; s < sheets.length; s++) {
-        var sheet = sheets[s];
+      // Use AccountNameManager to include renamed tabs
+      var acctSheetsToScan = [];
+      if (typeof getAccountTabObjects === 'function') {
+        try { acctSheetsToScan = getAccountTabObjects(businessSS).map(function(a) { return a.sheet; }); } catch(e) {}
+      }
+      if (acctSheetsToScan.length === 0) {
+        var sheets = businessSS.getSheets();
+        for (var s = 0; s < sheets.length; s++) {
+          if (/^ACCOUNT\s*\d+$/i.test(sheets[s].getName())) acctSheetsToScan.push(sheets[s]);
+        }
+      }
+      for (var s = 0; s < acctSheetsToScan.length; s++) {
+        var sheet = acctSheetsToScan[s];
         var sheetName = sheet.getName();
-        
-        // Check if it's an ACCOUNT sheet
-        if (/^ACCOUNT\s*\d+$/i.test(sheetName)) {
           try {
             var lastAccRow = sheet.getLastRow();
             if (lastAccRow > 11) {
@@ -1089,8 +1096,14 @@ function diagnoseBusinessSync() {
           results.push('No BACKEND sheet found in business spreadsheet');
         }
         
-        // Check ACCOUNT sheets for "Moved to Personal" labels
-        var accountSheets = sheets.filter(function(s) { return /^ACCOUNT\s*\d+$/i.test(s.getName()); });
+        // Check ACCOUNT sheets for "Moved to Personal" labels (including renamed tabs)
+        var accountSheets = [];
+        if (typeof getAccountTabObjects === 'function') {
+          try { accountSheets = getAccountTabObjects(businessSS || ss).map(function(a) { return a.sheet; }); } catch(e) {}
+        }
+        if (accountSheets.length === 0) {
+          accountSheets = sheets.filter(function(s) { return /^ACCOUNT\s*\d+$/i.test(s.getName()); });
+        }
         results.push('Found ' + accountSheets.length + ' ACCOUNT sheets');
         
         var movedToPersonalCount = 0;
