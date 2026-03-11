@@ -510,8 +510,8 @@ function getAccountTransactionsV2(accountName) {
       var aiSetupResult = setupAISuggestionsForAccount(accountName);
       if (aiSetupResult && aiSetupResult.count > 0) {
         Logger.log('🤖 Added ' + aiSetupResult.count + ' new AI suggestion formulas');
-        // Give formulas a moment to calculate (they run async)
-        Utilities.sleep(500);
+        // Give formulas a brief moment to start calculating (they run async in Sheets)
+        Utilities.sleep(200);
       }
     } catch (aiSetupErr) {
       Logger.log('[WARN] AI auto-setup skipped: ' + aiSetupErr.message);
@@ -572,10 +572,12 @@ function getAccountTransactionsV2(accountName) {
       // Skip completely empty rows
       if (!date && !description && amount === 0) continue;
       
-      // Check if this is a special label
+      // Check if this is a special label (can be in Column F or Column G)
       var specialLabel = '';
       if (specialLabels.indexOf(businessCat) !== -1) {
         specialLabel = businessCat;
+      } else if (specialLabels.indexOf(category) !== -1) {
+        specialLabel = category;
       }
       
       // Check if this is a split transaction (mainCat contains split data)
@@ -949,7 +951,8 @@ function getUncategorizedTransactionsV2(accountName, batchSize) {
 
       if (!date && !description && amount === 0) continue;
 
-      var specialLabel = specialLabels.indexOf(businessCat) !== -1 ? businessCat : '';
+      var specialLabel = specialLabels.indexOf(businessCat) !== -1 ? businessCat
+                         : (specialLabels.indexOf(category) !== -1 ? category : '');
       var isSplit = mainCat && mainCat.indexOf('SPLIT:') === 0;
       var dateStr = '';
       if (date) {
@@ -1105,7 +1108,7 @@ function saveCategorizationChangesV2(accountName, changes) {
         }
         
         // NEED/DESIRE → Column I (index 6)
-        // Allow explicit clear (empty string)
+        // Allow for all expense and business transactions (not income)
         if (change.needDesire !== undefined && !isIncome) {
           existingData[idx][6] = change.needDesire || '';
         }
@@ -1150,26 +1153,29 @@ function saveCategorizationChangesV2(accountName, changes) {
     Logger.log('saveCategorizationChangesV2 COMPLETE: ' + message);
     Logger.log('═══════════════════════════════════════════════════════════════════');
     
-    // TRIGGER TWO-WAY SYNC: Queue transactions with business categories for sync
+    // TRIGGER TWO-WAY SYNC: queue only — do NOT call performTwoWaySync() inline
+    // to avoid blocking the save response. A 1-minute trigger picks it up shortly after.
     try {
-      if (typeof onCategorizationSaved === 'function') {
+      if (typeof onCategorizationSaved === 'function' || typeof _deferredSyncAfterSave_ === 'function') {
         // Pass full transaction data for sync queuing
+        var dataStartRow = (typeof CAT_CONFIG !== 'undefined' && CAT_CONFIG.DATA_START_ROW) ? CAT_CONFIG.DATA_START_ROW : 11;
         var fullChanges = changes.map(function(change) {
-          var idx = change.row - 11;
+          var idx = change.row - dataStartRow;
           if (idx >= 0 && idx < existingData.length) {
             return {
               row: change.row,
               date: existingData[idx][0],
               description: existingData[idx][1],
               amount: existingData[idx][2],
-              category: change.personalCategory || change.specialLabel || '',
+              category: change.category || change.personalCategory || change.specialLabel || '',
               businessCategory: change.businessCategory || '',
               memo: change.memo || existingData[idx][5] || ''
             };
           }
           return change;
         });
-        onCategorizationSaved(accountName, fullChanges);
+        // Queue for deferred sync (non-blocking)
+        _deferredSyncAfterSave_(accountName, fullChanges);
       }
     } catch (syncErr) {
       Logger.log('[SYNC] Error triggering sync: ' + syncErr.message);
@@ -1753,6 +1759,63 @@ function recordCategorizationLearning(description, category, type) {
     
   } catch (e) {
     Logger.log('[WARN] recordCategorizationLearning error: ' + e.message);
+  }
+}
+
+/**
+/**
+ * Deferred sync helper: stores the pending sync payload in ScriptProperties
+ * and schedules a 1-minute trigger so the save response is returned immediately.
+ * The trigger handler _runDeferredSync_ picks it up and calls onCategorizationSaved.
+ */
+function _deferredSyncAfterSave_(accountName, fullChanges) {
+  try {
+    // Only queue if there are changes that contain a business category
+    var hasBizChange = fullChanges.some(function(c) { return c.businessCategory; });
+    if (!hasBizChange) return; // nothing to sync
+    
+    // Store payload (ScriptProperties max 9KB per key; stringify safely)
+    var payload = JSON.stringify({ accountName: accountName, changes: fullChanges });
+    if (payload.length > 8000) {
+      // Too large — strip memo/dates to reduce size
+      var slim = fullChanges.filter(function(c) { return c.businessCategory; })
+                             .map(function(c) { return { row: c.row, businessCategory: c.businessCategory, description: c.description, amount: c.amount }; });
+      payload = JSON.stringify({ accountName: accountName, changes: slim });
+    }
+    PropertiesService.getScriptProperties().setProperty('_deferred_sync_payload_', payload);
+    
+    // Schedule a 1-minute trigger (remove existing ones first to avoid stacking)
+    var triggers = ScriptApp.getProjectTriggers();
+    for (var i = 0; i < triggers.length; i++) {
+      if (triggers[i].getHandlerFunction() === '_runDeferredSync_') {
+        ScriptApp.deleteTrigger(triggers[i]);
+      }
+    }
+    ScriptApp.newTrigger('_runDeferredSync_')
+      .timeBased()
+      .after(60 * 1000) // 1 minute
+      .create();
+    Logger.log('[DEFERRED SYNC] Scheduled _runDeferredSync_ in 1 minute');
+  } catch (e) {
+    Logger.log('[DEFERRED SYNC] Could not schedule: ' + e.message);
+  }
+}
+
+/**
+ * Time-based trigger handler: runs the deferred sync payload.
+ */
+function _runDeferredSync_() {
+  try {
+    var payload = PropertiesService.getScriptProperties().getProperty('_deferred_sync_payload_');
+    if (!payload) return;
+    PropertiesService.getScriptProperties().deleteProperty('_deferred_sync_payload_');
+    var data = JSON.parse(payload);
+    if (typeof onCategorizationSaved === 'function') {
+      onCategorizationSaved(data.accountName, data.changes);
+    }
+    Logger.log('[DEFERRED SYNC] _runDeferredSync_ completed');
+  } catch (e) {
+    Logger.log('[DEFERRED SYNC] Error in _runDeferredSync_: ' + e.message);
   }
 }
 
