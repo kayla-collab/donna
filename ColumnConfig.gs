@@ -379,32 +379,43 @@ function isDataRow(rowNum) {
 }
 
 /**
- * Check if sheet name is an Account sheet
+ * Check if sheet name is an Account sheet.
+ * Updated to work with renamed tabs via AccountNameManager.
  * @param {string} sheetName - Sheet name to check
  * @returns {boolean} True if it's an Account sheet
  */
 function isAccountSheet(sheetName) {
-  return /^ACCOUNT\s*\d+$/i.test(sheetName);
+  // Fast path: still matches default pattern
+  if (/^ACCOUNT\s*\d+$/i.test(sheetName)) return true;
+  // Slower path: check if it's a renamed account tab
+  if (typeof isAccountTab === 'function') {
+    try { return isAccountTab(sheetName); } catch(e) {}
+  }
+  return false;
 }
 
 /**
- * Get all Account sheet names from a spreadsheet
- * @param {Spreadsheet} ss - Spreadsheet object (optional, uses active if not provided)
- * @returns {Array<string>} Array of account sheet names, sorted
+ * Get all Account sheet NAMES (actual tab names) from a spreadsheet.
+ * Updated to include renamed tabs via AccountNameManager.
+ * @param {Spreadsheet} [ss] - optional spreadsheet
+ * @returns {Array<string>} Array of current tab names, sorted by slot
  */
 function getAccountSheetNames(ss) {
+  if (typeof getAccountTabObjects === 'function') {
+    try {
+      return getAccountTabObjects(ss).map(function(a) { return a.sheetName; });
+    } catch(e) {
+      Logger.log('[ColumnConfig] getAccountTabObjects failed, falling back: ' + e.message);
+    }
+  }
+  // Fallback: original regex scan
   ss = ss || SpreadsheetApp.getActiveSpreadsheet();
   var sheets = ss.getSheets();
   var accounts = [];
-  
   for (var i = 0; i < sheets.length; i++) {
     var name = sheets[i].getName();
-    if (isAccountSheet(name)) {
-      accounts.push(name);
-    }
+    if (/^ACCOUNT\s*\d+$/i.test(name)) accounts.push(name);
   }
-  
-  // Sort numerically (ACCOUNT 1, 2, 3... not 1, 10, 2, 3...)
   return accounts.sort(function(a, b) {
     var numA = parseInt(a.match(/\d+/)) || 0;
     var numB = parseInt(b.match(/\d+/)) || 0;
