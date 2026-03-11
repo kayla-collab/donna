@@ -154,26 +154,31 @@ function populateYearlyOverviewBreakdown() {
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * Get all ACCOUNT sheet names from the spreadsheet
+ * Get all ACCOUNT sheet names from the spreadsheet.
+ * Uses AccountNameManager to include renamed tabs.
  */
 function _getAccountSheetNames(ss) {
-  var sheets = ss.getSheets();
-  var accountSheets = [];
-  
-  for (var i = 0; i < sheets.length; i++) {
-    var name = sheets[i].getName();
-    if (name.match(/^ACCOUNT \d+$/i)) {
-      accountSheets.push(name);
+  // Use AccountNameManager when available
+  if (typeof getAccountTabObjects === 'function') {
+    try {
+      return getAccountTabObjects(ss).map(function(a) { return a.sheetName; });
+    } catch(e) {
+      Logger.log('[YearlyOverview] AccountNameManager error, falling back: ' + e.message);
     }
   }
-  
-  // Sort by account number
+
+  // Fallback: original regex scan
+  var sheets = ss.getSheets();
+  var accountSheets = [];
+  for (var i = 0; i < sheets.length; i++) {
+    var name = sheets[i].getName();
+    if (name.match(/^ACCOUNT \d+$/i)) accountSheets.push(name);
+  }
   accountSheets.sort(function(a, b) {
     var numA = parseInt(a.replace(/\D/g, ''));
     var numB = parseInt(b.replace(/\D/g, ''));
     return numA - numB;
   });
-  
   return accountSheets;
 }
 

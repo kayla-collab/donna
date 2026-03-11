@@ -2207,32 +2207,38 @@ function MM_apiGetDashboardData(filter) {
   // 2. DETECT ACCOUNT SHEETS
   // ═══════════════════════════════════════════════════════════════════
   log('\n[2] Detecting Account sheets...');
-  const allSheets = ss.getSheets();
   const accounts = [];
-  
-  allSheets.forEach(sheet => {
-    const sheetName = sheet.getName();
-    if (sheetName.match(/^ACCOUNT \d+$/i)) {
-      // Read custom account name from C7
-      let accountName = '';
-      try {
-        accountName = sheet.getRange('C7').getValue();
-        accountName = accountName ? String(accountName).trim() : '';
-      } catch (e) {
-        accountName = '';
-      }
-      
-      // Use custom name if set, otherwise fallback to sheet name
-      const displayName = accountName || sheetName;
-      
-      accounts.push({
-        name: displayName,
-        sheet: sheetName
+
+  // Use AccountNameManager when available — supports renamed tabs
+  if (typeof getAccountTabObjects === 'function') {
+    try {
+      getAccountTabObjects(ss).forEach(function(a) {
+        accounts.push({ name: a.displayName, sheet: a.sheetName });
+        log('  ✓ ' + a.sheetName + ': "' + a.displayName + '"');
       });
-      log(`  ✓ ${sheetName}: "${displayName}"${accountName ? '' : ' (no custom name)'}`);
+    } catch (anmErr) {
+      Logger.log('⚠️ AccountNameManager error in MM_apiGetDashboardData, falling back: ' + anmErr.message);
     }
-  });
-  log(`✓ Accounts found: ${accounts.length}`);
+  }
+
+  // Fallback: original regex scan
+  if (accounts.length === 0) {
+    const allSheets = ss.getSheets();
+    allSheets.forEach(sheet => {
+      const sheetName = sheet.getName();
+      if (sheetName.match(/^ACCOUNT \d+$/i)) {
+        let accountName = '';
+        try {
+          accountName = sheet.getRange('C7').getValue();
+          accountName = accountName ? String(accountName).trim() : '';
+        } catch (e) { accountName = ''; }
+        const displayName = accountName || sheetName;
+        accounts.push({ name: displayName, sheet: sheetName });
+        log('  ✓ ' + sheetName + ': "' + displayName + '"');
+      }
+    });
+  }
+  log('✓ Accounts found: ' + accounts.length);
   
   // ═══════════════════════════════════════════════════════════════════
   // 3. READ ALL TRANSACTIONS FROM ACCOUNT SHEETS
@@ -5160,38 +5166,55 @@ function buildChartDataForDateRange(startDate, endDate, incomeTransactions, expe
 function getAccountBalances() {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheets = ss.getSheets();
     var balances = {};
-    
-    sheets.forEach(function(sheet) {
-      var sheetName = sheet.getName();
-      if (sheetName.match(/^ACCOUNT \d+$/i)) {
-        // Get account name from C7
-        var accountName = sheet.getRange('C7').getValue();
-        if (accountName && String(accountName).trim() !== '') {
-          accountName = String(accountName).trim();
-          
-          // Calculate balance by summing Amount column (E, column 5) from row 11+
-          var lastRow = sheet.getLastRow();
-          var balance = 0;
-          
-          if (lastRow >= 11) {
-            var amounts = sheet.getRange(11, 5, lastRow - 10, 1).getValues();
-            for (var i = 0; i < amounts.length; i++) {
-              var amt = amounts[i][0];
-              if (typeof amt === 'number' && !isNaN(amt)) {
-                balance += amt;
+
+    // Use AccountNameManager when available — supports renamed tabs
+    var accountTabs = null;
+    if (typeof getAccountTabObjects === 'function') {
+      try { accountTabs = getAccountTabObjects(ss); } catch(e) { accountTabs = null; }
+    }
+
+    if (accountTabs) {
+      accountTabs.forEach(function(a) {
+        var sheet = a.sheet;
+        var displayName = a.displayName;
+        var lastRow = sheet.getLastRow();
+        var balance = 0;
+        if (lastRow >= 11) {
+          var amounts = sheet.getRange(11, 5, lastRow - 10, 1).getValues();
+          for (var i = 0; i < amounts.length; i++) {
+            var amt = amounts[i][0];
+            if (typeof amt === 'number' && !isNaN(amt)) balance += amt;
+          }
+        }
+        balances[displayName] = balance;
+      });
+    } else {
+      // Fallback: original logic
+      var sheets = ss.getSheets();
+      sheets.forEach(function(sheet) {
+        var sheetName = sheet.getName();
+        if (sheetName.match(/^ACCOUNT \d+$/i)) {
+          var accountName = sheet.getRange('C7').getValue();
+          if (accountName && String(accountName).trim() !== '') {
+            accountName = String(accountName).trim();
+            var lastRow = sheet.getLastRow();
+            var balance = 0;
+            if (lastRow >= 11) {
+              var amounts = sheet.getRange(11, 5, lastRow - 10, 1).getValues();
+              for (var i = 0; i < amounts.length; i++) {
+                var amt = amounts[i][0];
+                if (typeof amt === 'number' && !isNaN(amt)) balance += amt;
               }
             }
+            balances[accountName] = balance;
           }
-          
-          balances[accountName] = balance;
         }
-      }
-    });
-    
+      });
+    }
+
     return balances;
-    
+
   } catch (e) {
     Logger.log('getAccountBalances ERROR: ' + e.message);
     return {};

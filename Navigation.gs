@@ -500,9 +500,9 @@ function _navBuildNavigationMenuHTML_() {
 // ═══════════════════════════════════════════════════════════════════
 
 /**
- * Gets list of account display names from ACCOUNT sheets
- * Reads custom name from C7, falls back to sheet name if empty
- * Cached for 5 minutes to improve performance
+ * Gets list of account display names from ACCOUNT sheets.
+ * Uses AccountNameManager for renamed-tab support.
+ * Cached for 5 minutes to improve performance.
  */
 function getAccountNames() {
   var cacheKey = 'nav_account_names_v2';
@@ -510,50 +510,32 @@ function getAccountNames() {
   if (cached) return cached;
   
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheets = ss.getSheets();
-    var accountsData = [];
-    
-    for (var i = 0; i < sheets.length; i++) {
-      var sheet = sheets[i];
-      var sheetName = sheet.getName();
-      
-      // Only include ACCOUNT sheets (ACCOUNT 1, ACCOUNT 2, etc.)
-      if (/^ACCOUNT\s*\d+$/i.test(sheetName) && 
-          sheetName !== 'MOVED FROM PERSONAL') {
-        
-        // Read custom account name from C7
-        var customName = '';
-        try {
-          customName = sheet.getRange('C7').getValue();
-          customName = customName ? String(customName).trim() : '';
-        } catch (e) {
-          customName = '';
+    var accounts;
+    if (typeof getAccountTabObjects === 'function') {
+      // Use AccountNameManager — works with renamed tabs
+      accounts = getAccountTabObjects().map(function(a) { return a.displayName; });
+    } else {
+      // Legacy fallback
+      var ss = SpreadsheetApp.getActiveSpreadsheet();
+      var sheets = ss.getSheets();
+      var accountsData = [];
+      for (var i = 0; i < sheets.length; i++) {
+        var sheet = sheets[i];
+        var sheetName = sheet.getName();
+        if (/^ACCOUNT\s*\d+$/i.test(sheetName) && sheetName !== 'MOVED FROM PERSONAL') {
+          var customName = '';
+          try { customName = String(sheet.getRange('C7').getValue() || '').trim(); } catch(e) {}
+          accountsData.push({
+            displayName: customName || sheetName,
+            sortNum: parseInt(sheetName.match(/\d+/)) || 0
+          });
         }
-        
-        // Use custom name if set, otherwise use sheet name
-        var displayName = customName || sheetName;
-        
-        // Store both for sorting and display
-        accountsData.push({
-          sheetName: sheetName,
-          displayName: displayName,
-          sortNum: parseInt(sheetName.match(/\d+/)) || 0
-        });
       }
+      accountsData.sort(function(a, b) { return a.sortNum - b.sortNum; });
+      accounts = accountsData.map(function(a) { return a.displayName; });
     }
-    
-    // Sort accounts numerically (ACCOUNT 1, ACCOUNT 2, ...)
-    accountsData.sort(function(a, b) {
-      return a.sortNum - b.sortNum;
-    });
-    
-    // Return just the display names
-    var accounts = accountsData.map(function(a) { return a.displayName; });
-    
     _navPutCache(cacheKey, accounts, 300); // Cache 5 minutes
     return accounts;
-    
   } catch (e) {
     Logger.log('getAccountNames error: ' + e);
     return [];
@@ -1058,11 +1040,19 @@ function clearAllCaches() {
  */
 function getNavigableSheets() {
   try {
+    // Use AccountNameManager to include renamed tabs
+    if (typeof getAccountTabObjects === 'function') {
+      var tabs = getAccountTabObjects();
+      var names = tabs.map(function(t) { return t.sheetName; });
+      Logger.log('getNavigableSheets: Found ' + names.length + ' account sheets (incl. renamed)');
+      return names;
+    }
+
+    // Fallback: legacy regex scan
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheets = ss.getSheets();
     var accountSheets = [];
     
-    // EXCLUDED SHEETS - these should not appear in navigation
     var excludedSheets = [
       'BACKEND', 'Backend', 'backend',
       'MACHINE LEARNING', 'ML_DATA', 'ML DATA',
@@ -1073,38 +1063,48 @@ function getNavigableSheets() {
     for (var i = 0; i < sheets.length; i++) {
       var name = sheets[i].getName();
       var upperName = name.toUpperCase();
-      
-      // Skip hidden sheets
       if (sheets[i].isSheetHidden()) continue;
-      
-      // Skip excluded sheets
       var isExcluded = false;
       for (var j = 0; j < excludedSheets.length; j++) {
-        if (upperName.indexOf(excludedSheets[j].toUpperCase()) !== -1) {
-          isExcluded = true;
-          break;
-        }
+        if (upperName.indexOf(excludedSheets[j].toUpperCase()) !== -1) { isExcluded = true; break; }
       }
       if (isExcluded) continue;
-      
-      // Only include ACCOUNT sheets
-      if (/^ACCOUNT\s*\d+$/i.test(name)) {
-        accountSheets.push(name);
-      }
+      if (/^ACCOUNT\s*\d+$/i.test(name)) accountSheets.push(name);
     }
-    
-    // Sort accounts numerically (ACCOUNT 1, ACCOUNT 2, ...)
     accountSheets.sort(function(a, b) {
       var numA = parseInt(a.match(/\d+/)) || 0;
       var numB = parseInt(b.match(/\d+/)) || 0;
       return numA - numB;
     });
-    
     Logger.log('getNavigableSheets: Found ' + accountSheets.length + ' account sheets');
     return accountSheets;
-    
   } catch (e) {
     Logger.log('getNavigableSheets error: ' + e);
+    return [];
+  }
+}
+
+/**
+ * Returns account descriptors for the navigation menu.
+ * Each item: { tabName, displayName }
+ *   tabName     — actual Google Sheets tab name (used for navigation)
+ *   displayName — user-facing name (C7 value, or tab name if C7 is empty)
+ *
+ * Called from NavigationMenu.html instead of getNavigableSheets() so the
+ * menu can show friendly names while passing the real tab name to server
+ * functions like openCategorizationForAccount() and navigateToSheet().
+ */
+function getAccountNamesForNav() {
+  try {
+    if (typeof getAccountTabObjects === 'function') {
+      return getAccountTabObjects().map(function(a) {
+        return { tabName: a.sheetName, displayName: a.displayName };
+      });
+    }
+    // Fallback: return tab names for both fields
+    return getNavigableSheets().map(function(n) { return { tabName: n, displayName: n }; });
+  } catch (e) {
+    Logger.log('getAccountNamesForNav error: ' + e);
     return [];
   }
 }
@@ -1118,31 +1118,50 @@ function openCategorizationForAccount(accountName) {
   try {
     Logger.log('openCategorizationForAccount called for: ' + accountName);
     
-    // Note: Loading screen is shown in the sidebar UI (NavigationMenu.html)
-    // No need for server-side loading screen here
-    
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = ss.getSheetByName(accountName);
-    
+    var sheet = null;
+
+    // Use AccountNameManager to resolve by tab name OR display name
+    if (typeof findAccountSheet === 'function') {
+      sheet = findAccountSheet(accountName, ss);
+    } else {
+      // Fallback: direct lookup
+      sheet = ss.getSheetByName(accountName);
+      if (!sheet) {
+        // Try matching C7 display name on default-named tabs
+        var sheets = ss.getSheets();
+        for (var i = 0; i < sheets.length; i++) {
+          if (/^ACCOUNT\s*\d+$/i.test(sheets[i].getName())) {
+            try {
+              var c7 = String(sheets[i].getRange('C7').getValue() || '').trim();
+              if (c7.toLowerCase() === accountName.toLowerCase()) { sheet = sheets[i]; break; }
+            } catch(e) {}
+          }
+        }
+      }
+    }
+
     if (!sheet) {
       throw new Error('Account "' + accountName + '" not found');
     }
-    
-    // Validate it's an Account sheet
-    if (!/^ACCOUNT\s*\d+$/i.test(accountName)) {
+
+    // Validate it's actually an account tab
+    if (typeof isAccountTab === 'function') {
+      if (!isAccountTab(sheet.getName(), ss)) {
+        throw new Error('Invalid account: ' + accountName);
+      }
+    } else if (!/^ACCOUNT\s*\d+$/i.test(sheet.getName())) {
       throw new Error('Invalid account: ' + accountName);
     }
-    
-    // Create template and pass sheet name
+
     var template = HtmlService.createTemplateFromFile('CategorizationModal');
-    template.initialAccountName = accountName;
+    template.initialAccountName = sheet.getName(); // always pass actual tab name
     
     var html = template.evaluate()
       .setWidth(1200)
       .setHeight(800);
     
     SpreadsheetApp.getUi().showModalDialog(html, 'Categorize Transactions');
-    
     return { success: true };
     
   } catch (e) {

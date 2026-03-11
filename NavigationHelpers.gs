@@ -226,31 +226,38 @@ function showStripeSyncSuccessMessage(accountName, transactionCount) {
 }
 
 /**
- * Get all ACCOUNT sheets for navigation
+ * Get all ACCOUNT sheets for navigation.
+ * Uses AccountNameManager to include renamed tabs.
  */
 function getAccountSheetsForNavigation() {
   try {
+    // Use AccountNameManager when available
+    if (typeof getAccountTabObjects === 'function') {
+      try {
+        var tabs = getAccountTabObjects();
+        var names = tabs.map(function(t) { return t.sheetName; });
+        Logger.log('Found ' + names.length + ' account sheets (incl. renamed)');
+        return names;
+      } catch(anmErr) {
+        Logger.log('[NavigationHelpers] AccountNameManager error, falling back: ' + anmErr.message);
+      }
+    }
+
+    // Fallback: original logic
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheets = ss.getSheets();
     var accountSheets = [];
-    
     for (var i = 0; i < sheets.length; i++) {
       var name = sheets[i].getName();
-      if (name.indexOf('ACCOUNT') === 0) {
-        accountSheets.push(name);
-      }
+      if (name.indexOf('ACCOUNT') === 0) accountSheets.push(name);
     }
-    
-    // Sort by account number
     accountSheets.sort(function(a, b) {
       var numA = parseInt(a.replace('ACCOUNT ', '')) || 0;
       var numB = parseInt(b.replace('ACCOUNT ', '')) || 0;
       return numA - numB;
     });
-    
     Logger.log('Found ' + accountSheets.length + ' ACCOUNT sheets');
     return accountSheets;
-    
   } catch (e) {
     Logger.log('ERROR getting ACCOUNT sheets: ' + e.toString());
     return [];
@@ -266,8 +273,9 @@ function navigateToAdjacentAccount(direction) {
     var currentSheet = ss.getActiveSheet();
     var currentName = currentSheet.getName();
     
-    // Check if we're on an ACCOUNT sheet
-    if (currentName.indexOf('ACCOUNT') !== 0) {
+    // Check if we're on an ACCOUNT sheet (incl. renamed tabs)
+    var isAcct = typeof isAccountTab === 'function' ? isAccountTab(currentName) : (currentName.indexOf('ACCOUNT') === 0);
+    if (!isAcct) {
       Logger.log('Not on an ACCOUNT sheet, cannot navigate');
       return { success: false, error: 'Not on an ACCOUNT sheet' };
     }
