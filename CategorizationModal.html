@@ -599,6 +599,30 @@
       border: 2px solid transparent;
       transition: all 0.2s;
       font-size: 12px;
+      /* Allow category dropdowns to overflow above sibling rows */
+      overflow: visible;
+      position: relative;
+    }
+    
+    /* Raise z-index of the row when a dropdown is open so it overlaps siblings */
+    .transaction-row:focus-within {
+      z-index: 50;
+    }
+    
+    /* Column header row — labels above the transaction grid */
+    .tx-column-header {
+      background: transparent !important;
+      box-shadow: none !important;
+      border: none !important;
+      padding: 4px 20px !important;
+      pointer-events: none;
+    }
+    .tx-col-hdr {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #aaa;
     }
     
     .transaction-row:hover {
@@ -679,10 +703,13 @@
     /* Category Select with Typeahead */
     .tx-category {
       position: relative;
+      /* Ensure open dropdowns overflow above sibling grid cells */
+      overflow: visible;
     }
     
     .category-wrapper {
       position: relative;
+      overflow: visible;
     }
     
     /* Clarity Suggestion Tooltip */
@@ -842,7 +869,8 @@
       box-shadow: var(--shadow-md);
       max-height: 200px;
       overflow-y: auto;
-      z-index: 100;
+      /* High z-index so dropdowns appear above all sibling grid rows */
+      z-index: 1000;
       display: none;
     }
     
@@ -2482,6 +2510,13 @@
        ═══════════════════════════════════════════════════════════════════ -->
   <script>
     // ═══════════════════════════════════════════════════════════════════
+    // BUSINESS MODE FLAG
+    // Set to true in the business branch to swap column header labels
+    // (Business left, Personal right) without altering data mapping.
+    // ═══════════════════════════════════════════════════════════════════
+    const BUSINESS_MODE = true; // → set to true on business branch
+
+    // ═══════════════════════════════════════════════════════════════════
     // STATE
     // ═══════════════════════════════════════════════════════════════════
     let state = {
@@ -2669,78 +2704,158 @@
       const textEl = document.getElementById('loadingText');
       
       if (afterSave) {
-        // After save: continue from 50%, moving forward to 100%
-        // Progress flow: Save(10->40) -> Refresh start(50) -> Loading(60) -> Process(75) -> Render(90) -> Done(100)
         updateLoadingProgress(60);
         if (textEl) textEl.textContent = 'Loading updated transactions...';
         if (subtitleEl) subtitleEl.textContent = `Refreshing ${accountName} with your changes`;
       } else {
-        // Normal load
         updateLoadingStep('transactions', 'active');
         if (subtitleEl) {
-          subtitleEl.textContent = `Processing ${accountName} — reading all your transactions and preparing Clarity's insights.`;
+          subtitleEl.textContent = `Loading ${accountName} — fetching uncategorized transactions first.`;
         }
       }
       
       const startTime = Date.now();
       
+      // ─── PHASE 1: Fast load — uncategorized only, no ML/AI ───────────────
+      google.script.run
+        .withSuccessHandler(function(fastData) {
+          const elapsed1 = Date.now() - startTime;
+          console.log(`✅ Fast (uncategorized) batch loaded in ${elapsed1}ms`);
+          
+          if (!fastData) {
+            // Fall back to full load
+            _loadFullTransactions(accountName, afterSave, startTime);
+            return;
+          }
+          
+          if (fastData.error) {
+            console.warn('⚠️ Fast load warning:', fastData.error);
+          }
+          
+          // Render the first batch immediately so the user can start working
+          if (!afterSave) {
+            updateLoadingStep('transactions', 'complete');
+            updateLoadingStep('clarity', 'active');
+          } else {
+            updateLoadingProgress(75);
+          }
+          
+          state.transactions = fastData.transactions || [];
+          state.mlSuggestions = {};       // no suggestions yet
+          state.clarityMistakes = {};
+          state.selectedRows.clear();
+          state.changes.clear();
+          
+          console.log(`📊 Fast batch: ${state.transactions.length} transactions (${fastData.uncategorizedCount || 0} uncategorized)`);
+          
+          setTimeout(() => {
+            if (!afterSave) updateLoadingStep('clarity', 'complete');
+            renderAndFinish(afterSave);
+          }, afterSave ? 100 : 200);
+          
+          // ─── PHASE 2: Background — full load with ML/AI ──────────────────
+          // Only run if not coming from a save (after save we need fresh data anyway)
+          if (!afterSave) {
+            _loadFullTransactions(accountName, false, startTime);
+          }
+        })
+        .withFailureHandler(function(err) {
+          console.warn('⚠️ Fast load failed, falling back to full load:', err);
+          _loadFullTransactions(accountName, afterSave, startTime);
+        })
+        .getUncategorizedTransactionsV2(accountName);
+    }
+    
+    /**
+     * INTERNAL: Load full transaction set (with ML/AI suggestions) in the background.
+     * Merges results into existing state and re-renders only if no changes pending.
+     */
+    function _loadFullTransactions(accountName, afterSave, startTime) {
+      const textEl = document.getElementById('loadingText');
+      if (!afterSave && textEl && state.transactions.length > 0) {
+        // Already rendered fast batch — update subtitle only, don't show loading screen
+        const subtitleEl = document.getElementById('loadingSubtitle');
+        if (subtitleEl && document.getElementById('transactionList')) {
+          // Modal is showing — update Clarity bar quietly
+        }
+      }
+      
       google.script.run
         .withSuccessHandler(function(data) {
           const elapsed = Date.now() - startTime;
-          console.log(`✅ Transactions loaded in ${elapsed}ms`);
+          console.log(`✅ Full transactions loaded in ${elapsed}ms`);
           
           if (afterSave) {
             updateLoadingProgress(75);
             if (textEl) textEl.textContent = 'Processing updates...';
-          } else {
-            updateLoadingStep('transactions', 'complete');
           }
           
           if (!data) {
-            console.error('❌ No transaction data returned');
-            if (!afterSave) updateLoadingStep('clarity', 'error');
-            state.transactions = [];
-            state.mlSuggestions = {};
-            renderAndFinish(afterSave);
+            if (!afterSave) {
+              // We already have the fast batch rendered — just log
+              console.warn('⚠️ Full load returned no data');
+            } else {
+              state.transactions = [];
+              state.mlSuggestions = {};
+              renderAndFinish(afterSave);
+            }
             return;
           }
           
           if (data.error) {
             console.warn('⚠️ Backend warning:', data.error);
-            showToast('Warning: ' + data.error, 'error');
+            if (!afterSave && state.transactions.length === 0) {
+              showToast('Warning: ' + data.error, 'error');
+            }
           }
           
-          // Step 3: Process Clarity data
           if (afterSave) {
             updateLoadingProgress(85);
             if (textEl) textEl.textContent = 'Finalizing...';
-          } else {
-            updateLoadingStep('clarity', 'active');
           }
           
+          // Merge ML suggestions into state (preserve any user changes)
+          const hadChanges = state.changes.size > 0;
           state.transactions = data.transactions || [];
           state.mlSuggestions = data.mlSuggestions || {};
           state.clarityMistakes = data.clarityMistakes || {};
-          state.selectedRows.clear();
-          state.changes.clear();
+          
+          if (!afterSave) {
+            // Don't clear selections/changes — user may have already started working
+            if (!hadChanges) {
+              state.selectedRows.clear();
+            }
+          } else {
+            state.selectedRows.clear();
+            state.changes.clear();
+          }
           
           const suggestionsCount = Object.keys(state.mlSuggestions).length;
-          const mistakesCount = Object.keys(state.clarityMistakes).length;
+          console.log(`📊 Full: ${state.transactions.length} transactions, ${suggestionsCount} suggestions`);
           
-          console.log(`📊 ${state.transactions.length} transactions, ${suggestionsCount} suggestions, ${mistakesCount} issues`);
-          
-          // Brief pause to show Clarity step, then render
-          setTimeout(() => {
-            if (!afterSave) updateLoadingStep('clarity', 'complete');
-            renderAndFinish(afterSave);
-          }, afterSave ? 100 : 300);
+          if (afterSave) {
+            setTimeout(() => { renderAndFinish(afterSave); }, 100);
+          } else {
+            // Quietly refresh the rendered view with ML suggestions now available
+            setTimeout(() => {
+              renderTransactions();
+              updateCounts();
+              updateStats();
+              updateClarityHelper(suggestionsCount, 0);
+            }, 50);
+          }
         })
         .withFailureHandler(function(error) {
           const elapsed = Date.now() - startTime;
-          console.error(`❌ loadAccountTransactionsOptimized FAILED after ${elapsed}ms`, error);
-          if (!afterSave) updateLoadingStep('transactions', 'error');
-          showToast('Error loading transactions: ' + (error?.message || error), 'error');
-          showEmpty();
+          console.error(`❌ Full load FAILED after ${elapsed}ms`, error);
+          if (afterSave) {
+            showToast('Error loading transactions: ' + (error?.message || error), 'error');
+            showEmpty();
+          } else if (state.transactions.length === 0) {
+            showToast('Error loading transactions: ' + (error?.message || error), 'error');
+            showEmpty();
+          }
+          // If fast batch already rendered, just log — don't disrupt user
         })
         .getAccountTransactionsV2(accountName);
     }
@@ -2927,7 +3042,28 @@
         return;
       }
       
-      console.log('📋 Rendering ' + filtered.length + ' transactions');
+      console.log('📋 rendering ' + filtered.length + ' transactions');
+      
+      // ── Column header row ──────────────────────────────────────────────
+      // BUSINESS_MODE swaps "Personal"/"Business" label display order
+      // Data mapping is UNCHANGED: Personal always = Col F, Business always = Col G
+      const col1Label = BUSINESS_MODE ? 'Business (Col G)' : 'Personal (Col F)';
+      const col2Label = BUSINESS_MODE ? 'Personal (Col F)' : 'Business (Col G)';
+      const headerRow = document.createElement('div');
+      headerRow.className = 'transaction-row tx-column-header';
+      headerRow.innerHTML = `
+        <div></div>
+        <div class="tx-col-hdr">Date</div>
+        <div class="tx-col-hdr">Description</div>
+        <div class="tx-col-hdr">Amount</div>
+        <div class="tx-col-hdr">${col1Label}</div>
+        <div class="tx-col-hdr">${col2Label}</div>
+        <div class="tx-col-hdr">Need/Desire</div>
+        <div class="tx-col-hdr">Memo</div>
+        <div class="tx-col-hdr">Actions</div>
+      `;
+      container.appendChild(headerRow);
+      // ──────────────────────────────────────────────────────────────────
       
       // Use document fragment for better performance
       const fragment = document.createDocumentFragment();
@@ -3047,7 +3183,6 @@
                 <div class="clarity-suggestion-category" onclick="applyClaritySuggestion(${tx.row}, '${escapeHtml(mlCategory)}', false, event)">
                   ${escapeHtml(mlCategory)}
                 </div>
-                <div class="clarity-suggestion-confidence">${confidencePercent}% confident</div>
               </div>
             ` : ''}
             <div class="category-dropdown personal-dropdown" data-row="${tx.row}">
@@ -3080,7 +3215,6 @@
                 <div class="clarity-suggestion-category" onclick="applyClaritySuggestion(${tx.row}, '${escapeHtml(mlCategory)}', true, event)">
                   ${escapeHtml(mlCategory)}
                 </div>
-                <div class="clarity-suggestion-confidence">${confidencePercent}% confident</div>
               </div>
             ` : ''}
             <div class="category-dropdown business-dropdown" data-row="${tx.row}">
@@ -3165,6 +3299,9 @@
         html = '<div class="category-option" style="color: #999;">No matching categories</div>';
       }
       
+      // Clear option always visible
+      html += `<div class="category-option clear-option" onmousedown="clearCategory(${row})" style="color:#e03131;font-weight:600;border-top:1px solid #eee;margin-top:4px;padding-top:6px;">✕ Clear Category</div>`;
+      
       dropdown.innerHTML = html;
     }
     
@@ -3181,6 +3318,10 @@
       html += SPECIAL_LABELS.map(label => 
         `<div class="category-option special-label ${getSpecialLabelClass(label)}" onmousedown="selectPersonalSpecialLabelDirect(${row}, '${escapeJs(label)}')">${escapeHtml(label)}</div>`
       ).join('');
+      
+      // Clear option — always at bottom
+      html += '<div class="category-divider clear-divider">Actions</div>';
+      html += `<div class="category-option clear-option" onmousedown="clearCategory(${row})" style="color:#e03131;font-weight:600;">✕ Clear Category</div>`;
       
       return html;
     }
@@ -3230,6 +3371,9 @@
         html = '<div class="category-option" style="color: #999;">No matching categories or labels</div>';
       }
       
+      // Clear option always visible
+      html += `<div class="category-option clear-option" onmousedown="clearCategory(${row})" style="color:#e03131;font-weight:600;border-top:1px solid #eee;margin-top:4px;padding-top:6px;">✕ Clear Category</div>`;
+      
       dropdown.innerHTML = html;
     }
     
@@ -3252,6 +3396,10 @@
       html += SPECIAL_LABELS.map(label => 
         `<div class="category-option special-label ${getSpecialLabelClass(label)}" onmousedown="selectBusinessSpecialLabel(${row}, '${escapeJs(label)}')">${escapeHtml(label)}</div>`
       ).join('');
+      
+      // Clear option — always at bottom
+      html += '<div class="category-divider clear-divider">Actions</div>';
+      html += `<div class="category-option clear-option" onmousedown="clearCategory(${row})" style="color:#e03131;font-weight:600;">✕ Clear Category</div>`;
       
       return html;
     }
@@ -3797,7 +3945,6 @@
               </div>
             </div>
             <div class="ml-suggestion-category">${escapeHtml(item.category)}${needDesireHtml}</div>
-            <div class="ml-suggestion-confidence ${confidenceClass}">${confidencePercent}%</div>
             <div class="ml-suggestion-actions">
               <button class="ml-action-btn accept" onclick="acceptMLSuggestion(${tx.row})" title="Accept suggestion" ${item.accepted ? 'disabled' : ''}>
                 &#x2713;
@@ -3986,15 +4133,18 @@
       state.changes.forEach((change, row) => {
         changes.push({
           row: row,
-          category: change.category || '',
-          businessCategory: change.businessCategory || '',
+          category: change.category !== undefined ? change.category : '',
+          businessCategory: change.businessCategory !== undefined ? change.businessCategory : '',
           needDesire: change.needDesire || '',
           memo: change.memo !== undefined ? change.memo : '',
           receipt: change.receipt || '',
-          specialLabel: change.specialLabel || '',
+          specialLabel: change.specialLabel !== undefined ? change.specialLabel : '',
           splits: change.splits || null
         });
       });
+      
+      // Snapshot which rows are being saved so we can merge back
+      const savedSnapshot = new Map(state.changes);
       
       console.log('🔄 Auto-saving ' + changes.length + ' changes silently...');
       
@@ -4002,15 +4152,27 @@
         .withSuccessHandler(function(result) {
           console.log('✅ Auto-save complete: ' + result.savedCount + ' saved');
           
+          // Merge saved values back into the live transaction state
+          // so reopening the modal or switching views shows persisted data
+          savedSnapshot.forEach((change, row) => {
+            const tx = state.transactions.find(t => t.row === row);
+            if (tx) {
+              if (change.category !== undefined)         tx.category = change.category;
+              if (change.businessCategory !== undefined) tx.businessCategory = change.businessCategory;
+              if (change.specialLabel !== undefined)     tx.specialLabel = change.specialLabel;
+              if (change.needDesire)                     tx.needDesire = change.needDesire;
+              if (change.memo !== undefined)             tx.memo = change.memo;
+              if (change.receipt)                        tx.receipt = change.receipt;
+              if (change.splits)                         tx.splits = change.splits;
+            }
+          });
+          
           // Clear the saved changes from state (but DON'T reload)
           state.changes.clear();
           state.autoSaveInProgress = false;
           
-          // Update the UI to reflect saved state (without full reload)
           updateButtons();
           updateCounts();
-          
-          // Subtle indicator that save happened
           showToast('Saved', 'success');
         })
         .withFailureHandler(function(error) {
@@ -4782,19 +4944,22 @@
       state.changes.forEach((change, row) => {
         changes.push({
           row: row,
-          category: change.category || '',
-          businessCategory: change.businessCategory || '',
+          category: change.category !== undefined ? change.category : '',
+          businessCategory: change.businessCategory !== undefined ? change.businessCategory : '',
           needDesire: change.needDesire || '',
           memo: change.memo !== undefined ? change.memo : '',
           receipt: change.receipt || '',
-          specialLabel: change.specialLabel || '',
+          specialLabel: change.specialLabel !== undefined ? change.specialLabel : '',
           splits: change.splits || null
         });
       });
       
       console.log('📤 Saving changes:', JSON.stringify(changes, null, 2));
       
-      // Show loading screen during save - start at 10% and progress forward
+      // Snapshot for merging back into state
+      const savedSnapshot = new Map(state.changes);
+      
+      // Show loading screen during save
       showLoading();
       updateLoadingProgress(10);
       const loadingText = document.getElementById('loadingText');
@@ -4809,18 +4974,30 @@
           const elapsed = Math.round((new Date().getTime() - saveStartTime) / 1000);
           console.log('✅ Save completed in ' + elapsed + 's');
           
+          // Merge saved values back into live transaction objects
+          // This ensures cross-view consistency on reload
+          savedSnapshot.forEach((change, row) => {
+            const tx = state.transactions.find(t => t.row === row);
+            if (tx) {
+              if (change.category !== undefined)         tx.category = change.category;
+              if (change.businessCategory !== undefined) tx.businessCategory = change.businessCategory;
+              if (change.specialLabel !== undefined)     tx.specialLabel = change.specialLabel;
+              if (change.needDesire)                     tx.needDesire = change.needDesire;
+              if (change.memo !== undefined)             tx.memo = change.memo;
+              if (change.receipt)                        tx.receipt = change.receipt;
+            }
+          });
+          
           // Clear changes AND selections after save
           state.changes.clear();
           state.selectedRows.clear();
           
-          // Progress forward: save complete = 40%, then refresh takes it to 100%
           updateLoadingProgress(40);
           if (loadingText) loadingText.textContent = 'Saved! Refreshing data...';
           if (loadingSubtitle) loadingSubtitle.textContent = result.savedCount + ' categories updated successfully.';
           
-          // Brief pause to show success, then reload (pass true to indicate after-save)
           setTimeout(function() {
-            loadAccountTransactions(accountName, true); // true = afterSave, keeps progress moving forward from 40%
+            loadAccountTransactions(accountName, true);
           }, 500);
         })
         .withFailureHandler(function(error) {
@@ -5251,6 +5428,45 @@
       updateCounts();
       
       // Auto-save if enabled (silent background save)
+      performAutoSave();
+    }
+    
+    /**
+     * Clear all category fields for a row (personal, business, special label).
+     * Writes empty strings to the sheet so the row reverts to "uncategorized".
+     * Persists across close/reopen because the blank is saved immediately.
+     */
+    function clearCategory(row) {
+      const personalInput = document.querySelector(`.personal-input[data-row="${row}"]`);
+      const businessInput = document.querySelector(`.business-input[data-row="${row}"]`);
+      
+      const change = state.changes.get(row) || {};
+      // Explicit clear — all three fields set to empty string
+      change.category        = '';
+      change.businessCategory = '';
+      change.specialLabel    = '';
+      
+      if (personalInput) {
+        personalInput.value = '';
+        personalInput.className = 'category-input personal-input';
+        personalInput.style.borderColor = '';
+      }
+      if (businessInput) {
+        businessInput.value = '';
+        businessInput.className = 'category-input business-input';
+        businessInput.style.borderColor = '#0ca678';
+      }
+      
+      state.changes.set(row, change);
+      
+      // Re-render the row to reset Need/Desire button states
+      renderTransactions();
+      updateButtons();
+      updateCounts();
+      
+      showToast('Category cleared', 'info');
+      
+      // Auto-save the clear immediately so it persists on reopen
       performAutoSave();
     }
     
