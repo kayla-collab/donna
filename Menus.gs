@@ -328,8 +328,9 @@ function setupAISuggestionsMenu() {
   var activeSheet = ss.getActiveSheet();
   var sheetName = activeSheet.getName();
   
-  // Check if on an ACCOUNT sheet
-  if (!/^ACCOUNT\s*\d+$/i.test(sheetName)) {
+  // Check if on an ACCOUNT sheet (supports renamed tabs)
+  const _isAcctMenuSheet = /^ACCOUNT\s*\d+$/i.test(sheetName) || (typeof isAccountTab === 'function' && isAccountTab(sheetName));
+  if (!_isAcctMenuSheet) {
     var response = ui.alert(
       'Setup AI Suggestions',
       'You are not on an ACCOUNT sheet. Do you want to set up AI suggestions for ALL account sheets?',
@@ -339,21 +340,28 @@ function setupAISuggestionsMenu() {
     if (response === ui.Button.YES) {
       ui.alert('Setting Up...', 'This may take a moment. Click OK to continue.', ui.ButtonSet.OK);
       
-      var sheets = ss.getSheets();
-      var count = 0;
-      var errors = [];
-      
-      for (var i = 0; i < sheets.length; i++) {
-        var name = sheets[i].getName();
-        if (/^ACCOUNT\s*\d+$/i.test(name)) {
-          var result = setupAISuggestionsForAccount(name);
+        // Use AccountNameManager when available
+        var accountNames = [];
+        if (typeof getAccountTabObjects === 'function') {
+          try { accountNames = getAccountTabObjects(ss).map(function(a) { return a.sheetName; }); } catch(e) {}
+        }
+        if (accountNames.length === 0) {
+          var sheets = ss.getSheets();
+          for (var i = 0; i < sheets.length; i++) {
+            var name = sheets[i].getName();
+            if (/^ACCOUNT\s*\d+$/i.test(name)) accountNames.push(name);
+          }
+        }
+        var count = 0;
+        var errors = [];
+        for (var i = 0; i < accountNames.length; i++) {
+          var result = setupAISuggestionsForAccount(accountNames[i]);
           if (result.success) {
             count += result.count || 0;
           } else {
-            errors.push(name + ': ' + result.error);
+            errors.push(accountNames[i] + ': ' + result.error);
           }
         }
-      }
       
       if (errors.length > 0) {
         ui.alert('AI Setup Complete', 'Added AI formulas for ' + count + ' transactions.\n\nErrors:\n' + errors.join('\n'), ui.ButtonSet.OK);
