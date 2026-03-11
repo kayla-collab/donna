@@ -2485,9 +2485,15 @@
         <button class="footer-btn cancel" style="width: 100%; margin-top: 12px; border: 2px dashed var(--color-light); color: var(--color-dark);" onclick="addSplitEntry()">
           + Add Another Split
         </button>
-        <div style="margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #f8f6f3 0%, #ebe6df 100%); border-radius: 8px; display: flex; justify-content: space-between; border: 1px solid var(--color-lightest);">
-          <span style="font-weight: 600; color: var(--color-darkest);">Split Total:</span>
-          <span id="splitTotal" style="font-weight: 700; color: var(--color-dark);">$0.00</span>
+        <div style="margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #f8f6f3 0%, #ebe6df 100%); border-radius: 8px; border: 1px solid var(--color-lightest);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+            <span style="font-weight: 600; color: var(--color-darkest);">Split Total:</span>
+            <span id="splitTotal" style="font-weight: 700; color: var(--color-dark);">$0.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 600; color: var(--color-darkest);">Remaining:</span>
+            <span id="splitRemaining" style="font-weight: 700; color: var(--color-dark);">$0.00</span>
+          </div>
         </div>
         <div id="splitWarning" style="margin-top: 8px; padding: 8px; background: #ffe3e3; color: #c92a2a; border-radius: 6px; font-size: 12px; display: none;">
           Split amounts must equal the original transaction amount
@@ -3222,13 +3228,12 @@
             </div>
           </div>
         </div>
-        <!-- NEED/DESIRE (only for personal expenses) -->
-        <div class="tx-category need-desire-toggle ${isIncome || isBusiness ? 'disabled-for-income' : ''}">
+        <!-- NEED/DESIRE (for all expense transactions, including business-categorized) -->
+        <div class="tx-category need-desire-toggle ${isIncome ? 'disabled-for-income' : ''}">
           ${isIncome ? 
             '<span class="income-no-nd">N/A</span>' :
-            (isBusiness ? '<span class="income-no-nd">N/A (Biz)</span>' :
             `<button class="nd-btn need ${currentNeedDesire === 'Need' ? 'active' : ''}" onclick="setNeedDesire(${tx.row}, 'Need')">Need</button>
-             <button class="nd-btn desire ${currentNeedDesire === 'Desire' ? 'active' : ''}" onclick="setNeedDesire(${tx.row}, 'Desire')">Desire</button>`)
+             <button class="nd-btn desire ${currentNeedDesire === 'Desire' ? 'active' : ''}" onclick="setNeedDesire(${tx.row}, 'Desire')">Desire</button>`
           }
         </div>
         <div class="tx-memo">
@@ -4160,7 +4165,7 @@
               if (change.category !== undefined)         tx.category = change.category;
               if (change.businessCategory !== undefined) tx.businessCategory = change.businessCategory;
               if (change.specialLabel !== undefined)     tx.specialLabel = change.specialLabel;
-              if (change.needDesire)                     tx.needDesire = change.needDesire;
+              if (change.needDesire !== undefined)       tx.needDesire = change.needDesire;
               if (change.memo !== undefined)             tx.memo = change.memo;
               if (change.receipt)                        tx.receipt = change.receipt;
               if (change.splits)                         tx.splits = change.splits;
@@ -4946,7 +4951,7 @@
           row: row,
           category: change.category !== undefined ? change.category : '',
           businessCategory: change.businessCategory !== undefined ? change.businessCategory : '',
-          needDesire: change.needDesire || '',
+          needDesire: change.needDesire !== undefined ? change.needDesire : '',
           memo: change.memo !== undefined ? change.memo : '',
           receipt: change.receipt || '',
           specialLabel: change.specialLabel !== undefined ? change.specialLabel : '',
@@ -4954,37 +4959,45 @@
         });
       });
       
-      console.log('📤 Saving changes:', JSON.stringify(changes, null, 2));
+      console.log('📤 Saving ' + changes.length + ' changes...');
       
       // Snapshot for merging back into state
       const savedSnapshot = new Map(state.changes);
+      const isSingleChange = changes.length === 1;
       
-      // Show loading screen during save
-      showLoading();
-      updateLoadingProgress(10);
-      const loadingText = document.getElementById('loadingText');
-      const loadingSubtitle = document.getElementById('loadingSubtitle');
-      if (loadingText) loadingText.textContent = 'Saving ' + changes.length + ' changes...';
-      if (loadingSubtitle) loadingSubtitle.textContent = 'Adding to your sheet. Please wait...';
+      // For single-change saves (fast path): show minimal overlay, skip reload
+      // For multi-change saves: show full loading screen
+      if (isSingleChange) {
+        // Lightweight indicator: just disable the save button temporarily
+        const saveBtn = document.getElementById('saveBtn');
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
+      } else {
+        showLoading();
+        updateLoadingProgress(10);
+        const loadingText = document.getElementById('loadingText');
+        const loadingSubtitle = document.getElementById('loadingSubtitle');
+        if (loadingText) loadingText.textContent = 'Saving ' + changes.length + ' changes...';
+        if (loadingSubtitle) loadingSubtitle.textContent = 'Adding to your sheet. Please wait...';
+      }
       
       const saveStartTime = new Date().getTime();
       
       google.script.run
         .withSuccessHandler(function(result) {
           const elapsed = Math.round((new Date().getTime() - saveStartTime) / 1000);
-          console.log('✅ Save completed in ' + elapsed + 's');
+          console.log('✅ Save completed in ' + elapsed + 's (' + changes.length + ' changes)');
           
           // Merge saved values back into live transaction objects
-          // This ensures cross-view consistency on reload
           savedSnapshot.forEach((change, row) => {
             const tx = state.transactions.find(t => t.row === row);
             if (tx) {
               if (change.category !== undefined)         tx.category = change.category;
               if (change.businessCategory !== undefined) tx.businessCategory = change.businessCategory;
               if (change.specialLabel !== undefined)     tx.specialLabel = change.specialLabel;
-              if (change.needDesire)                     tx.needDesire = change.needDesire;
+              if (change.needDesire !== undefined)       tx.needDesire = change.needDesire;
               if (change.memo !== undefined)             tx.memo = change.memo;
               if (change.receipt)                        tx.receipt = change.receipt;
+              if (change.splits)                         tx.splits = change.splits;
             }
           });
           
@@ -4992,16 +5005,34 @@
           state.changes.clear();
           state.selectedRows.clear();
           
-          updateLoadingProgress(40);
-          if (loadingText) loadingText.textContent = 'Saved! Refreshing data...';
-          if (loadingSubtitle) loadingSubtitle.textContent = result.savedCount + ' categories updated successfully.';
-          
-          setTimeout(function() {
-            loadAccountTransactions(accountName, true);
-          }, 500);
+          if (isSingleChange) {
+            // Fast path: no reload — just re-render with updated state
+            const saveBtn = document.getElementById('saveBtn');
+            if (saveBtn) { saveBtn.textContent = 'Save'; }
+            renderTransactions();
+            updateButtons();
+            updateCounts();
+            showToast('Saved ✓', 'success');
+          } else {
+            // Multi-change path: brief progress then reload
+            updateLoadingProgress(40);
+            const loadingText = document.getElementById('loadingText');
+            const loadingSubtitle = document.getElementById('loadingSubtitle');
+            if (loadingText) loadingText.textContent = 'Saved! Refreshing data...';
+            if (loadingSubtitle) loadingSubtitle.textContent = (result.savedCount || changes.length) + ' categories updated successfully.';
+            
+            setTimeout(function() {
+              loadAccountTransactions(accountName, true);
+            }, 500);
+          }
         })
         .withFailureHandler(function(error) {
-          showList();
+          if (isSingleChange) {
+            const saveBtn = document.getElementById('saveBtn');
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
+          } else {
+            showList();
+          }
           showToast('Error saving: ' + error.message, 'error');
         })
         .saveCategorizationChangesV2(accountName, changes);
@@ -5734,6 +5765,11 @@
       document.getElementById('splitEntries').innerHTML = '';
       document.getElementById('splitWarning').style.display = 'none';
       document.getElementById('saveSplitBtn').disabled = true;
+      // Reset totals display
+      const splitTotalEl = document.getElementById('splitTotal');
+      if (splitTotalEl) { splitTotalEl.textContent = '$0.00'; splitTotalEl.style.color = ''; }
+      const splitRemainingEl = document.getElementById('splitRemaining');
+      if (splitRemainingEl) { splitRemainingEl.textContent = formatCurrency(splitState.originalAmount); splitRemainingEl.style.color = '#f59f00'; }
       
       // Add two initial split entries
       addSplitEntry();
@@ -5951,21 +5987,49 @@
         if (amount <= 0) allHaveAmounts = false;
       });
       
-      document.getElementById('splitTotal').textContent = formatCurrency(total);
-      
-      const diff = Math.abs(total - splitState.originalAmount);
+      const remaining = splitState.originalAmount - total;
+      const diff = Math.abs(remaining);
       const amountsMatch = diff < 0.01;
+      
+      // Update Split Total display
+      const totalEl = document.getElementById('splitTotal');
+      if (totalEl) {
+        totalEl.textContent = formatCurrency(total);
+        totalEl.style.color = amountsMatch ? 'var(--color-income)' : 'var(--color-expense)';
+      }
+      
+      // Update Remaining display — shows real-time remainder including negative
+      const remainingEl = document.getElementById('splitRemaining');
+      if (remainingEl) {
+        remainingEl.textContent = formatCurrency(remaining);
+        if (amountsMatch) {
+          remainingEl.style.color = 'var(--color-income)';
+        } else if (remaining < 0) {
+          remainingEl.style.color = '#e03131'; // over-allocated — red
+        } else {
+          remainingEl.style.color = '#f59f00'; // under-allocated — amber
+        }
+      }
       
       // Valid when: amounts match original, at least 2 entries, ALL have categories, ALL have amounts
       const isValid = amountsMatch && entries.length >= 2 && allHaveCategories && allHaveAmounts;
       
-      // Show warning if amounts don't match
-      document.getElementById('splitWarning').style.display = !amountsMatch ? 'block' : 'none';
-      document.getElementById('saveSplitBtn').disabled = !isValid;
+      // Show warning with specific message if amounts don't match
+      const warningEl = document.getElementById('splitWarning');
+      if (warningEl) {
+        if (!amountsMatch) {
+          warningEl.style.display = 'block';
+          if (remaining < 0) {
+            warningEl.textContent = 'Over by ' + formatCurrency(Math.abs(remaining)) + ' — reduce one entry.';
+          } else {
+            warningEl.textContent = 'Still need to allocate ' + formatCurrency(remaining) + ' more.';
+          }
+        } else {
+          warningEl.style.display = 'none';
+        }
+      }
       
-      // Color the total based on whether amounts match
-      const totalEl = document.getElementById('splitTotal');
-      totalEl.style.color = amountsMatch ? 'var(--color-income)' : 'var(--color-expense)';
+      document.getElementById('saveSplitBtn').disabled = !isValid;
     }
     
     function saveSplit() {

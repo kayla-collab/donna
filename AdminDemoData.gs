@@ -1697,26 +1697,31 @@ function generateBusinessExpenseTransaction_(date, type, context) {
 }
 
 /**
- * Find all ACCOUNT sheets in the spreadsheet
+ * Find all ACCOUNT sheets in the spreadsheet.
+ * Uses AccountNameManager to include renamed tabs.
  */
 function findAccountSheets_(ss) {
-  var sheets = ss.getSheets();
-  var accountSheets = [];
-  
-  for (var i = 0; i < sheets.length; i++) {
-    var name = sheets[i].getName();
-    if (/^ACCOUNT\s*\d+$/i.test(name)) {
-      accountSheets.push(sheets[i]);
+  // Use AccountNameManager when available
+  if (typeof getAccountTabObjects === 'function') {
+    try {
+      return getAccountTabObjects(ss).map(function(a) { return a.sheet; });
+    } catch(e) {
+      Logger.log('[AdminDemoData] AccountNameManager error, falling back: ' + e.message);
     }
   }
-  
-  // Sort by account number
+
+  // Fallback: original regex scan
+  var sheets = ss.getSheets();
+  var accountSheets = [];
+  for (var i = 0; i < sheets.length; i++) {
+    var name = sheets[i].getName();
+    if (/^ACCOUNT\s*\d+$/i.test(name)) accountSheets.push(sheets[i]);
+  }
   accountSheets.sort(function(a, b) {
     var numA = parseInt(a.getName().match(/\d+/)) || 0;
     var numB = parseInt(b.getName().match(/\d+/)) || 0;
     return numA - numB;
   });
-  
   return accountSheets;
 }
 

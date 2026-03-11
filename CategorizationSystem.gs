@@ -66,12 +66,28 @@ function getCategorizationModalDataV2() {
     var sheets = ss.getSheets();
     Logger.log('📊 Total sheets in spreadsheet: ' + sheets.length);
     
-    // Get account sheets (ACCOUNT 1, ACCOUNT 2, etc.)
-    for (var i = 0; i < sheets.length; i++) {
-      var name = sheets[i].getName();
-      if (/^ACCOUNT\s*\d+$/i.test(name)) {
-        accounts.push(name);
-        Logger.log('📋 Found account sheet: ' + name);
+    // Get account sheets — use AccountNameManager to include renamed tabs
+    if (typeof getAccountTabObjects === 'function') {
+      try {
+        var accountTabs = getAccountTabObjects(ss);
+        accounts = accountTabs.map(function(a) { return a.sheetName; });
+        accountTabs.forEach(function(a) {
+          Logger.log('📋 Found account sheet: ' + a.sheetName + ' (display: ' + a.displayName + ')');
+        });
+      } catch(anmErr) {
+        Logger.log('⚠️ AccountNameManager failed, falling back: ' + anmErr.message);
+        accounts = [];
+      }
+    }
+    
+    // Fallback: original regex scan
+    if (accounts.length === 0) {
+      for (var i = 0; i < sheets.length; i++) {
+        var name = sheets[i].getName();
+        if (/^ACCOUNT\s*\d+$/i.test(name)) {
+          accounts.push(name);
+          Logger.log('📋 Found account sheet: ' + name);
+        }
       }
     }
     
@@ -510,8 +526,8 @@ function getAccountTransactionsV2(accountName) {
       var aiSetupResult = setupAISuggestionsForAccount(accountName);
       if (aiSetupResult && aiSetupResult.count > 0) {
         Logger.log('🤖 Added ' + aiSetupResult.count + ' new AI suggestion formulas');
-        // Give formulas a moment to calculate (they run async)
-        Utilities.sleep(500);
+        // Give formulas a brief moment to start calculating (they run async in Sheets)
+        Utilities.sleep(200);
       }
     } catch (aiSetupErr) {
       Logger.log('[WARN] AI auto-setup skipped: ' + aiSetupErr.message);
@@ -572,10 +588,12 @@ function getAccountTransactionsV2(accountName) {
       // Skip completely empty rows
       if (!date && !description && amount === 0) continue;
       
-      // Check if this is a special label
+      // Check if this is a special label (can be in Column F or Column G)
       var specialLabel = '';
       if (specialLabels.indexOf(businessCat) !== -1) {
         specialLabel = businessCat;
+      } else if (specialLabels.indexOf(category) !== -1) {
+        specialLabel = category;
       }
       
       // Check if this is a split transaction (mainCat contains split data)
@@ -949,7 +967,8 @@ function getUncategorizedTransactionsV2(accountName, batchSize) {
 
       if (!date && !description && amount === 0) continue;
 
-      var specialLabel = specialLabels.indexOf(businessCat) !== -1 ? businessCat : '';
+      var specialLabel = specialLabels.indexOf(businessCat) !== -1 ? businessCat
+                         : (specialLabels.indexOf(category) !== -1 ? category : '');
       var isSplit = mainCat && mainCat.indexOf('SPLIT:') === 0;
       var dateStr = '';
       if (date) {
@@ -1105,7 +1124,7 @@ function saveCategorizationChangesV2(accountName, changes) {
         }
         
         // NEED/DESIRE → Column I (index 6)
-        // Allow explicit clear (empty string)
+        // Allow for all expense and business transactions (not income)
         if (change.needDesire !== undefined && !isIncome) {
           existingData[idx][6] = change.needDesire || '';
         }
@@ -1150,26 +1169,29 @@ function saveCategorizationChangesV2(accountName, changes) {
     Logger.log('saveCategorizationChangesV2 COMPLETE: ' + message);
     Logger.log('═══════════════════════════════════════════════════════════════════');
     
-    // TRIGGER TWO-WAY SYNC: Queue transactions with business categories for sync
+    // TRIGGER TWO-WAY SYNC: queue only — do NOT call performTwoWaySync() inline
+    // to avoid blocking the save response. A 1-minute trigger picks it up shortly after.
     try {
-      if (typeof onCategorizationSaved === 'function') {
+      if (typeof onCategorizationSaved === 'function' || typeof _deferredSyncAfterSave_ === 'function') {
         // Pass full transaction data for sync queuing
+        var dataStartRow = (typeof CAT_CONFIG !== 'undefined' && CAT_CONFIG.DATA_START_ROW) ? CAT_CONFIG.DATA_START_ROW : 11;
         var fullChanges = changes.map(function(change) {
-          var idx = change.row - 11;
+          var idx = change.row - dataStartRow;
           if (idx >= 0 && idx < existingData.length) {
             return {
               row: change.row,
               date: existingData[idx][0],
               description: existingData[idx][1],
               amount: existingData[idx][2],
-              category: change.personalCategory || change.specialLabel || '',
+              category: change.category || change.personalCategory || change.specialLabel || '',
               businessCategory: change.businessCategory || '',
               memo: change.memo || existingData[idx][5] || ''
             };
           }
           return change;
         });
-        onCategorizationSaved(accountName, fullChanges);
+        // Queue for deferred sync (non-blocking)
+        _deferredSyncAfterSave_(accountName, fullChanges);
       }
     } catch (syncErr) {
       Logger.log('[SYNC] Error triggering sync: ' + syncErr.message);
@@ -1753,6 +1775,63 @@ function recordCategorizationLearning(description, category, type) {
     
   } catch (e) {
     Logger.log('[WARN] recordCategorizationLearning error: ' + e.message);
+  }
+}
+
+/**
+/**
+ * Deferred sync helper: stores the pending sync payload in ScriptProperties
+ * and schedules a 1-minute trigger so the save response is returned immediately.
+ * The trigger handler _runDeferredSync_ picks it up and calls onCategorizationSaved.
+ */
+function _deferredSyncAfterSave_(accountName, fullChanges) {
+  try {
+    // Only queue if there are changes that contain a business category
+    var hasBizChange = fullChanges.some(function(c) { return c.businessCategory; });
+    if (!hasBizChange) return; // nothing to sync
+    
+    // Store payload (ScriptProperties max 9KB per key; stringify safely)
+    var payload = JSON.stringify({ accountName: accountName, changes: fullChanges });
+    if (payload.length > 8000) {
+      // Too large — strip memo/dates to reduce size
+      var slim = fullChanges.filter(function(c) { return c.businessCategory; })
+                             .map(function(c) { return { row: c.row, businessCategory: c.businessCategory, description: c.description, amount: c.amount }; });
+      payload = JSON.stringify({ accountName: accountName, changes: slim });
+    }
+    PropertiesService.getScriptProperties().setProperty('_deferred_sync_payload_', payload);
+    
+    // Schedule a 1-minute trigger (remove existing ones first to avoid stacking)
+    var triggers = ScriptApp.getProjectTriggers();
+    for (var i = 0; i < triggers.length; i++) {
+      if (triggers[i].getHandlerFunction() === '_runDeferredSync_') {
+        ScriptApp.deleteTrigger(triggers[i]);
+      }
+    }
+    ScriptApp.newTrigger('_runDeferredSync_')
+      .timeBased()
+      .after(60 * 1000) // 1 minute
+      .create();
+    Logger.log('[DEFERRED SYNC] Scheduled _runDeferredSync_ in 1 minute');
+  } catch (e) {
+    Logger.log('[DEFERRED SYNC] Could not schedule: ' + e.message);
+  }
+}
+
+/**
+ * Time-based trigger handler: runs the deferred sync payload.
+ */
+function _runDeferredSync_() {
+  try {
+    var payload = PropertiesService.getScriptProperties().getProperty('_deferred_sync_payload_');
+    if (!payload) return;
+    PropertiesService.getScriptProperties().deleteProperty('_deferred_sync_payload_');
+    var data = JSON.parse(payload);
+    if (typeof onCategorizationSaved === 'function') {
+      onCategorizationSaved(data.accountName, data.changes);
+    }
+    Logger.log('[DEFERRED SYNC] _runDeferredSync_ completed');
+  } catch (e) {
+    Logger.log('[DEFERRED SYNC] Error in _runDeferredSync_: ' + e.message);
   }
 }
 
@@ -2703,14 +2782,22 @@ function bootstrapMLFromExistingTransactions() {
     var sheets = ss.getSheets();
     var learned = 0;
     var skipped = 0;
-    
-    for (var i = 0; i < sheets.length; i++) {
-      var sheet = sheets[i];
+
+    // Use AccountNameManager when available to include renamed tabs
+    var accountSheetsToScan = [];
+    if (typeof getAccountTabObjects === 'function') {
+      try { accountSheetsToScan = getAccountTabObjects(ss).map(function(a) { return a.sheet; }); } catch(e) {}
+    }
+    if (accountSheetsToScan.length === 0) {
+      for (var i = 0; i < sheets.length; i++) {
+        if (sheets[i].getName().indexOf('ACCOUNT') === 0) accountSheetsToScan.push(sheets[i]);
+      }
+    }
+
+    for (var i = 0; i < accountSheetsToScan.length; i++) {
+      var sheet = accountSheetsToScan[i];
       var name = sheet.getName();
-      
-      // Only process ACCOUNT sheets
-      if (name.indexOf('ACCOUNT') !== 0) continue;
-      
+
       Logger.log('Scanning sheet: ' + name);
       
       var lastRow = sheet.getLastRow();
@@ -2908,8 +2995,10 @@ function showCategorizationModal() {
     var activeSheet = SpreadsheetApp.getActiveSheet();
     var sheetName = activeSheet.getName();
     
-    // Validate it's an Account sheet
-    if (!/^ACCOUNT\s*\d+$/i.test(sheetName)) {
+    // Validate it's an Account sheet (supports renamed tabs via AccountNameManager)
+    var isAcctSheet = /^ACCOUNT\s*\d+$/i.test(sheetName) ||
+      (typeof isAccountTab === 'function' && isAccountTab(sheetName));
+    if (!isAcctSheet) {
       SpreadsheetApp.getUi().alert(
         'Invalid Sheet',
         'Please select an Account sheet first (e.g., ACCOUNT 1, ACCOUNT 2).\n\n' +
@@ -2991,33 +3080,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#f8f6f3;
 function showAccountCategorizationModal(accountName) {
   try {
     Logger.log('✅ showAccountCategorizationModal called for: ' + accountName);
-    
-    // Find the actual sheet name - account might be displayed by custom name from C7
+
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-    var sheets = ss.getSheets();
-    var sheetName = null;
-    
-    for (var i = 0; i < sheets.length; i++) {
-      var sheet = sheets[i];
-      var name = sheet.getName();
-      
-      // Direct match with sheet name
-      if (name === accountName || name.toUpperCase() === accountName.toUpperCase()) {
-        sheetName = name;
-        break;
-      }
-      
-      // Check if it's an Account sheet and compare custom name from C7
-      if (/^ACCOUNT\s*\d+$/i.test(name)) {
-        var customName = sheet.getRange('C7').getValue();
-        if (customName && String(customName).trim() === accountName) {
-          sheetName = name;
-          break;
+    var foundSheet = null;
+
+    // Use AccountNameManager when available — resolves renamed tabs
+    if (typeof findAccountSheet === 'function') {
+      try { foundSheet = findAccountSheet(accountName, ss); } catch(anmErr) { Logger.log('[WARN] findAccountSheet error: ' + anmErr.message); }
+    }
+
+    // Fallback: direct name match then C7 scan
+    if (!foundSheet) {
+      var sheets = ss.getSheets();
+      for (var i = 0; i < sheets.length; i++) {
+        var s = sheets[i];
+        var sName = s.getName();
+        if (sName === accountName || sName.toUpperCase() === accountName.toUpperCase()) {
+          foundSheet = s; break;
+        }
+        if (/^ACCOUNT\s*\d+$/i.test(sName)) {
+          try {
+            var c7v = String(s.getRange('C7').getValue() || '').trim();
+            if (c7v && c7v.toLowerCase() === accountName.toLowerCase()) { foundSheet = s; break; }
+          } catch(e) {}
         }
       }
     }
-    
-    if (!sheetName) {
+
+    if (!foundSheet) {
       SpreadsheetApp.getUi().alert(
         'Account Not Found',
         'Could not find account: ' + accountName + '\n\nPlease try refreshing the dashboard.',
@@ -3025,8 +3115,10 @@ function showAccountCategorizationModal(accountName) {
       );
       return;
     }
-    
-    // Create template and pass sheet name
+
+    var sheetName = foundSheet.getName();
+
+    // Create template and pass actual tab name
     var template = HtmlService.createTemplateFromFile('CategorizationModal');
     template.initialAccountName = sheetName;
     

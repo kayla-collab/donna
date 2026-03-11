@@ -72,7 +72,9 @@ function processManualTransactions(sheet, data) {
   }
   
   const sheetName = sheet.getName();
-  if (!/^ACCOUNT\s*\d+$/i.test(sheetName)) {
+  // Support renamed tabs via AccountNameManager
+  const _isAcct = /^ACCOUNT\s*\d+$/i.test(sheetName) || (typeof isAccountTab === 'function' && isAccountTab(sheetName));
+  if (!_isAcct) {
     return { success: false, message: 'Can only process transactions on ACCOUNT sheets' };
   }
   
@@ -154,8 +156,9 @@ function handleManualPaste(e) {
   const sheet = e.range.getSheet();
   const sheetName = sheet.getName();
   
-  // Only process on ACCOUNT sheets
-  if (!/^ACCOUNT\s*\d+$/i.test(sheetName)) return;
+  // Only process on ACCOUNT sheets (including renamed tabs)
+  const _isAcctSheet = /^ACCOUNT\s*\d+$/i.test(sheetName) || (typeof isAccountTab === 'function' && isAccountTab(sheetName));
+  if (!_isAcctSheet) return;
   
   const startRow = e.range.getRow();
   const startCol = e.range.getColumn();
@@ -198,23 +201,24 @@ function handleManualPaste(e) {
 // ==================== ACCOUNT SHEET UTILITIES ====================
 
 /**
- * Get list of ACCOUNT tabs
+ * Get list of ACCOUNT tabs.
+ * Uses AccountNameManager to include renamed tabs.
  */
 function getAccountSheets() {
   if (!_mm_requireLoginOrOpenGate_('Account List')) throw new Error('Login required.');
-  
+
+  // Use AccountNameManager when available
+  if (typeof getAccountTabObjects === 'function') {
+    try { return getAccountTabObjects().map(function(a) { return a.sheetName; }); } catch(e) {}
+  }
+
   const ss = MMNAV_OPT.getSS();
   const sheets = ss.getSheets();
   const accounts = [];
-  
   for (let i = 0; i < sheets.length; i++) {
     const name = sheets[i].getName();
-    if (/^ACCOUNT\s*\d+$/i.test(name)) {
-      accounts.push(name);
-    }
+    if (/^ACCOUNT\s*\d+$/i.test(name)) accounts.push(name);
   }
-  
-  // Sort numerically (ACCOUNT 1, 2, 3... not 1, 10, 2, 3...)
   return accounts.sort(function(a, b) {
     var numA = parseInt(a.match(/\d+/)) || 0;
     var numB = parseInt(b.match(/\d+/)) || 0;
@@ -235,7 +239,9 @@ function clearAccountTransactions(sheetName) {
     throw new Error('Sheet not found: ' + sheetName);
   }
   
-  if (!/^ACCOUNT\s*\d+$/i.test(sheetName)) {
+  // Support renamed tabs
+  const _isAcctTab = /^ACCOUNT\s*\d+$/i.test(sheetName) || (typeof isAccountTab === 'function' && isAccountTab(sheetName));
+  if (!_isAcctTab) {
     throw new Error('Can only clear transactions from ACCOUNT sheets');
   }
   

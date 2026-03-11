@@ -27,25 +27,30 @@ function getFinancialDataForAI() {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     
     // Get all ACCOUNT sheets
-    var sheets = ss.getSheets();
+    // Get all ACCOUNT sheets (including renamed tabs via AccountNameManager)
     var accountSheets = [];
-    for (var i = 0; i < sheets.length; i++) {
-      if (sheets[i].getName().indexOf('ACCOUNT') === 0) {
-        accountSheets.push(sheets[i]);
+    if (typeof getAccountTabObjects === 'function') {
+      try {
+        accountSheets = getAccountTabObjects(ss).map(function(a) { return a.sheet; });
+      } catch(e) { accountSheets = []; }
+    }
+    if (accountSheets.length === 0) {
+      var sheets = ss.getSheets();
+      for (var i = 0; i < sheets.length; i++) {
+        if (sheets[i].getName().indexOf('ACCOUNT') === 0) accountSheets.push(sheets[i]);
       }
     }
-    
-    // Find active accounts (have account name in C7)
+
+    // Find active accounts (have account name in C7 OR are renamed)
     var activeAccounts = [];
     for (var i = 0; i < accountSheets.length; i++) {
       try {
-        var accountName = accountSheets[i].getRange('C7').getValue();
-        if (accountName && String(accountName).trim() !== '') {
-          activeAccounts.push(accountSheets[i]);
-        }
-      } catch (e) {
-        // Skip sheets that can't be read
-      }
+        var c7val = String(accountSheets[i].getRange('C7').getValue() || '').trim();
+        // Accept if C7 has value OR if the tab itself was renamed (tab name ≠ default pattern)
+        var tabName = accountSheets[i].getName();
+        var isRenamed = !/^ACCOUNT\s*\d+$/i.test(tabName);
+        if (c7val !== '' || isRenamed) activeAccounts.push(accountSheets[i]);
+      } catch (e) { /* skip */ }
     }
     
     // Calculate totals

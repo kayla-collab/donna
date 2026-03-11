@@ -931,13 +931,23 @@ function fetchBusinessTransactions_(businessSS, account) {
   }
   
   // Strategy 3: Look for transactions in ACCOUNT sheets marked as "Moved to Personal"
-  var sheets = businessSS.getSheets();
-  for (var k = 0; k < sheets.length; k++) {
-    var sheet = sheets[k];
+  // Use AccountNameManager to include renamed tabs
+  var acctSheetsStrat3 = [];
+  if (typeof getAccountTabObjects === 'function') {
+    try { acctSheetsStrat3 = getAccountTabObjects(businessSS).map(function(a) { return a.sheet; }); } catch(e) {}
+  }
+  if (acctSheetsStrat3.length === 0) {
+    var sheets = businessSS.getSheets();
+    for (var k = 0; k < sheets.length; k++) {
+      if (/^ACCOUNT\s*\d+$/i.test(sheets[k].getName())) acctSheetsStrat3.push(sheets[k]);
+    }
+  }
+  for (var k = 0; k < acctSheetsStrat3.length; k++) {
+    var sheet = acctSheetsStrat3[k];
     var sheetName = sheet.getName();
-    
+
     // Check if it's an ACCOUNT sheet
-    if (/^ACCOUNT\s*\d+$/i.test(sheetName)) {
+    if (true) {  // all sheets in array are account sheets
       try {
         var lastAccRow = sheet.getLastRow();
         if (lastAccRow > 11) { // Data starts at row 11
